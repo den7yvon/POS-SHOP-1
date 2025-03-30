@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIDEN | SALES RECORDS</title>
+    <link rel="shortcut icon" type="image/x-icon" href="Favicon.jpg">
+    <style>/* Sidebar styles */
+        .sidebar {
+            width: 250px;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: -250px;
+            background-color: blue;
+            color: white;
+            padding-top: 20px;
+            transition: 0.3s;
+            z-index: 1000;
+        }
+        .sidebar.active {
+            left: 0;
+        }
+        .sidebar ul {
+            list-style-type: circle;
+            padding: 10;
+        }
+        .sidebar ul li {
+            padding: 8px;
+            text-align: justify;
+        }
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+        }
+        .open-btn {
+            font-size: 30px;
+            cursor: pointer;
+        }
+        /* Rest of the styles */
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            margin: 0;
+            padding: 0;
+            background-color: white;
+        }
+        
+        header {
+            background-color: blue;
+            color: white;
+            padding: 0.1px;
+            text-align: center;
+            border-bottom-left-radius: 30%;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 10px;
+            border-top-right-radius: 30%;
+        }
+        
+        button {
+            background-color: white;
+            color: blue;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: lime;
+        }
+        
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+        }
+        
+        form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        form input,
+        form select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        text{
+            text-align: center;
+        }
+        table {
+            width: 90%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            border: 10px solid blue;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: lightgray;
+        }    
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <button class="close-btn" onclick="toggleSidebar()">×</button>
+        <nav>
+            <header style="background-color: white; color: blue; padding: 20px; font-size: 20px;"><b>NAVIGATION BAR</b></header>
+            <ul>
+                <b>
+                <li><a href="homepage.html">HOMEPAGE</a></li>
+                <li><a href="POINT OF SALE.html">POINT OF SALE</a></li>
+                <li><a href="ADD STOCK.html">ADD STOCK</a></li>
+                <li><a href="EXPENSES.html">EXPENSES</a></li>
+                <li><a href="SALES RECORDS.html">SALES RECORDS</a></li>
+                <li><a href="ORDERS MANAGEMENT.html">ORDERS MANAGEMENT</a></li>
+                <li><a href="MY ACCOUNT.html">MY ACCOUNT</a></li>
+                </b>
+            </ul>
+            <pre>
+
+
+
+
+            </pre>
+            <footer style="background-color: white; color: blue;"><b>We value your trust. Thank you for choosing PIDEN. </b></footer>
+        </nav>
+    </div>
+    <div class="main-content">
+        <header>
+            <h1>
+                <img src="Favicon.jpg" style="width: 50px; height: 50px; border-radius: 100%;">
+                &nbsp&nbsp&nbsp&nbspPIDEN POINT OF SALE&nbsp&nbsp&nbsp&nbsp
+                <button class="open-btn" style=" border-radius: 100%;" onclick="toggleSidebar()">☰</button>
+            </h1>            
+        </header>
+        <text>
+            <h1>Welcome to your Sales Records</h1>
+            <p><b>Get the records of your entire sales in an outomatic and easy way</b></p>
+        </text>
+        <h1 style="text-align: center;">SALES RECORDS</h1>
+
+        <!-- Dynamic Day and Date -->
+        <h2 id="dateHeader" style="text-align: center;"></h2>
+        <!-- Sales Records Table -->
+        <div id="salesRecordsContainer" style="text-align: center; margin-top: 20px;">
+            <!-- Sales records will be dynamically added here -->
+        </div>
+
+         <footer style="background-color: blue; color: white;">
+            <p>&copy; 2025 PIDEN Point of Sale System</p>
+        </footer>
+    </div>
+    <script>
+        // Sidebar toggle function
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("active");
+        }
+        function addSalesRecord(itemName, itemType, quantity, stockAmount, sellingPrice, totalProfit, paymentMode) {
+            let today = new Date().toLocaleDateString('en-GB'); // Format: DD/MM/YYYY
+            let timeSold = new Date().toLocaleTimeString();    
+            // Retrieve existing sales records from localStorage
+            let salesData = JSON.parse(localStorage.getItem("salesData")) || { transactions: [] };
+            // Create a new sales record object
+            let newRecord = {
+                dateSold: today,
+                timeSold: timeSold,
+                itemName: itemName,
+                itemType: itemType,
+                quantity: quantity,
+                stockAmount: stockAmount,
+                sellingAmount: sellingPrice,
+                profit: totalProfit,
+                modeOfPayment: paymentMode
+            };
+            // Add the new record to transactions array
+            salesData.transactions.push(newRecord);
+
+            // Store the updated data back in localStorage
+            localStorage.setItem("salesData", JSON.stringify(salesData));
+
+            // Call function to update UI
+            displaySalesRecords();
+        }
+
+        function displaySalesRecords() {
+            let salesData = JSON.parse(localStorage.getItem("salesData")) || { transactions: [] };
+            let oldSalesRecords = JSON.parse(localStorage.getItem("salesRecords")) || []; 
+            let salesRecords = salesData.transactions.length > 0 ? salesData.transactions : oldSalesRecords;
+            let salesContainer = document.getElementById("salesRecordsContainer");
+            salesContainer.innerHTML = ""; // Clear previous entries
+            let groupedRecords = {};
+
+            // Group sales by date
+            salesRecords.forEach(record => {
+                if (!groupedRecords[record.dateSold]) {
+                    groupedRecords[record.dateSold] = [];
+                }
+                groupedRecords[record.dateSold].push(record);
+            });
+
+            // Display grouped records
+            Object.keys(groupedRecords).forEach(date => {
+                let section = document.createElement("div");
+                section.id = `report-${date.replace(/\s+/g, '-')}`; // ✅ Unique ID for each report section
+                let dateHeader = document.createElement("h2");
+                dateHeader.textContent = date;
+                dateHeader.style.textAlign = "center";
+                // Create "Download Report" Button
+                let downloadButton = document.createElement("button");
+                downloadButton.textContent = "Download Report";
+                // ✅ Apply styles directly in JavaScript
+                downloadButton.style.marginLeft = "20px";
+                downloadButton.style.padding = "8px 15px";
+                downloadButton.style.backgroundColor = "blue";
+                downloadButton.style.color = "white";
+                downloadButton.style.border = "none";
+                downloadButton.style.borderRadius = "5px";
+                downloadButton.style.cursor = "pointer";
+                downloadButton.style.fontSize = "14px";
+                downloadButton.style.marginLeft = "20px";
+                // ✅ Change background to "lime" on hover
+                downloadButton.onmouseover = function() {
+                    downloadButton.style.backgroundColor = "lime";
+                };
+                downloadButton.onmouseout = function() {
+                    downloadButton.style.backgroundColor = "#007bff"; // Back to blue
+                };
+                downloadButton.onclick = function() {
+                    downloadSalesReport(date);
+                };
+                dateHeader.appendChild(downloadButton);
+
+                section.appendChild(dateHeader);
+                let table = document.createElement("table");
+                table.border = "10";
+                table.align = "center";
+                let thead = document.createElement("thead");
+                thead.innerHTML = `
+                    <tr>
+                        <th>Serial No.</th>
+                        <th>Item Name</th>
+                        <th>Item Type</th>
+                        <th>Quantity</th>
+                        <th>Stock Amount</th>
+                        <th>Selling/Customer Price</th>
+                        <th>Total Profit</th>
+                        <th>Mode of Payment</th>
+                        <th>Time Sold</th>
+                    </tr>
+                `;
+                let tbody = document.createElement("tbody");
+
+                let totalSales = 0;
+                let totalStockAmount = 0;
+                let totalProfit = 0;
+                let totalSalesCash = 0;
+                let totalSalesMpesa = 0;
+                let totalStockCash = 0;
+                let totalStockMpesa = 0;
+                let totalProfitCash = 0;
+                let totalProfitMpesa = 0;
+
+                groupedRecords[date].forEach((record, index) => {
+                    let row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${record.itemName}</td>
+                        <td>${record.itemType}</td>
+                        <td>${record.quantity}</td>
+                        <td>${parseFloat(record.stockAmount).toFixed(2)}</td>
+                        <td>${parseFloat(record.sellingAmount).toFixed(2)}</td>
+                        <td>${parseFloat(record.profit).toFixed(2)}</td>
+                        <td>${record.modeOfPayment}</td>
+                        <td>${record.timeSold}</td>
+                    `;
+                    tbody.appendChild(row);
+
+                    // Accumulate totals
+                    totalSales += parseFloat(record.sellingAmount);
+                    totalStockAmount += parseFloat(record.stockAmount);
+                    totalProfit += parseFloat(record.profit);
+
+                    if (record.modeOfPayment === "Cash") {
+                        totalSalesCash += parseFloat(record.sellingAmount);
+                        totalStockCash += parseFloat(record.stockAmount);
+                        totalProfitCash += parseFloat(record.profit);
+                    } else if (record.modeOfPayment === "Mpesa") {
+                        totalSalesMpesa += parseFloat(record.sellingAmount);
+                        totalStockMpesa += parseFloat(record.stockAmount);
+                        totalProfitMpesa += parseFloat(record.profit);
+                    }
+                    });
+
+                    table.appendChild(thead);
+                    table.appendChild(tbody);
+                    section.appendChild(table);
+
+                    // Daily Calculations Table
+                    let calculationsTable = document.createElement("table");
+                    calculationsTable.border = "10";
+                    calculationsTable.align = "center";
+
+                    calculationsTable.innerHTML = `
+                        <tr>
+                            <th colspan="6" style="text-align: center; 
+                            background-color: lime;">DAILY CALCULATIONS</th>
+                        </tr>
+                        <tr>
+                            <th colspan="2">Total Sales</th>
+                            <th colspan="2">Total Stock Amount</th>
+                            <th colspan="2">Total Profit</th>
+                        </tr>
+                        <tr>
+                            <td colspan="2">${totalSales.toFixed(2)}</td>
+                            <td colspan="2">${totalStockAmount.toFixed(2)}</td>
+                            <td colspan="2">${totalProfit.toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <th>In Cash</th>
+                            <th>In Mpesa</th>
+                            <th>In Cash</th>
+                            <th>In Mpesa</th>
+                            <th>In Cash</th>
+                            <th>In Mpesa</th>
+                        </tr>
+                        <tr>
+                            <td>${totalSalesCash.toFixed(2)}</td>
+                            <td>${totalSalesMpesa.toFixed(2)}</td>
+                            <td>${totalStockCash.toFixed(2)}</td>
+                            <td>${totalStockMpesa.toFixed(2)}</td>
+                            <td>${totalProfitCash.toFixed(2)}</td>
+                            <td>${totalProfitMpesa.toFixed(2)}</td>
+                        </tr>
+                    `;
+                    section.appendChild(calculationsTable);
+                    salesContainer.appendChild(section);
+                });
+            }
+
+        // Load sales records when the page loads
+        document.addEventListener("DOMContentLoaded", () => {
+            displaySalesRecords();
+        });
+
+        // Auto-update sales records when a checkout happens
+        window.addEventListener("storage", (event) => {
+            if (event.key === "salesRecords") {
+                displaySalesRecords();
+            }
+        }); 
+
+        function downloadSalesReport(date) {
+            let reportSection = document.getElementById(`report-${date.replace(/\s+/g, '-')}`);
+
+            // Check if the report section exists
+            if (!reportSection) {
+                alert("Error: Report section not found!");
+                return;
+            }
+
+            html2canvas(reportSection, { scale: 2 }).then(canvas => { // Scale for better quality
+                let image = canvas.toDataURL("image/jpeg");
+                let link = document.createElement("a");
+                link.href = image;
+                link.download = `Sales_Report_${date.replace(/\s+/g, '_')}.jpg`;
+
+                // Append link to body, click, then remove to ensure compatibility
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Show "Downloaded Successfully" Popup
+                showDownloadPopup();
+                }).catch(error => {
+                    console.error("Error capturing report:", error);
+                    alert("Failed to download report. Please try again.");
+                });
+        }
+
+        // Function to show the success popup
+        function showDownloadPopup() {
+            let popup = document.createElement("div");
+            popup.textContent = "Downloaded Successfully ✅";
+            popup.style.position = "fixed";
+            popup.style.top = "50%";
+            popup.style.left = "50%";
+            popup.style.transform = "translate(-50%, -50%)";
+            popup.style.background = "#28a745";
+            popup.style.color = "white";
+            popup.style.padding = "15px 25px";
+            popup.style.borderRadius = "5px";
+            popup.style.boxShadow = "0px 4px 10px rgba(0, 0, 0, 0.3)";
+            document.body.appendChild(popup);
+
+            setTimeout(() => {
+                popup.remove();
+            }, 1000);
+        }
+     </script>
+</body>
+</html>

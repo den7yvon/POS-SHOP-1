@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIDEN | ADD STOCK</title>
+    <link rel="shortcut icon" type="image/x-icon" href="Favicon.jpg">
+    <style>
+      .sidebar {
+         width: 250px;
+         height: 100%;
+         position: fixed;
+         top: 0;
+         left: -250px;
+         background-color: blue;
+         color: white;
+         padding-top: 20px;
+         transition: 0.3s;
+        }
+  	  .sidebar.active {
+        left: 0;
+        }
+      .sidebar ul {
+         list-style-type: circle;
+        padding: 10;
+        }
+      .sidebar ul li {
+         padding: 8px;
+         text-align: justify;
+        }
+      .sidebar ul li a {
+        color: white;
+        text-decoration: none;
+        }
+      .open-btn {
+         font-size: 30px;
+         cursor: pointer;
+        }   
+      body {
+         font-family: 'Times New Roman', Times, serif;
+         margin: 0;
+         padding: 0;
+         background-color: white;
+         text-align: center;
+        }
+      header {
+         background-color: blue;
+         color: white;
+         padding: 0.1px;
+         text-align: center;
+         border-bottom-left-radius: 30%;
+        }
+      footer {
+        text-align: center;
+        padding: 10px;
+        border-top-right-radius: 30%;
+        }
+      button {
+        background-color: white;
+        color: blue;
+        padding: 10px 20px;
+        cursor: pointer;
+        }
+      button:hover {
+         background-color: lime;
+        }
+      form {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: 5px;
+        }
+      form label {
+        display: block;
+        margin-bottom: 5px;
+        }
+      form input,
+      form select {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        }
+      text{
+        text-align: center;
+        }
+      .button {
+        padding: 10px 20px;
+        margin: 10px;
+        cursor: pointer;
+        background-color: white;
+        color: blue;
+        border-color: blue;
+        border-radius: 8px;
+      }
+      .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(5px);
+      }
+      .popup {
+        position: relative;
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 400px;
+        text-align: left;
+      }
+      .popup input {
+        width: 100%;
+        padding: 8px;
+        margin: 8px 0;
+        border-radius: 6px;
+        border: 1px solid blue;
+      }
+      .popup button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 50px;
+        background-color: blue;
+        color: white;
+        cursor: pointer;
+      }
+      .popup button:hover{
+        background-color: lime;
+      }
+      .success-popup {
+        text-align: center;
+      }
+      .success-popup button {
+        width: 45%;
+        margin: 5px;
+        background-color: #007BFF;
+      }
+      .close-btn {
+        position: relative;
+        top: 1px;
+        right: 1px;
+        background: white;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color:blue;
+      }
+    </style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <button class="close-btn" onclick="toggleSidebar()">×</button>
+        <nav>
+            <header style="background-color: white; color: blue; padding: 20px; font-size: 20px;"><b>NAVIGATION BAR</b></header>
+            <ul>
+                <b>
+                <li><a href="homepage.html">HOMEPAGE</a></li>
+                <li><a href="POINT OF SALE.html">POINT OF SALE</a></li>
+                <li><a href="ADD STOCK.html">ADD STOCK</a></li>
+                <li><a href="EXPENSES.html">EXPENSES</a></li>
+                <li><a href="SALES RECORDS.html">SALES RECORDS</a></li>
+                <li><a href="ORDERS MANAGEMENT.html">ORDERS MANAGEMENT</a></li>
+                <li><a href="MY ACCOUNT.html">MY ACCOUNT</a></li>
+                </b>
+            </ul>
+            <pre>
+
+
+
+
+            </pre>
+            <footer style="background-color: white; color: blue;"><b>We value your trust. Thank you for choosing PIDEN. </b></footer>
+        </nav>
+    </div>
+    <div class="main-content">
+        <header>
+            <h1>
+                <img src="Favicon.jpg" style="width: 50px; height: 50px; border-radius: 100%;">
+                &nbsp&nbsp&nbsp&nbspPIDEN POINT OF SALE &nbsp&nbsp&nbsp&nbsp
+                <button class="open-btn" style=" border-radius: 100%;" onclick="toggleSidebar()">☰</button>
+            </h1>            
+        </header>
+        <body>
+            <h1 style="background-color: blue; border-bottom-left-radius: 20%;
+             border-bottom-right-radius: 20%; color: white" >
+             ADD STOCK
+            </h1>
+            <button class="button" onclick="openPopup('product')">Add Product</button>
+            <button class="button" onclick="openPopup('service')">Add Service</button>
+            <button class="button" onclick="openPopup('other')">Add Other</button>      
+            <div id="popup-overlay" class="popup-overlay">
+              <div id="popup" class="popup">
+                <button class="close-btn" onclick="closePopup()">&times;</button>
+              </div>
+            </div>      
+            <script>
+              const popupOverlay = document.getElementById('popup-overlay');
+              const popup = document.getElementById('popup');
+      
+              function openPopup(type) {
+              const fields = {
+              product: `
+                <button class="close-btn" onclick="closePopup()">&times;</button>
+                <h2>Add Product</h2>
+                <input type="file" id="image" accept="image/*" required />
+                <input type="text" id="name" placeholder="Product Name" required />
+                <input type="number" id="stock" placeholder="Quantity" required />
+                <input type="number" id="buyingPrice" placeholder="Buying Price" required />
+                <input type="number" id="sellingPrice" placeholder="Selling Price" required oninput="calculateProfit('sellingPrice', 'buyingPrice', 'profit')" />
+                <input type="number" id="profit" placeholder="Profit" readonly />
+                <button onclick="addItem('${type}')">Add</button>
+              `,
+              service: `
+                <button class="close-btn" onclick="closePopup()">&times;</button>
+                <h2>Add Service</h2>
+                <input type="file" id="image" accept="image/*" required />
+                <input type="text" id="name" placeholder="Service Name" required />
+                <input type="number" id="stock" placeholder="Quantity" required />
+                <input type="number" id="costService" placeholder="Cost of Service" required />
+                <input type="number" id="customerPrice" placeholder="Customer Pricing" required oninput="calculateProfit('customerPrice', 'costService', 'profit')" />
+                <input type="number" id="profit" placeholder="Profit" readonly />
+                <button onclick="addItem('${type}')">Add</button>
+              `,
+              other: `
+                <button class="close-btn" onclick="closePopup()">&times;</button>
+                <h2>Add Other</h2>
+                <input type="file" id="image" accept="image/*" required />
+                <input type="text" id="name" placeholder="Name" required />
+                <input type="number" id="stock" placeholder="Quantity" required />
+                <input type="number" id="cost" placeholder="Cost" required />
+                <input type="number" id="customerPrice" placeholder="Customer Pricing" required oninput="calculateProfit('customerPrice', 'cost', 'profit')" />
+                <input type="number" id="profit" placeholder="Profit" readonly />
+                <button onclick="addItem('${type}')">Add</button>
+              `
+              };
+      
+              popup.innerHTML = fields[type];
+              popupOverlay.style.display = 'flex';
+              }
+      
+            function calculateProfit(priceId, costId, profitId) {
+              const price = parseFloat(document.getElementById(priceId).value) || 0;
+              const cost = parseFloat(document.getElementById(costId).value) || 0;
+              document.getElementById(profitId).value = price - cost;
+            }
+      
+            function addItem(type) {
+              const name = document.getElementById('name').value;
+              const profit = parseFloat(document.getElementById('profit').value) || 0;
+              const stock = parseInt(document.getElementById('stock').value) || 1; // Default to 1 if empty
+              const reader = new FileReader();
+              const imageFile = document.getElementById('image').files[0];
+              let buyingPrice = 0, sellingPrice = 0, customerPrice = 0, costService = 0, cost = 0;
+
+              // Assign correct values based on type
+              if (type === "product") {
+                  buyingPrice = parseFloat(document.getElementById('buyingPrice').value) || 0;
+                  sellingPrice = parseFloat(document.getElementById('sellingPrice').value) || 0;
+              } else if (type === "service") {
+                  costService = parseFloat(document.getElementById('costService').value) || 0;
+                  customerPrice = parseFloat(document.getElementById('customerPrice').value) || 0;
+              } else {
+                  cost = parseFloat(document.getElementById('cost').value) || 0;
+                  customerPrice = parseFloat(document.getElementById('customerPrice').value) || 0;
+              }
+
+              reader.onload = function() {
+              let items = JSON.parse(localStorage.getItem('items')) || [];
+
+              // Check if item already exists (to update stock count instead of duplicating)
+              let existingItem = items.find(item => item.name === name && item.type === type);
+              if (existingItem) {
+                  existingItem.stock += stock; // Increase stock count
+              } else {
+                  const item = {type,name,profit,buyingPrice,sellingPrice,customerPrice,costService, 
+                                cost,stock,image: reader.result};
+                  items.push(item);
+              }
+
+              localStorage.setItem('items', JSON.stringify(items));
+              popup.innerHTML = `
+                  <div class="success-popup">
+                    <h2>Added successfully!</h2>
+                    <button onclick="viewPOS()">View</button>
+                    <button onclick="closePopup()">Add Next Stock</button>
+                  </div>
+              `;
+              };
+              reader.readAsDataURL(imageFile);
+            }
+      
+            function closePopup() {
+              popupOverlay.style.display = 'none';
+              popup.innerHTML = '<button class="close-btn" onclick="closePopup()">&times;</button>';
+            }
+      
+            function viewPOS() {
+              window.location.href = 'POINT OF SALE.html';
+            }
+            function toggleSidebar() {
+              const sidebar = document.getElementById("sidebar");
+              sidebar.classList.toggle("active");
+            }
+        </script>
+        <pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </pre>
+        <footer style="background-color: blue; color: white;">
+            <p>&copy; 2025 PIDEN Point of Sale System</p>
+        </footer>
+    </div>
+</body>
+</html>
