@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIDEN | SALES RECORDS</title>
+    <link rel="shortcut icon" type="image/x-icon" href="Favicon.jpg">
+    <style>/* Sidebar styles */
+        .sidebar {
+            width: 250px;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: -250px;
+            background-color: blue;
+            color: white;
+            padding-top: 20px;
+            transition: 0.3s;
+            z-index: 1000;
+        }
+        .sidebar.active {
+            left: 0;
+        }
+        .sidebar ul {
+            list-style-type: circle;
+            padding: 10;
+        }
+        .sidebar ul li {
+            padding: 8px;
+            text-align: justify;
+        }
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+        }
+        .open-btn {
+            font-size: 30px;
+            cursor: pointer;
+        }
+        /* Rest of the styles */
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            margin: 0;
+            padding: 0;
+            background-color: white;
+        }
+        
+        header {
+            background-color: blue;
+            color: white;
+            padding: 0.1px;
+            text-align: center;
+            border-bottom-left-radius: 30%;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 10px;
+            border-top-right-radius: 30%;
+        }
+        
+        button {
+            background-color: white;
+            color: blue;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: lime;
+        }
+        
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+        }
+        
+        form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        form input,
+        form select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        text{
+            text-align: center;
+        }
+        table {
+            width: 90%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            border: 10px solid blue;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: lightgray;
+        }    
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <button class="close-btn" onclick="toggleSidebar()">×</button>
+        <nav>
+            <header style="background-color: white; color: blue; padding: 20px; font-size: 20px;"><b>NAVIGATION BAR</b></header>
+            <ul>
+                <b>
+                <li><a href="homepage.html">HOMEPAGE</a></li>
+                <li><a href="POINT OF SALE.html">POINT OF SALE</a></li>
+                <li><a href="ADD STOCK.html">ADD STOCK</a></li>
+                <li><a href="EXPENSES.html">EXPENSES</a></li>
+                <li><a href="SALES RECORDS.html">SALES RECORDS</a></li>
+                <li><a href="ORDERS MANAGEMENT.html">ORDERS MANAGEMENT</a></li>
+                <li><a href="MY ACCOUNT.html">MY ACCOUNT</a></li>
+                </b>
+            </ul>
+            <pre>
+
+
+
+
+            </pre>
+            <footer style="background-color: white; color: blue;"><b>We value your trust. Thank you for choosing PIDEN. </b></footer>
+        </nav>
+    </div>
+    <div class="main-content">
+        <header>
+            <h1>
+                <img src="Favicon.jpg" style="width: 50px; height: 50px; border-radius: 100%;">
+                &nbsp&nbsp&nbsp&nbspPIDEN POINT OF SALE&nbsp&nbsp&nbsp&nbsp
+                <button class="open-btn" style=" border-radius: 100%;" onclick="toggleSidebar()">☰</button>
+            </h1>            
+        </header>
+        <text>
+            <h1>Welcome to your Sales Records</h1>
+            <p><b>Get the records of your entire sales in an outomatic and easy way</b></p>
+        </text>
+        <h1 style="text-align: center;">SALES RECORDS</h1>
+
+        <!-- Dynamic Day and Date -->
+        <h2 id="dateHeader" style="text-align: center;"></h2>
+        <!-- Sales Records Table -->
+        <div id="salesRecordsContainer" style="text-align: center; margin-top: 20px;">
+            <!-- Sales records will be dynamically added here -->
+        </div>
+
+         <footer style="background-color: blue; color: white;">
+            <p>&copy; 2025 PIDEN Point of Sale System</p>
+        </footer>
+    </div>
+              <!-- Supabase JS Library (must come FIRST before you use supabase) -->
+              <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+              <!-- Supabase Initialization -->
+              <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const supabaseUrl = "https://drivactdliyzcshlousw.supabase.co";
+            const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyaXZhY3RkbGl5emNzaGxvdXN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY1NTY4ODUsImV4cCI6MjA2MjEzMjg4NX0.7NYTI6cZIjsQoxCwBjj4ELbSEvEQqrR66fNB3PNNVDo";
+            window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
+                   });
+              </script>
+    <script>
+        // Sidebar toggle function
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("active");
+        }
+        async function addSalesRecord(itemName, itemType, quantity, stockAmount, sellingPrice, totalProfit, paymentMode) {
+            const now = new Date();
+            const formattedDate = now.toLocaleDateString('en-GB', {
+                weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit'
+            }).replace(',', '');
+            const formattedTime = now.toLocaleTimeString();
+
+            const { error } = await supabase
+                .from('sales')
+                .insert([{
+                    item_name: itemName,
+                    item_type: itemType,
+                    quantity: quantity,
+                    stock_amount: stockAmount.toFixed(2),
+                    selling_amount: sellingPrice.toFixed(2),
+                    profit: totalProfit.toFixed(2),
+                    mode_of_payment: paymentMode,
+                    time_sold: formattedTime,
+                    date_sold: formattedDate
+                }]);
+
+            if (error) {
+                console.error('Error adding sales record to Supabase:', error.message);
+                return;
+            }
+
+            // Update UI
+            displaySalesRecords();
+        }
+
+        async function displaySalesRecords() {
+            const salesContainer = document.getElementById("salesRecordsContainer");
+            salesContainer.innerHTML = ""; // Clear previous records
+
+            // Fetch all sales records from Supabase
+            let { data: salesRecords, error } = await supabase
+                .from("sales")
+                .select("*")
+                .order('date_sold', { ascending: false });
+
+            if (error) {
+                console.error("Error fetching sales records:", error.message);
+                return;
+            }
+
+            const groupedRecords = {};
+
+            // Group sales by date
+            salesRecords.forEach(record => {
+                if (!groupedRecords[record.date_sold]) {
+                    groupedRecords[record.date_sold] = [];
+                }
+                groupedRecords[record.date_sold].push(record);
+            });
+
+            Object.keys(groupedRecords).forEach(date => {
+                const section = document.createElement("div");
+                section.id = `report-${date.replace(/\s+/g, "-")}`;
+
+                const dateHeader = document.createElement("h2");
+                dateHeader.textContent = date;
+                dateHeader.style.textAlign = "center";
+
+                const downloadButton = document.createElement("button");
+                downloadButton.textContent = "Download Report";
+                downloadButton.style.cssText = `
+                    margin-left: 20px;
+                    padding: 8px 15px;
+                    background-color: #007bff;
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    font-size: 14px;
+                `;
+                downloadButton.onmouseover = () => downloadButton.style.backgroundColor = "lime";
+                downloadButton.onmouseout = () => downloadButton.style.backgroundColor = "#007bff";
+                downloadButton.onclick = () => downloadSalesReport(date);
+                dateHeader.appendChild(downloadButton);
+
+                section.appendChild(dateHeader);
+
+                const table = document.createElement("table");
+                table.border = "10";
+                table.align = "center";
+
+                const thead = document.createElement("thead");
+                thead.innerHTML = `
+                    <tr>
+                        <th>Serial No.</th>
+                        <th>Item Name</th>
+                        <th>Item Type</th>
+                        <th>Quantity</th>
+                        <th>Stock Amount</th>
+                        <th>Selling/Customer Price</th>
+                        <th>Total Profit</th>
+                        <th>Mode of Payment</th>
+                        <th>Time Sold</th>
+                    </tr>
+                `;
+
+                const tbody = document.createElement("tbody");
+
+                let totalSales = 0;
+                let totalStockAmount = 0;
+                let totalProfit = 0;
+                let totalSalesCash = 0;
+                let totalSalesMpesa = 0;
+                let totalStockCash = 0;
+                let totalStockMpesa = 0;
+                let totalProfitCash = 0;
+                let totalProfitMpesa = 0;
+
+                groupedRecords[date].forEach((record, index) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${record.item_name}</td>
+                        <td>${record.item_type}</td>
+                        <td>${record.quantity}</td>
+                        <td>${parseFloat(record.stock_amount).toFixed(2)}</td>
+                        <td>${parseFloat(record.selling_amount).toFixed(2)}</td>
+                        <td>${parseFloat(record.profit).toFixed(2)}</td>
+                        <td>${record.mode_of_payment}</td>
+                        <td>${record.time_sold}</td>
+                    `;
+                    tbody.appendChild(row);
+
+                    // Accumulate totals
+                    const sell = parseFloat(record.selling_amount);
+                    const stock = parseFloat(record.stock_amount);
+                    const profit = parseFloat(record.profit);
+
+                    totalSales += sell;
+                    totalStockAmount += stock;
+                    totalProfit += profit;
+
+                    if (record.mode_of_payment === "Cash") {
+                        totalSalesCash += sell;
+                        totalStockCash += stock;
+                        totalProfitCash += profit;
+                    } else if (record.mode_of_payment === "Mpesa") {
+                        totalSalesMpesa += sell;
+                        totalStockMpesa += stock;
+                        totalProfitMpesa += profit;
+                    }
+                });
+
+                table.appendChild(thead);
+                table.appendChild(tbody);
+                section.appendChild(table);
+
+                const calculationsTable = document.createElement("table");
+                calculationsTable.border = "10";
+                calculationsTable.align = "center";
+                calculationsTable.innerHTML = `
+                    <tr>
+                        <th colspan="6" style="text-align: center; background-color: lime;">DAILY CALCULATIONS</th>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Total Sales</th>
+                        <th colspan="2">Total Stock Amount</th>
+                        <th colspan="2">Total Profit</th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">${totalSales.toFixed(2)}</td>
+                        <td colspan="2">${totalStockAmount.toFixed(2)}</td>
+                        <td colspan="2">${totalProfit.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <th>In Cash</th>
+                        <th>In Mpesa</th>
+                        <th>In Cash</th>
+                        <th>In Mpesa</th>
+                        <th>In Cash</th>
+                        <th>In Mpesa</th>
+                    </tr>
+                    <tr>
+                        <td>${totalSalesCash.toFixed(2)}</td>
+                        <td>${totalSalesMpesa.toFixed(2)}</td>
+                        <td>${totalStockCash.toFixed(2)}</td>
+                        <td>${totalStockMpesa.toFixed(2)}</td>
+                        <td>${totalProfitCash.toFixed(2)}</td>
+                        <td>${totalProfitMpesa.toFixed(2)}</td>
+                    </tr>
+                `;
+                section.appendChild(calculationsTable);
+                salesContainer.appendChild(section);
+            });
+        }
+
+        // Load sales records when the page loads
+        document.addEventListener("DOMContentLoaded", () => {
+            displaySalesRecords();
+        });
+
+        // Auto-update sales records when a checkout happens
+        window.addEventListener("storage", (event) => {
+            if (event.key === "salesRecords") {
+                displaySalesRecords();
+            }
+        }); 
+
+        function downloadSalesReport(date) {
+            let reportSection = document.getElementById(`report-${date.replace(/\s+/g, '-')}`);
+
+            // Check if the report section exists
+            if (!reportSection) {
+                alert("Error: Report section not found!");
+                return;
+            }
+
+            html2canvas(reportSection, { scale: 2 }).then(canvas => { // Scale for better quality
+                let image = canvas.toDataURL("image/jpeg");
+                let link = document.createElement("a");
+                link.href = image;
+                link.download = `Sales_Report_${date.replace(/\s+/g, '_')}.jpg`;
+
+                // Append link to body, click, then remove to ensure compatibility
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Show "Downloaded Successfully" Popup
+                showDownloadPopup();
+                }).catch(error => {
+                    console.error("Error capturing report:", error);
+                    alert("Failed to download report. Please try again.");
+                });
+        }
+
+        // Function to show the success popup
+        function showDownloadPopup() {
+            let popup = document.createElement("div");
+            popup.textContent = "Downloaded Successfully ✅";
+            popup.style.position = "fixed";
+            popup.style.top = "50%";
+            popup.style.left = "50%";
+            popup.style.transform = "translate(-50%, -50%)";
+            popup.style.background = "#28a745";
+            popup.style.color = "white";
+            popup.style.padding = "15px 25px";
+            popup.style.borderRadius = "5px";
+            popup.style.boxShadow = "0px 4px 10px rgba(0, 0, 0, 0.3)";
+            document.body.appendChild(popup);
+
+            setTimeout(() => {
+                popup.remove();
+            }, 1000);
+        }
+     </script>
+</body>
+</html>
