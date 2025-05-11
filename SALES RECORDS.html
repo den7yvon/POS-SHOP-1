@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIDEN | SALES RECORDS</title>
+    <link rel="shortcut icon" type="image/x-icon" href="Favicon.jpg">
+    <style>/* Sidebar styles */
+        .sidebar {
+            width: 250px;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: -250px;
+            background-color: blue;
+            color: white;
+            padding-top: 20px;
+            transition: 0.3s;
+            z-index: 1000;
+        }
+        .sidebar.active {
+            left: 0;
+        }
+        .sidebar ul {
+            list-style-type: circle;
+            padding: 10;
+        }
+        .sidebar ul li {
+            padding: 8px;
+            text-align: justify;
+        }
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+        }
+        .open-btn {
+            font-size: 30px;
+            cursor: pointer;
+        }
+        /* Rest of the styles */
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            margin: 0;
+            padding: 0;
+            background-color: white;
+        }
+        
+        header {
+            background-color: blue;
+            color: white;
+            padding: 0.1px;
+            text-align: center;
+            border-bottom-left-radius: 30%;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 10px;
+            border-top-right-radius: 30%;
+        }
+        
+        button {
+            background-color: white;
+            color: blue;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: lime;
+        }
+        
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+        }
+        
+        form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        form input,
+        form select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        text{
+            text-align: center;
+        }
+        table {
+            width: 90%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            border: 10px solid blue;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: lightgray;
+        }    
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <button class="close-btn" onclick="toggleSidebar()">×</button>
+        <nav>
+            <header style="background-color: white; color: blue; padding: 20px; font-size: 20px;"><b>NAVIGATION BAR</b></header>
+            <ul>
+                <b>
+                <li><a href="homepage.html">HOMEPAGE</a></li>
+                <li><a href="POINT OF SALE.html">POINT OF SALE</a></li>
+                <li><a href="ADD STOCK.html">ADD STOCK</a></li>
+                <li><a href="EXPENSES.html">EXPENSES</a></li>
+                <li><a href="SALES RECORDS.html">SALES RECORDS</a></li>
+                <li><a href="ORDERS MANAGEMENT.html">ORDERS MANAGEMENT</a></li>
+                <li><a href="MY ACCOUNT.html">MY ACCOUNT</a></li>
+                </b>
+            </ul>
+            <pre>
+
+
+
+
+            </pre>
+            <footer style="background-color: white; color: blue;"><b>We value your trust. Thank you for choosing PIDEN. </b></footer>
+        </nav>
+    </div>
+    <div class="main-content">
+        <header>
+            <h1>
+                <img src="Favicon.jpg" style="width: 50px; height: 50px; border-radius: 100%;">
+                &nbsp&nbsp&nbsp&nbspPIDEN POINT OF SALE&nbsp&nbsp&nbsp&nbsp
+                <button class="open-btn" style=" border-radius: 100%;" onclick="toggleSidebar()">☰</button>
+            </h1>            
+        </header>
+        <text>
+            <h1>Welcome to your Sales Records</h1>
+            <p><b>Get the records of your entire sales in an outomatic and easy way</b></p>
+        </text>
+        <h1 style="text-align: center;">SALES RECORDS</h1>
+
+        <!-- Dynamic Day and Date -->
+        <h2 id="dateHeader" style="text-align: center;"></h2>
+        <!-- Sales Records Table -->
+        <div id="salesRecordsContainer" style="text-align: center; margin-top: 20px;">
+            <!-- Sales records will be dynamically added here -->
+        </div>
+
+         <footer style="background-color: blue; color: white;">
+            <p>&copy; 2025 PIDEN Point of Sale System</p>
+        </footer>
+    </div>
+              <!-- Supabase JS Library (must come FIRST before you use supabase) -->
+              <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+              <!-- Supabase Initialization -->
+              <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const supabaseUrl = "https://drivactdliyzcshlousw.supabase.co";
+            const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyaXZhY3RkbGl5emNzaGxvdXN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY1NTY4ODUsImV4cCI6MjA2MjEzMjg4NX0.7NYTI6cZIjsQoxCwBjj4ELbSEvEQqrR66fNB3PNNVDo";
+            window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
+                   });
+              </script>
+    <script>
+        // Sidebar toggle function
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("active");
+        }
+        
+    // Add Sales Record
+    async function addSalesRecord(itemName, quantity, stockAmount, sellingPrice, totalProfit) {
+        const now = new Date();
+        
+        // Extract day of the week
+        const dayOfWeek = now.toLocaleDateString('en-GB', { weekday: 'long' });
+        
+        // Format date as YYYY-MM-DD for `sale_date`
+        const saleDate = now.toISOString().split('T')[0];
+        
+        // Format time as HH:MM:SS
+        const formattedTime = now.toLocaleTimeString();
+
+        const { error } = await supabase
+            .from('sales')
+            .insert([{
+                item_name: itemName,
+                quantity: quantity,
+                stock_amount: stockAmount.toFixed(2),
+                selling_amount: sellingPrice.toFixed(2),
+                profit: totalProfit.toFixed(2),
+                time_sold: formattedTime,  // Used to group sales records
+                sale_date: saleDate,    
+                day_of_week: dayOfWeek
+            }]);
+
+        if (error) {
+            console.error('Error adding sales record to Supabase:', error.message);
+            return;
+        }
+
+        console.log(`Sale record added for ${itemName} at ${formattedTime}.`);
+
+        // Update UI
+        displaySalesRecords();
+    }
+
+        // Display Sales Records
+        async function displaySalesRecords() {
+            const salesContainer = document.getElementById("salesRecordsContainer");
+            salesContainer.innerHTML = ""; // Clear previous records
+
+            let { data: salesRecords, error } = await supabase
+                .from("sales")
+                .select("*")
+                .order('sale_date', { ascending: false })
+                .order('time_sold', { ascending: true });
+
+            if (error) {
+                console.error("Error fetching sales records:", error.message);
+                return;
+            }
+
+            const groupedByDate = {};
+
+            // Group sales by sale_date
+            salesRecords.forEach(record => {
+                const saleDate = record.sale_date;
+                if (!groupedByDate[saleDate]) {
+                    groupedByDate[saleDate] = [];
+                }
+                groupedByDate[saleDate].push(record);
+            });
+
+            Object.keys(groupedByDate).forEach(saleDate => {
+                const records = groupedByDate[saleDate];
+                const dayOfWeek = records[0]?.day_of_week || "Unknown";
+                const displayDate = `${dayOfWeek} - ${saleDate}`;
+
+                // Create a section for the date
+                const section = document.createElement("div");
+                section.id = `report-${saleDate.replace(/\s+/g, "-")}`;
+
+                // Header with the date and download button
+                const headerContainer = document.createElement("div");
+                headerContainer.style.display = "flex";
+                headerContainer.style.justifyContent = "center";
+                headerContainer.style.alignItems = "center";
+                headerContainer.style.gap = "10px";
+
+                const dateHeader = document.createElement("h2");
+                dateHeader.textContent = displayDate;
+                dateHeader.style.textAlign = "center";
+
+                const downloadButton = document.createElement("button");
+                downloadButton.textContent = "Download Report";
+                downloadButton.style.cssText = `
+                    background-color: green;
+                    color: white;
+                    padding: 5px 10px;
+                    border: none;
+                    cursor: pointer;
+                `;
+                downloadButton.onclick = () => downloadSalesReport(saleDate);
+
+                headerContainer.appendChild(dateHeader);
+                headerContainer.appendChild(downloadButton);
+                section.appendChild(headerContainer);
+
+                // Main Sales Table
+                const table = document.createElement("table");
+                table.border = "10";
+                table.align = "center";
+
+                const thead = document.createElement("thead");
+                thead.innerHTML = `
+                    <tr>
+                        <th>Serial No.</th>
+                        <th>Item Name</th>
+                        <th>Quantity</th>
+                        <th>Stock Amount</th>
+                        <th>Selling Price</th>
+                        <th>Profit</th>
+                        <th>Time Sold</th>
+                        <th>Sales Receipt</th>
+                    </tr>
+                `;
+                table.appendChild(thead);
+
+                const tbody = document.createElement("tbody");
+
+                // Group by time_sold
+                const groupedByTime = {};
+                records.forEach(record => {
+                    const timeSold = record.time_sold;
+                    if (!groupedByTime[timeSold]) {
+                        groupedByTime[timeSold] = [];
+                    }
+                    groupedByTime[timeSold].push(record);
+                });
+
+                let serialNo = 1;
+                Object.keys(groupedByTime).forEach(timeSold => {
+                    const saleGroup = groupedByTime[timeSold];
+                    let isFirstRow = true;
+
+                    saleGroup.forEach((record, index) => {
+                        const row = document.createElement("tr");
+
+                        // Serial Number Column
+                        const serialCell = document.createElement("td");
+                        serialCell.textContent = isFirstRow ? `${serialNo}.` : "";
+                        row.appendChild(serialCell);
+
+                        // Item Name
+                        const nameCell = document.createElement("td");
+                        nameCell.textContent = record.item_name;
+                        row.appendChild(nameCell);
+
+                        // Quantity
+                        const quantityCell = document.createElement("td");
+                        quantityCell.textContent = record.quantity;
+                        row.appendChild(quantityCell);
+
+                        // Stock Amount
+                        const stockCell = document.createElement("td");
+                        stockCell.textContent = parseFloat(record.stock_amount).toFixed(2);
+                        row.appendChild(stockCell);
+
+                        // Selling Price
+                        const sellCell = document.createElement("td");
+                        sellCell.textContent = parseFloat(record.selling_amount).toFixed(2);
+                        row.appendChild(sellCell);
+
+                        // Profit
+                        const profitCell = document.createElement("td");
+                        profitCell.textContent = parseFloat(record.profit).toFixed(2);
+                        row.appendChild(profitCell);
+
+                        // Time Sold
+                        const timeCell = document.createElement("td");
+                        timeCell.textContent = isFirstRow ? record.time_sold : "";
+                        row.appendChild(timeCell);
+
+                        // Sales Receipt Button
+                        const receiptCell = document.createElement("td");
+                        if (isFirstRow) {
+                            const receiptButton = document.createElement("button");
+                            receiptButton.textContent = "GENERATE RECEIPT";
+                            receiptButton.style.cssText = `
+                                background-color: blue;
+                                color: white;
+                                padding: 5px 10px;
+                                border: none;
+                                cursor: pointer;
+                            `;
+                            receiptButton.onclick = () => generateReceipt(timeSold, saleDate);
+                            receiptCell.appendChild(receiptButton);
+                        }
+                        row.appendChild(receiptCell);
+
+                        tbody.appendChild(row);
+                        isFirstRow = false;
+                    });
+
+                    serialNo++;
+                });
+
+                table.appendChild(tbody);
+                section.appendChild(table);
+
+                // DAILY CALCULATIONS TABLE
+                let dailySalesTotal = 0;
+                let dailyStockTotal = 0;
+                let dailyProfitTotal = 0;
+
+                records.forEach(record => {
+                    dailySalesTotal += parseFloat(record.selling_amount);
+                    dailyStockTotal += parseFloat(record.stock_amount);
+                    dailyProfitTotal += parseFloat(record.profit);
+                });
+
+                const calculationsTable = document.createElement("table");
+                calculationsTable.border = "10";
+                calculationsTable.align = "center";
+                calculationsTable.innerHTML = `
+                    <tr>
+                        <th colspan="6" style="text-align: center; background-color: lime;">DAILY CALCULATIONS</th>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Total Sales</th>
+                        <th colspan="2">Total Stock Amount</th>
+                        <th colspan="2">Total Profit</th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">${dailySalesTotal.toFixed(2)}</td>
+                        <td colspan="2">${dailyStockTotal.toFixed(2)}</td>
+                        <td colspan="2">${dailyProfitTotal.toFixed(2)}</td>
+                    </tr>
+                `;
+                section.appendChild(calculationsTable);
+
+                salesContainer.appendChild(section);
+            });
+        }
+
+        // Generate Receipt Function
+        async function generateReceipt(timeSold, saleDate) {
+            const { data: saleRecords, error } = await supabase
+                .from("sales")
+                .select("*")
+                .eq("sale_date", saleDate)
+                .eq("time_sold", timeSold);
+
+            if (error) {
+                console.error("Error fetching sale records:", error.message);
+                return;
+            }
+
+            if (!saleRecords || saleRecords.length === 0) {
+                console.warn("No sales records found for the specified sale date and time.");
+                return;
+            }
+
+            // Canvas setup
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            canvas.width = 400;
+            canvas.height = 600;
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#000";
+            ctx.font = "16px Arial";
+            ctx.textAlign = "center";
+
+            // Header
+            ctx.fillText("BUSINESS NAME IN HAND", canvas.width / 2, 50);
+            ctx.fillText("CASH SALE RECEIPT", canvas.width / 2, 80);
+            ctx.fillText("Tel: 0748 408 498", canvas.width / 2, 110);
+            ctx.fillText(".........................................................................", canvas.width / 2, 130);
+
+            let yOffset = 160;
+
+            // Headings
+            ctx.textAlign = "left";
+            ctx.fillText("Qty", 40, yOffset);
+            ctx.fillText("Item Name", 140, yOffset);
+            ctx.textAlign = "right";
+            ctx.fillText("Total Price", 360, yOffset);
+
+            yOffset += 20; // Adjust spacing
+
+            ctx.textAlign = "center";
+            ctx.fillText(".........................................................................", canvas.width / 2, yOffset);
+            yOffset += 30;
+
+            // Sale Records
+            ctx.textAlign = "left";
+            saleRecords.forEach(record => {
+                ctx.fillText(`${record.quantity}`, 40, yOffset);
+                ctx.fillText(`${record.item_name}`, 140, yOffset);
+                ctx.textAlign = "right";
+                ctx.fillText(`${parseFloat(record.selling_amount).toFixed(2)}`, 360, yOffset);
+                yOffset += 30;
+                ctx.textAlign = "left";
+            });
+
+            ctx.textAlign = "center";
+            ctx.fillText(".........................................................................", canvas.width / 2, yOffset);
+            yOffset += 30;
+
+            // Totals
+            const totalAmount = saleRecords.reduce((acc, record) => acc + parseFloat(record.selling_amount), 0).toFixed(2);
+            ctx.fillText(`TOTALS: ${totalAmount}`, canvas.width / 2, yOffset);
+            yOffset += 50;
+
+            // Footer
+            ctx.fillText("Goods Once Sold Cannot be Re-accepted", canvas.width / 2, yOffset);
+
+            // Download as JPG
+            const link = document.createElement("a");
+            link.href = canvas.toDataURL("image/jpeg");
+            link.download = `Receipt_${saleDate}_${timeSold}.jpg`;
+            link.click();
+
+            // Show download success notification
+            showDownloadNotification();
+        }
+
+        // Function to Show Popup Notification
+        function showDownloadNotification() {
+            const notification = document.createElement("div");
+            notification.textContent = "Receipt downloaded successfully";
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: #4caf50;
+                color: white;
+                padding: 10px 20px;
+                border-radius: 5px;
+                font-size: 14px;
+                z-index: 1000;
+                box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+            `;
+            
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 1000);
+        }
+
+        // Load sales records when the page loads
+        document.addEventListener("DOMContentLoaded", () => {
+            displaySalesRecords();
+        });
+
+        // Auto-update sales records when a checkout happens
+        window.addEventListener("storage", (event) => {
+            if (event.key === "salesRecords") {
+                displaySalesRecords();
+            }
+        }); 
+
+        function downloadSalesReport(date) {
+            let reportSection = document.getElementById(`report-${date.replace(/\s+/g, '-')}`);
+
+            // Check if the report section exists
+            if (!reportSection) {
+                alert("Error: Report section not found!");
+                return;
+            }
+
+            html2canvas(reportSection, { scale: 2 }).then(canvas => { // Scale for better quality
+                let image = canvas.toDataURL("image/jpeg");
+                let link = document.createElement("a");
+                link.href = image;
+                link.download = `Sales_Report_${date.replace(/\s+/g, '_')}.jpg`;
+
+                // Append link to body, click, then remove to ensure compatibility
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Show "Downloaded Successfully" Popup
+                showDownloadPopup();
+                }).catch(error => {
+                    console.error("Error capturing report:", error);
+                    alert("Failed to download report. Please try again.");
+                });
+        }
+
+        // Function to show the success popup
+        function showDownloadPopup() {
+            let popup = document.createElement("div");
+            popup.textContent = "Downloaded Successfully ✅";
+            popup.style.position = "fixed";
+            popup.style.top = "50%";
+            popup.style.left = "50%";
+            popup.style.transform = "translate(-50%, -50%)";
+            popup.style.background = "#28a745";
+            popup.style.color = "white";
+            popup.style.padding = "15px 25px";
+            popup.style.borderRadius = "5px";
+            popup.style.boxShadow = "0px 4px 10px rgba(0, 0, 0, 0.3)";
+            document.body.appendChild(popup);
+
+            setTimeout(() => {
+                popup.remove();
+            }, 1000);
+        }
+     </script>
+</body>
+</html>
