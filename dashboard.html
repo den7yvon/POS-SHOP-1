@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POS | Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+<body class="dashboard-page">
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <div class="nav-left">
+      <div class="menu-icon" onclick="toggleMenuDropdown()">☰</div>
+      <span class="active-page" id="activePageName">Dashboard</span>
+      <div class="menu-dropdown" id="menuDropdown">
+        <a href="dashboard.html">➤ Dashboard</a>
+        <a href="items.html">➤ Items</a>
+        <a href="sales.html">➤ Sales</a>
+        <a href="expenses.html">➤ Expenses</a>
+      </div>
+    </div>
+
+    <div class="nav-center">
+      <span class="nav-logo">POS</span>
+    </div>
+
+    <div class="nav-right">
+      <div class="user-icon" onclick="toggleUserDropdown()">
+        <div class="circle">
+          <div class="head"></div>
+          <div class="shoulders"></div>
+        </div>
+      </div>
+      <div class="user-dropdown" id="userDropdown">
+        <p><strong>Piden Electronics</strong></p>
+        <button onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Content Area Placeholder -->
+  <main class="main-content">
+    <!-- Dynamic content goes here later -->
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    &copy; 2025 Piden Company Limited. All rights reserved.
+  </footer>
+
+  <!-- Inline JS for dropdowns & logout -->
+  <script>
+    function toggleMenuDropdown() {
+      document.getElementById("menuDropdown").classList.toggle("show");
+      document.getElementById("userDropdown").classList.remove("show");
+    }
+
+    function toggleUserDropdown() {
+      document.getElementById("userDropdown").classList.toggle("show");
+      document.getElementById("menuDropdown").classList.remove("show");
+    }
+
+    function logout() {
+      sessionStorage.clear();
+      window.location.href = "index.html";
+    }
+
+    window.onload = () => {
+      // Disable back button after logout
+      if (!sessionStorage.getItem("loggedIn")) {
+        window.location.replace("index.html");
+      }
+    }
+
+    window.onclick = function(event) {
+      if (!event.target.matches('.menu-icon') && !event.target.closest('.menu-dropdown')) {
+        document.getElementById("menuDropdown").classList.remove("show");
+      }
+      if (!event.target.closest('.user-icon') && !event.target.closest('.user-dropdown')) {
+        document.getElementById("userDropdown").classList.remove("show");
+      }
+    }
+  </script>
+</body>
+</html>

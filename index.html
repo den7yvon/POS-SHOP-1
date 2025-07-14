@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIDEN | LOGIN</title>
+    <link rel="shortcut icon" type="image/x-icon" href="Favicon.jpg">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1 class="title">PIDEN COMPANY LIMITED</h1>
+
+    <div class="main">
+        <h2>PIDEN POINT OF SALE</h2>
+        <h3>Hello Dennis? Enter your login credentials</h3>
+        <form id="loginForm">
+            <label>Username:</label>
+            <input type="text" id="username" placeholder="Enter your Username" required>
+            <label>Password:</label>
+            <input type="password" id="password" placeholder="Enter your Password" required>
+            <button type="submit" id="loginBtn">LOGIN</button>
+            <div id="loader" class="loader" style="display: none;"></div>
+        </form>
+    </div>
+
+    <div id="successPopup" class="popup">Login Successful!</div>
+
+    <marquee><h3 class="marquee">WELCOME</h3></marquee>
+
+    <footer>&copy;2025 Piden Company Limited. All rights reserved</footer>
+
+    <script>
+        const loginForm = document.getElementById("loginForm");
+        const loader = document.getElementById("loader");
+
+        loginForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const popup = document.getElementById("successPopup");
+
+            const validUsername = "PIDEN";
+            const validPassword = "Den7yvon";
+
+            loader.style.display = "block";
+
+            setTimeout(() => {
+                loader.style.display = "none";
+                if (username === validUsername && password === validPassword) {
+                      // Set session flag to indicate logged in
+                    sessionStorage.setItem("loggedIn", "true");
+                    popup.style.display = "block";
+                    setTimeout(() => {
+                        popup.style.display = "none";
+                        window.location.href = "dashboard.html";
+                    }, 1000);
+                } else {
+                    alert("Invalid username or password. Try again.");
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
