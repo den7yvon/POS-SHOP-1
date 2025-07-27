@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POS | Dashboard</title>
+  <link rel="shortcut icon" type="image/x-icon" href="Favicon.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    /*STRIKETHROUGH-- START*/
+    body {display: flex; font-family: 'Times New Roman', Times, serif; line-height: 1.4; min-height: 100vh;
+      flex-direction: column; margin: 0; background-color: #f1f4f8;}
+
+    .title {color: #003366; font-size: 24px; margin-bottom: 20px;}
+
+    .main {background-color: white; border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      padding: 25px; width: 90%; max-width: 400px; text-align: center;}
+
+    .top-nav {width: 100%; height: 40px; background-color: #003366; color: white; display: flex;
+      justify-content: space-between; align-items: center; padding: 0 15px; position: fixed;
+      top: 0; z-index: 100;}
+  
+    .nav-left, .nav-center, .nav-right {display: flex; align-items: center; position: relative;}
+  
+    .menu-icon {font-size: 24px; cursor: pointer; margin-right: 10px;}
+  
+    .active-page {font-size: 16px; font-weight: 600;}
+  
+    .menu-dropdown {position: absolute; top: 40px; left: 0; background: white; color: #003366;
+      border: 1px solid #ccc; border-radius: 6px; display: none; flex-direction: column; width: 220px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);  overflow: hidden; z-index: 1000;}
+    
+    .menu-dropdown a {padding: 10px; text-decoration: none; color: #003366; 
+      border-bottom: 1px solid #eee; font-weight: 500;}
+    
+    .menu-dropdown a:hover {background-color: #f0f0f0;}
+    
+    .menu-dropdown.show {display: flex;}
+    
+    .nav-logo {font-size: 22px; font-weight: bold; margin-right: 70px;}
+
+    .user-icon {cursor: pointer; margin-right: 30px;}
+    
+    .circle {width: 36px; height: 36px; background-color: white; border-radius: 50%; position: relative;
+      display: flex; align-items: center; justify-content: center;}
+    
+    .head {width: 10px; height: 10px; background-color: #003366; border-radius: 50%;
+      position: absolute; top: 8px;}
+    
+    .shoulders {width: 20px; height: 8px; background-color: #003366; border-radius: 50%; position: absolute;
+      bottom: 8px;}
+
+    .user-dropdown {position: absolute; top: 40px; right: 0; background: white;
+      color: #003366; padding: 10px; border-radius: 6px; box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      display: none; z-index: 1000; width: 160px; text-align: center;}
+    
+    .user-dropdown.show {display: block;}
+    
+    .user-dropdown p {margin: 0 0 10px;}
+    
+    .user-dropdown button {background-color: #003366; color: white; border: none; padding: 8px 12px;
+      border-radius: 4px; cursor: pointer; width: 90%;}
+    
+    .user-dropdown button:hover {background-color: #0055aa;}
+
+    .main-content {margin-top: 65px; padding: 20px;}
+
+    .foot {width: 100%; background-color: #003366; color: white; text-align: center; padding: 2px 1px;
+      position: fixed; bottom: 0; left: 0; font-size: 10px;}
+
+    #pageLoader {position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9);
+        z-index: 9999; display: flex; align-items: center; justify-content: center;}
+  
+    .spinner {border: 6px solid #ccc; border-top: 6px solid #2f0fe4; border-radius: 50%; width: 40px; height: 40px;
+        animation: spin 1s linear infinite;}
+  
+    @keyframes spin {0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); }}
+    /*STRIKETHROUGH-- END*/
+
+    .filter-buttons {display: flex; justify-content: center; gap: 8px; margin-bottom: 10px;}
+      
+    .filter-buttons button {padding: 8px 16px; font-size: 15px; border: none; background-color: #003366;
+        color: white; border-radius: 4px; cursor: pointer; transition: background-color 0.2s;}
+      
+    .filter-buttons button.active {background-color: #0055aa;}      
+      
+    .items-container {display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 15px; justify-content: start;}
+      
+    .item-card {background-color: white; border-radius: 10px; padding: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); text-align: center; font-size: 14px;}
+      
+    .item-card img {width: 100%; height: 100px; object-fit: cover; border-radius: 6px; margin-bottom: 6px;}
+      
+    .item-card h3 {font-size: 15px; margin: 5px 0 3px;}
+      
+    .item-card p {margin: 2px 0; color: #444;}
+      
+    .item-card button {margin-top: 6px; background-color: #003366; color: white; border: none;
+        padding: 6px 10px; border-radius: 4px; font-size: 13px; cursor: pointer; width: 100%;}
+      
+    .item-card button:hover {background-color: #0055aa;}
+
+    .search-bar-container {position: fixed; top: 45px; right: 20px; z-index: 99;}
+
+    #itemSearch {padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;
+      width: 70px;}
+
+    #notFound {display: none; text-align: center; color: #003366; margin-top: 30px; font-size: 16px;}
+
+    #notFound::before {content: "🕵️‍♂️"; font-size: 100px; display: block; margin-bottom: 10px;}
+
+    .sale-popup {position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%;
+      max-width: 500px; height: 500px; background: white; border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); z-index: 9988; display: none; flex-direction: column;}
+
+    .popup-header {background: #003366; color: white; padding: 10px 15px; font-weight: bold; display: flex;
+      justify-content: space-between; align-items: center;}
+
+    .popup-header .close-btn {cursor: pointer; font-size: 20px;}
+
+    .popup-items {flex: 1; overflow-y: auto; padding: 10px 15px;}
+
+    .popup-item {border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px; padding: 10px;
+      position: relative;}
+
+    .popup-item h4 {margin: 0 0 5px;}
+
+    .popup-item .delete-btn {position: absolute; top: 8px; right: 8px; background: red; color: white;
+      border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 14px; cursor: pointer;}
+
+    .popup-item .edit-price {font-size: 14px; margin-left: 6px; cursor: pointer; color: #003366;}
+
+    .popup-footer {padding: 10px 15px; border-top: 1px solid #ddd; background-color: #f9f9f9;}
+
+    .total-box {font-weight: bold; margin-bottom: 10px;}
+
+    .popup-footer button {width: 100%; margin-bottom: 5px; padding: 10px; background-color: #003366;
+      color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;}
+
+    .popup-footer button:hover {background-color: #0055aa;}
+
+    .minimized-sale-box {position: fixed; bottom: 20px; right: 20px; background-color: green;
+      font-weight: bold; color: white; padding: 12px 18px; border-radius: 8px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); cursor: pointer; font-size: 14px; z-index: 9999;}
+    
+    .minimized-sale-box:hover{background-color: #0055aa;}
+
+    #popupOverlay {display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      backdrop-filter: blur(10px); background-color: rgba(0, 0, 0, 0.1); z-index: 998;}
+
+    .checkout-popup {display: none; position: fixed; z-index: 9990; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      background: white; padding: 25px; border-radius: 12px; box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+      width: 100%; max-width: 250px; text-align: center; border-top: 30px solid limegreen;
+      border-bottom: 30px solid limegreen;}
+
+    .popup-overlay {display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.3); z-index: 9989; backdrop-filter: blur(3px);}
+
+    .payment-options {display: flex; justify-content: center; gap: 20px; margin: 20px 0;}
+
+    .payment-options img {width: 80px; height: 80px; border: 2px solid transparent; border-radius: 10px;
+      cursor: pointer; transition: 0.3s;}
+
+    .payment-options img.selected {border-color: #003366; box-shadow: 0 0 10px #003366aa;}
+
+    .selected-payment {font-weight: bold; margin-bottom: 20px;}
+
+    .checkout-buttons button {padding: 10px 16px; margin: 0 10px; background-color: #003366;
+      color: white; border: none; border-radius: 6px; cursor: pointer;}
+
+    .close-btn {position: absolute; top: 10px; right: 15px; font-size: 20px; cursor: pointer;
+      font-weight: bold;}
+ 
+    .checkout-buttons button:hover{background-color: #0055aa;}
+
+    .success-popup-overlay {position: fixed; top: 0; left: 0; width: 100%; height: 100%; backdrop-filter: blur(5px);
+      background: rgba(0,0,0,0.3); display: none; align-items: center; justify-content: center; z-index: 9991;}
+
+    .success-box {position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white;
+      padding: 30px; border-radius: 16px; text-align: center; box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.4s ease-in-out; z-index: 9992; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;}
+
+    .checkmark {width: 80px; height: 80px; stroke: #4CAF50; stroke-width: 4; stroke-linecap: round;
+      stroke-linejoin: round; stroke-miterlimit: 10; animation: drawCircle 0.6s ease-in-out forwards;
+      display: block; overflow: visible; box-sizing: content-box;}
+
+    .checkmark-circle {stroke-dasharray: 166; stroke-dashoffset: 166;
+      animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;}
+
+    .checkmark-check {stroke-dasharray: 48; stroke-dashoffset: 48;
+      animation: stroke 0.3s 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;}
+
+    @keyframes stroke {to {stroke-dashoffset: 0;}}
+
+    @keyframes drawCircle {0% {transform: scale(0); opacity: 0;} 100% {transform: scale(1); opacity: 1;}}
+
+    .buttons {margin-top: 20px; display: flex; gap: 10px; justify-content: center;}
+
+    .buttons button {padding: 10px 20px; background: #4CAF50; color: white; border: none;
+      border-radius: 6px; cursor: pointer; transition: 0.3s; font-weight: bold;}
+
+    .buttons button:hover {background: #45a049;}
+
+    .receipt-overlay {position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5);
+      z-index: 9993; display: flex; justify-content: center; align-items: center;}
+
+    .receipt-container {background: white; border: 10px solid limegreen; width: 30%; max-height: 90vh;
+      border-radius: 10px; overflow: hidden; position: relative; padding: 20px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3); font-family: 'Courier New', monospace;}
+
+    .scrollable {overflow-y: auto; max-height: 60vh; margin-bottom: 20px;}
+
+    .close-button {position: absolute; right: 15px; top: 5px; bottom: 10px; font-size: 24px;
+      cursor: pointer; margin-bottom: 10px;}
+
+    .receipt-buttons{display: flex; justify-content: space-between; gap: 10px;}
+
+    .receipt-buttons button{cursor: pointer; font-weight: bolder; border-color: limegreen;
+      background-color: limegreen; border-radius: 8px;}
+
+    .receipt-buttons button:hover{background-color: green; border-color: green;}
+
+    .star-line {border: none; height: 1.5em; background: repeating-linear-gradient(to right,
+      white 0, white 5px, transparent 5px, transparent 6px); position: relative; overflow: hidden;}
+
+    .star-line::before {content: "✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦✦"; display: block;
+      text-align: center; font-size: 14px; letter-spacing: 4px; color: black; white-space: nowrap;
+      width: max-content; position: absolute; top: 0; left: 0;}
+  </style>
+</head>
+<body class="dashboard-page">
+    <!-- Loader Spinner -->
+    <div id="pageLoader">
+      <div class="spinner"></div>
+    </div>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <div class="nav-left">
+      <div class="menu-icon" onclick="toggleMenuDropdown()">☰</div>
+      <span class="active-page" id="activePageName">Dashboard</span>
+      <div class="menu-dropdown" id="menuDropdown">
+        <a href="dashboard.html">➤ Dashboard</a>
+        <a href="stock.html">➤ Stock</a>       
+        <a href="expenses.html">➤ Expenses</a> 
+        <a href="sales.html">➤ Sales Records</a>
+        <a href="orders.html">➤ Orders Management</a>
+        <a href="analysis.html">➤Analysis</a>
+      </div>
+    </div>
+
+    <div class="nav-center">
+      <span class="nav-logo">POS</span>
+    </div>
+
+    <div class="nav-right">
+      <div class="user-icon" onclick="toggleUserDropdown()">
+        <div class="circle">
+          <div class="head"></div>
+          <div class="shoulders"></div>
+        </div>
+      </div>
+      <div class="user-dropdown" id="userDropdown">
+        <p><strong>Piden Electronics</strong></p>
+        <button onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Content Area Placeholder -->
+  <main class="main-content">
+    <div id="popupOverlay"></div>
+
+    <div class="search-bar-container">
+      <input type="text" id="itemSearch" placeholder="🔍 Search">
+    </div>
+    
+    <div class="filter-buttons">
+      <button onclick="filterItems('product')" id="productBtn" class="active">Products</button>
+      <button onclick="filterItems('service')" id="serviceBtn">Services</button>
+    </div>
+    
+    <div id="itemsContainer" class="items-container">
+      <!-- Cards will be loaded here -->
+    </div>  
+    
+    <div id="notFound">Oops! Item not found</div>
+
+    <!-- Sale Popup -->
+    <div id="salePopup" class="sale-popup">
+      <div class="popup-header">
+        <h3>Sale Details</h3>
+        <span class="close-btn" onclick="closeSalePopup()">×</span>
+      </div>
+
+      <div class="popup-items" id="popupItemsContainer">
+        <!-- Items will be injected here dynamically -->
+      </div>
+
+      <div class="popup-footer">
+        <div class="total-box">
+          Total Price: Ksh.<span id="popupTotal">0.00</span>
+        </div>
+        <button onclick="minimizeSalePopup()">Add to Sale</button>
+        <button onclick="openCheckoutPopup()">Proceed to Checkout</button>
+      </div>
+    </div>
+
+    <!-- Minimized Box -->
+    <div id="minimizedSaleBox" class="minimized-sale-box" onclick="restoreSalePopup()" style="display: none;">
+      Proceed With Sale
+    </div>
+
+    <div id="checkoutPopup" class="checkout-popup">
+      <div class="heading">
+      <span class="close-btn" onclick="closeCheckoutPopup()">×</span>
+      <h3>Select Mode of Payment</h3>
+      </div>
+    
+      <div class="payment-options">
+        <img src="CASH.jpg" alt="Cash" onclick="selectPayment('Cash')" id="cashOption">
+        <img src="MPESA.jpeg" alt="Mpesa" onclick="selectPayment('Mpesa')" id="mpesaOption">
+      </div>
+    
+      <p id="selectedPaymentText" class="selected-payment">No payment method selected</p>
+    
+      <div class="checkout-buttons">
+        <button onclick="goBackToSale()">Back</button>
+        <button onclick="completeCheckout()">Checkout</button>
+      </div>
+    </div>
+    
+    <div id="checkoutOverlay" class="popup-overlay"></div>
+    <div id="success-popup-overlay" class="success-popup-overlay"></div>
+    <div id="checkoutSuccessPopup" class="success-popup-overlay">
+      <div class="success-box">
+        <h2>Checkout Successful</h2>
+        <div class="tick-animation">
+          <svg class="checkmark" viewBox="0 0 52 52">
+            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="checkmark-check" fill="none" d="M14 27l7 7 17-17"/>
+          </svg>
+        </div>
+        <div class="buttons">
+          <button onclick="generateReceipt()">Generate Receipt</button>
+          <button onclick="startNextSale()">Next Sale</button>
+        </div>
+      </div>
+    </div>
+    
+    <div id="receiptPopup" style="display: none;" class="receipt-overlay">
+      <div class="receipt-container">
+        <span class="close-button" onclick="closeReceiptPopup()">×</span>
+        <div id="receiptContent" class="receipt-content scrollable"></div>
+    
+        <div class="receipt-buttons">
+          <button onclick="printReceipt()">🖨️ Print</button>
+          <button onclick="downloadReceipt()">⬇️ Download PDF</button>
+          <button onclick="startNextSale()">➡️ Next Sale</button>
+        </div>
+      </div>
+    </div>    
+  </main>
+
+  <!-- Footer -->
+  <footer class="foot">
+    &copy; 2025 Piden Company Limited.
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  
+  <!-- Supabase JS Library (must come FIRST before you use supabase) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Supabase Initialization -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const supabaseUrl = "https://mzvlybnvgpemdayoylfk.supabase.co";
+      const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16dmx5Ym52Z3BlbWRheW95bGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0MjkyODMsImV4cCI6MjA2MTAwNTI4M30.bRg54tsPook5UrfUM1p3y2WWkZqv_u7vbHpBGBKrQ4E";
+    window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    });
+  </script>
+  
+  <!-- Inline JS for dropdowns & logout -->
+  <script>
+    function toggleMenuDropdown() {
+      document.getElementById("menuDropdown").classList.toggle("show");
+      document.getElementById("userDropdown").classList.remove("show");
+    }
+
+    function toggleUserDropdown() {
+      document.getElementById("userDropdown").classList.toggle("show");
+      document.getElementById("menuDropdown").classList.remove("show");
+    }
+
+    function logout() {
+      sessionStorage.clear();
+      window.location.href = "index.html";
+    }
+
+    window.onload = () => {
+      // Disable back button after logout
+      if (!sessionStorage.getItem("loggedIn")) {
+        window.location.replace("index.html");
+      }
+    }
+
+    window.onclick = function(event) {
+      if (!event.target.matches('.menu-icon') && !event.target.closest('.menu-dropdown')) {
+        document.getElementById("menuDropdown").classList.remove("show");
+      }
+      if (!event.target.closest('.user-icon') && !event.target.closest('.user-dropdown')) {
+        document.getElementById("userDropdown").classList.remove("show");
+      }
+    }
+
+    window.addEventListener("load", () => {
+        document.getElementById("pageLoader").style.display = "none";
+      });
+
+      // Optional global control for Supabase calls
+      function showLoader() {
+        document.getElementById("pageLoader").style.display = "flex";
+      }
+
+      function hideLoader() {
+        document.getElementById("pageLoader").style.display = "none";
+      }
+
+      const fallbackProductImg = "Product.png";
+      const fallbackServiceImg = "Service.png";
+
+      let currentItems = []; // Store current items for search
+      let currentType = "product"; // Track whether user is viewing products or services
+
+      // ✅ MAIN FETCH FUNCTION — Get items from Supabase
+      async function fetchItemsAndDisplay(type = "product") {
+        try {
+          showLoader();
+          currentType = type;
+
+          const { data, error } = await window.supabase
+            .from("items")
+            .select("*")
+            .eq("type", type)
+            .order("name", { ascending: true });
+
+          if (error) throw error;
+
+          currentItems = data;
+          renderItems(currentItems);
+        } catch (err) {
+          console.error("Fetch error:", err);
+        } finally {
+          hideLoader();
+        }
+      }
+
+      // ✅ RENDER FUNCTION — Displays items (or fallback message)
+      function renderItems(items) {
+        const container = document.getElementById("itemsContainer");
+        const notFound = document.getElementById("notFound");
+        container.innerHTML = "";
+        notFound.style.display = "none";
+
+        if (!items.length) {
+          notFound.style.display = "block";
+          return;
+        }
+
+        items.forEach(item => {
+          const card = document.createElement("div");
+          card.classList.add("item-card");
+
+          const img = document.createElement("img");
+          img.src = item.image_url || (currentType === "product" ? fallbackProductImg : fallbackServiceImg);
+          img.onerror = () => {
+            img.src = currentType === "product" ? fallbackProductImg : fallbackServiceImg;
+          };
+
+          const name = document.createElement("h3");
+          name.textContent = item.name;
+
+          const stock = document.createElement("p");
+          const price = document.createElement("p");
+
+          if (currentType === "product") {
+            stock.textContent = "Stock: " + item.stock;
+            price.textContent = "Price: Ksh " + item.selling_price;
+          } else {
+            price.textContent = "Price: Ksh " + item.customer_price;
+          }
+
+          const button = document.createElement("button");
+          button.textContent = "Add to Cart";
+          button.addEventListener("click", () => {
+            addToCart(item); // <-- This will handle all cart logic and open the popup
+
+            // ✅ Clear search input after cart action
+            document.getElementById("itemSearch").value = "";
+            renderItems(currentItems); // optional if you want to reset list view
+          });
+
+
+          card.appendChild(img);
+          card.appendChild(name);
+          if (currentType === "product") card.appendChild(stock);
+          card.appendChild(price);
+          card.appendChild(button);
+
+          container.appendChild(card);
+        });
+      }
+
+      async function silentBackgroundSync() {
+        try {
+          const { data, error } = await window.supabase
+            .from("items")
+            .select("*")
+            .eq("type", currentType)
+            .order("name", { ascending: true });
+
+          if (error || !Array.isArray(data)) {
+            console.warn("Background sync failed:", error);
+            return;
+          }
+
+          // Check if data changed before updating
+          const current = JSON.stringify(currentItems);
+          const incoming = JSON.stringify(data);
+
+          if (current !== incoming) {
+            currentItems = data;
+
+            // Only re-render if search input is empty
+            const searchValue = document.getElementById("itemSearch").value.trim();
+            if (!searchValue) {
+              renderItems(currentItems);
+            } else {
+              console.log("User is typing. Skipping render.");
+            }
+          }
+        } catch (err) {
+          console.error("Silent sync error:", err);
+        }
+      }
+      setInterval(silentBackgroundSync, 60000); // Every 1 minute
+
+      // ✅ FILTER BUTTONS — Products vs Services
+      function filterItems(type) {
+        document.getElementById("productBtn").classList.remove("active");
+        document.getElementById("serviceBtn").classList.remove("active");
+        document.getElementById(type + "Btn").classList.add("active");
+
+        // Clear search input and fetch items
+        document.getElementById("itemSearch").value = "";
+        fetchItemsAndDisplay(type);
+      }
+
+      // ✅ SEARCH INPUT — Real-time search by item name
+      document.getElementById("itemSearch").addEventListener("input", function () {
+        const term = this.value.trim().toLowerCase();
+        const filtered = currentItems.filter(item =>
+          item.name.toLowerCase().includes(term)
+        );
+        renderItems(filtered);
+      });
+
+      // ✅ ON LOAD — Default load products
+      document.addEventListener("DOMContentLoaded", async function () {
+        document.getElementById("itemSearch").value = ""; // clear search on load
+        showLoader();
+        await fetchItemsAndDisplay("product");
+
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            hideLoader();
+          }, 100);
+        });
+      });
+
+      function openSalePopup() {
+        document.getElementById("salePopup").style.display = "flex";
+        document.getElementById("minimizedSaleBox").style.display = "none";
+        document.getElementById("popupOverlay").style.display = "block";
+      }
+
+      function closeSalePopup() {
+        document.getElementById("salePopup").style.display = "none";
+        document.getElementById("popupOverlay").style.display = "none";
+
+        // 🔁 Reset cart and re-render
+        saleCart = [];
+        renderSaleCart();
+      }
+
+      function minimizeSalePopup() {
+        document.getElementById("salePopup").style.display = "none";
+        document.getElementById("minimizedSaleBox").style.display = "block";
+        document.getElementById("popupOverlay").style.display = "none";
+      }
+
+      function restoreSalePopup() {
+        document.getElementById("salePopup").style.display = "flex";
+        document.getElementById("minimizedSaleBox").style.display = "none";
+        document.getElementById("popupOverlay").style.display = "block";
+      }
+
+      let saleCart = [];
+
+      function addToCart(item) {
+        const isService = item.type === "service";
+
+        // ✅ Check if it's a product and has zero stock
+        if (!isService && item.stock === 0) {
+          alert(`${item.name} is out of stock. Kindly add your stock and try again.`);
+          return; // Stop further execution
+        }
+
+        const existing = saleCart.find(cartItem => cartItem.id === item.id);
+        if (existing) {
+          existing.quantity++;
+        } else {
+          saleCart.push({
+            ...item,
+            quantity: 1,
+            editablePrice: item.selling_price || item.customer_price,
+            buyingPrice: isService ? 0 : item.buying_price || 0,
+            cost_service: isService ? item.cost_service || 0 : 0,
+          });
+        }
+
+        renderSaleCart();
+        openSalePopup();
+      }
+
+      function renderSaleCart() {
+        const container = document.getElementById("popupItemsContainer");
+        container.innerHTML = "";
+
+        let total = 0;
+
+        saleCart.forEach((item, index) => {
+          const card = document.createElement("div");
+          card.className = "popup-item";
+
+          const title = document.createElement("h4");
+          title.textContent = `${index + 1}. ${item.name}`;
+
+          const deleteBtn = document.createElement("button");
+          deleteBtn.textContent = "×";
+          deleteBtn.className = "delete-btn";
+          deleteBtn.onclick = () => {
+            if (confirm("Remove this item from sale?")) {
+              saleCart.splice(index, 1);
+              renderSaleCart();
+            }
+          };
+
+          const quantityInput = document.createElement("input");
+          quantityInput.type = "number";
+          quantityInput.value = item.quantity;
+          quantityInput.min = 1;
+          quantityInput.style.width = "60px";
+          quantityInput.oninput = () => {
+        const qty = parseInt(quantityInput.value) || 1;
+        item.quantity = qty;
+
+        // Update price text and profit
+        price.textContent = `Price: Ksh. ${item.editablePrice * qty}`;
+        const earning = (item.editablePrice - (item.buying_price || item.cost_service || 0)) * qty;
+        profit.textContent = `Profit: Ksh. ${earning.toFixed(2)}`;
+
+        // Recalculate and update total price
+        let newTotal = 0;
+        saleCart.forEach(it => {
+          newTotal += it.editablePrice * it.quantity;
+        });
+        document.getElementById("popupTotal").textContent = newTotal.toFixed(2);
+      };
+
+          const priceContainer = document.createElement("div");
+          const price = document.createElement("span");
+          price.textContent = `Price: Ksh. ${item.editablePrice * item.quantity}`;
+
+          const pen = document.createElement("span");
+          pen.textContent = "✎";
+          pen.className = "edit-price";
+          pen.onclick = () => {
+            const newPrice = prompt("Edit Price:", item.editablePrice);
+            if (newPrice && !isNaN(newPrice)) {
+              item.editablePrice = parseFloat(newPrice);
+              renderSaleCart();
+            }
+          };
+
+          priceContainer.appendChild(price);
+          priceContainer.appendChild(pen);
+
+          const profit = document.createElement("p");
+          const cost = item.buying_price || item.cost_service || 0;
+          const earning = (item.editablePrice - cost) * item.quantity;
+          profit.textContent = `Profit: Ksh. ${earning.toFixed(2)}`;
+          profit.style.color = "green";
+
+          total += item.editablePrice * item.quantity;
+
+          card.appendChild(title);
+          card.appendChild(deleteBtn);
+          card.appendChild(document.createTextNode("Qty: "));
+          card.appendChild(quantityInput);
+          card.appendChild(document.createElement("br"));
+          card.appendChild(priceContainer);
+          card.appendChild(profit);
+
+          container.appendChild(card);
+        });
+
+        document.getElementById("popupTotal").textContent = total.toFixed(2);
+      }
+
+      let selectedPaymentMode = "";
+
+      function openCheckoutPopup() {
+        document.getElementById("checkoutPopup").style.display = "block";
+        document.getElementById("checkoutOverlay").style.display = "block";
+      }
+
+      function closeCheckoutPopup() {
+        document.getElementById("checkoutPopup").style.display = "none";
+        document.getElementById("checkoutOverlay").style.display = "none";
+        selectedPaymentMode = "";
+        document.getElementById("selectedPaymentText").textContent = "No payment method selected";
+
+        // Remove selection highlight
+        document.getElementById("cashOption").classList.remove("selected");
+        document.getElementById("mpesaOption").classList.remove("selected");
+      }
+
+      function selectPayment(mode) {
+        selectedPaymentMode = mode;
+        document.getElementById("selectedPaymentText").textContent = "Selected Mode of Payment: " + mode;
+
+        // Toggle image highlight
+        document.getElementById("cashOption").classList.toggle("selected", mode === "Cash");
+        document.getElementById("mpesaOption").classList.toggle("selected", mode === "Mpesa");
+      }
+
+      function goBackToSale() {
+        closeCheckoutPopup();
+        openSalePopup(); // This should restore the previous sale cart
+      }
+
+      async function completeCheckout() {
+        if (!selectedPaymentMode) {
+          alert("Please select a mode of payment.");
+          return;
+        }
+
+        showLoader();
+
+        const currentDate = new Date();
+        const timeSold = currentDate.toLocaleTimeString('en-GB');
+        const saleDate = currentDate.toISOString().split('T')[0];
+        const dayOfWeek = currentDate.toLocaleDateString('en-GB', { weekday: 'long' });
+
+        console.log("Sale Cart Contents:", saleCart);
+
+        for (const item of saleCart) {
+          const { id, name, type, quantity, editablePrice, buyingPrice, cost_service } = item;
+
+          if (
+            name == null ||
+            type == null ||
+            quantity == null ||
+            editablePrice == null ||
+            buyingPrice == null
+          ) {
+            console.error("Missing required item fields:", item);
+            alert("Some item details are missing. Cannot proceed with checkout.");
+            hideLoader();
+            return;
+          }
+
+          const stockAmount = (buyingPrice || cost_service || 0) * quantity;
+          const sellingAmount = editablePrice * quantity;
+          const profit = sellingAmount - stockAmount;
+
+          // 👉 Step 1: Insert into sales table
+          const { error: insertError } = await supabase
+            .from('sales')
+            .insert([{
+              item_name: name,
+              item_type: type,
+              quantity,
+              stock_amount: stockAmount,
+              selling_amount: sellingAmount,
+              profit,
+              mode_of_payment: selectedPaymentMode,
+              time_sold: timeSold,
+              day_of_week: dayOfWeek,
+              sale_date: saleDate.replace(/-/g, '/'),
+            }]);
+
+          if (insertError) {
+            console.error("Sale insert failed:", insertError);
+            alert("Failed to complete checkout. Please try again.");
+            hideLoader();
+            return;
+          }
+
+          // 👉 Step 2: Update stock in `items` table for products only
+          if (type === "product") {
+            const { data: currentItem, error: fetchError } = await supabase
+              .from('items')
+              .select('stock')
+              .eq('id', id)
+              .single();
+
+            if (fetchError) {
+              console.error("Error fetching current stock:", fetchError);
+              continue; // Skip stock update if fetching fails
+            }
+
+            const updatedStock = (currentItem.stock || 0) - quantity;
+
+            const { error: updateError } = await supabase
+              .from('items')
+              .update({ stock: updatedStock })
+              .eq('id', id);
+
+            if (updateError) {
+              console.error("Stock update failed for", name, ":", updateError);
+              // Optionally: Alert but don’t block sale
+            }
+          }
+        }
+
+        hideLoader();
+
+        document.getElementById("checkoutPopup").style.display = "none";
+        document.getElementById("salePopup").style.display = "none";
+        document.getElementById("popupOverlay").style.display = "none";
+
+        document.getElementById("checkoutSuccessPopup").style.display = "block";
+        document.getElementById("success-popup-overlay").style.display = "block";
+      }
+
+      function generateReceipt() {
+        const contentEl = document.getElementById("receiptContent");
+        contentEl.innerHTML = `<div class="loader">Generating Receipt...</div>`;
+        document.getElementById("receiptPopup").style.display = "flex";
+
+        setTimeout(() => {
+          // Simulate loader delay
+          let businessInfo = `
+            <div style="text-align: center;">
+              <h2>PIDEN CYBER & ELECTRONICS</h2>
+              <p>P.O. Box 10-10226, Kambiti</p>
+              <p>Murang'a, Kenya</P>
+              <p>Tel: +254-748-408498</p>
+              <p>The home of Cyber Services, Electronics, Mobile Phones and accessories.</p>
+              <h2>RECEIPT</h2>
+            </div>
+          <hr class="star-line">
+              `;
+
+          let itemsTable = `
+            <table style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr>
+                  <th style="text-align: left;">Qty</th>
+                  <th style="text-align: left;">Item</th>
+                  <th style="text-align: left;">Unit</th>
+                  <th style="text-align: left;">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+          `;
+
+          let total = 0;
+          saleCart.forEach(item => {
+            const itemTotal = item.quantity * item.editablePrice;
+            total += itemTotal;
+            itemsTable += `
+              <tr>
+                <td>${item.quantity}</td>
+                <td>${item.name}</td>
+                <td>${item.editablePrice.toFixed(2)}</td>
+                <td>${itemTotal.toFixed(2)}</td>
+              </tr>
+            `;
+          });
+
+          itemsTable += `
+              </tbody>
+            </table>
+          `;
+
+          let footer = `
+            <hr class="star-line">
+            <p><strong>Total: Ksh. ${total.toFixed(2)}</strong></p>
+            <p>Payment Mode: ${selectedPaymentMode}</p>
+            <hr class="star-line">
+            <p style="text-align: center;">Thank you and Welcome Again!</p>
+          `;
+
+          contentEl.innerHTML = businessInfo + itemsTable + footer;
+        }, 700); // Simulated loader delay
+      }
+
+      async function downloadReceipt() {
+        showLoader();
+        const original = document.querySelector(".receipt-content");
+
+        // Clone the receipt content
+        const clone = original.cloneNode(true);
+        clone.style.position = "absolute";
+        clone.style.top = "0";
+        clone.style.left = "0";
+        clone.style.width = original.scrollWidth + "px";
+        clone.style.height = "auto";
+        clone.style.maxHeight = "none";
+        clone.style.overflow = "visible";
+        clone.style.background = "#fff";
+        clone.style.zIndex = "-1"; // Keep hidden but paintable
+
+        // Append clone to body
+        document.body.appendChild(clone);
+
+        // Force full layout reflow
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        const canvas = await html2canvas(clone, {
+          scale: 2,
+          useCORS: true,
+          scrollY: -window.scrollY,
+          windowWidth: document.body.scrollWidth
+        });
+
+        // Cleanup
+        document.body.removeChild(clone);
+
+        const imgData = canvas.toDataURL("image/png");
+
+        const pdf = new window.jspdf.jsPDF("p", "mm", "a4");
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+
+        const targetWidth = pageWidth * 0.3;
+        const imgProps = pdf.getImageProperties(imgData);
+        const imgRatio = imgProps.height / imgProps.width;
+        const targetHeight = targetWidth * imgRatio;
+        const xOffset = (pageWidth - targetWidth) / 2;
+
+        if (targetHeight <= pageHeight) {
+          pdf.addImage(imgData, "PNG", xOffset, 0, targetWidth, targetHeight);
+        } else {
+          const pxPerMm = imgProps.width / targetWidth;
+          const pageHeightPx = pageHeight * pxPerMm;
+
+          const imgCanvas = document.createElement("canvas");
+          const ctx = imgCanvas.getContext("2d");
+
+          let pageY = 0;
+          while (pageY < imgProps.height) {
+            const sliceHeight = Math.min(pageHeightPx, imgProps.height - pageY);
+            imgCanvas.width = imgProps.width;
+            imgCanvas.height = sliceHeight;
+
+            ctx.clearRect(0, 0, imgCanvas.width, imgCanvas.height);
+            ctx.drawImage(
+              canvas,
+              0,
+              pageY,
+              imgCanvas.width,
+              sliceHeight,
+              0,
+              0,
+              imgCanvas.width,
+              sliceHeight
+            );
+
+            const pageImg = imgCanvas.toDataURL("image/png");
+            if (pageY !== 0) pdf.addPage();
+            pdf.addImage(pageImg, "PNG", xOffset, 0, targetWidth, (sliceHeight / imgProps.width) * targetWidth);
+
+            pageY += sliceHeight;
+          }
+        }
+        hideLoader();
+        pdf.save("receipt.pdf");
+      }
+
+      function printReceipt() {
+        const printContents = document.querySelector(".receipt-content").innerHTML;
+        const win = window.open('', '', 'width=600,height=800');
+        win.document.write(`
+          <html><head><title>Receipt</title>
+          <style>
+            body { font-family: Courier New, monospace; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { text-align: left; padding: 4px 0; }
+          </style>
+          </head><body>${printContents}</body></html>
+        `);
+        win.document.close();
+        win.print();
+      }
+
+      function closeReceiptPopup() {
+        document.getElementById("receiptPopup").style.display = "none";
+      }
+
+      function startNextSale() {
+        saleItems = [];
+        selectedPaymentMode = "";
+        closeReceiptPopup();
+        // Reset UI and redirect if needed:
+        window.location.href = "dashboard.html"; // or your actual page
+      }
+  </script>
+</body>
+</html>
