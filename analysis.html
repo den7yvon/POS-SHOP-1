@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POS | Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+        body {display: flex; font-family: 'Times New Roman', Times, serif; line-height: 1.4; min-height: 100vh;
+      flex-direction: column; margin: 0; background-color: #f1f4f8;}
+
+    .title {color: #003366; font-size: 24px; margin-bottom: 20px;}
+
+    .main {background-color: white; border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      padding: 25px; width: 90%; max-width: 400px; text-align: center;}
+
+    .top-nav {width: 100%; height: 40px; background-color: #003366; color: white; display: flex;
+      justify-content: space-between; align-items: center; padding: 0 15px; position: fixed;
+      top: 0; z-index: 100;}
+  
+    .nav-left, .nav-center, .nav-right {display: flex; align-items: center; position: relative;}
+  
+    .menu-icon {font-size: 24px; cursor: pointer; margin-right: 10px;}
+  
+    .active-page {font-size: 16px; font-weight: 600;}
+  
+    .menu-dropdown {position: absolute; top: 40px; left: 0; background: white; color: #003366;
+      border: 1px solid #ccc; border-radius: 6px; display: none; flex-direction: column; width: 220px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);  overflow: hidden; z-index: 1000;}
+    
+    .menu-dropdown a {padding: 10px; text-decoration: none; color: #003366; 
+      border-bottom: 1px solid #eee; font-weight: 500;}
+    
+    .menu-dropdown a:hover {background-color: #f0f0f0;}
+    
+    .menu-dropdown.show {display: flex;}
+    
+    .nav-logo {font-size: 22px; font-weight: bold; margin-right: 70px;}
+
+    .user-icon {cursor: pointer; margin-right: 30px;}
+    
+    .circle {width: 36px; height: 36px; background-color: white; border-radius: 50%; position: relative;
+      display: flex; align-items: center; justify-content: center;}
+    
+    .head {width: 10px; height: 10px; background-color: #003366; border-radius: 50%;
+      position: absolute; top: 8px;}
+    
+    .shoulders {width: 20px; height: 8px; background-color: #003366; border-radius: 50%; position: absolute;
+      bottom: 8px;}
+
+    .user-dropdown {position: absolute; top: 40px; right: 0; background: white;
+      color: #003366; padding: 10px; border-radius: 6px; box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      display: none; z-index: 1000; width: 160px; text-align: center;}
+    
+    .user-dropdown.show {display: block;}
+    
+    .user-dropdown p {margin: 0 0 10px;}
+    
+    .user-dropdown button {background-color: #003366; color: white; border: none; padding: 8px 12px;
+      border-radius: 4px; cursor: pointer; width: 90%;}
+    
+    .user-dropdown button:hover {background-color: #0055aa;}
+
+    .main-content {margin-top: 30px; padding: 20px;}
+
+    .foot {width: 100%; background-color: #003366; color: white; text-align: center; padding: 2px 1px;
+      position: fixed; bottom: 0; left: 0; font-size: 10px;}
+
+    #pageLoader {position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9);
+        z-index: 9999; display: flex; align-items: center; justify-content: center;}
+  
+    .spinner {border: 6px solid #ccc; border-top: 6px solid #2f0fe4; border-radius: 50%; width: 40px; height: 40px;
+        animation: spin 1s linear infinite;}
+  
+    @keyframes spin {0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); }}
+  </style>
+</head>
+<body class="dashboard-page">
+    <!-- Loader Spinner -->
+    <div id="pageLoader">
+      <div class="spinner"></div>
+    </div>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <div class="nav-left">
+      <div class="menu-icon" onclick="toggleMenuDropdown()">☰</div>
+      <span class="active-page" id="activePageName">Analysis</span>
+      <div class="menu-dropdown" id="menuDropdown">
+        <a href="dashboard.html">➤ Dashboard</a>
+        <a href="stock.html">➤ Stock</a>       
+        <a href="expenses.html">➤ Expenses</a> 
+        <a href="sales.html">➤ Sales Records</a>
+        <a href="orders.html">➤ Orders Management</a>
+        <a href="analysis.html">➤Analysis</a>
+      </div>
+    </div>
+
+    <div class="nav-center">
+      <span class="nav-logo">POS</span>
+    </div>
+
+    <div class="nav-right">
+      <div class="user-icon" onclick="toggleUserDropdown()">
+        <div class="circle">
+          <div class="head"></div>
+          <div class="shoulders"></div>
+        </div>
+      </div>
+      <div class="user-dropdown" id="userDropdown">
+        <p><strong>Piden Electronics</strong></p>
+        <button onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Content Area Placeholder -->
+  <main class="main-content">
+    <!-- Dynamic content goes here later -->
+  </main>
+
+  <!-- Footer -->
+  <footer class="foot">
+    &copy; 2025 Piden Company Limited.
+  </footer>
+
+  <!-- Supabase JS Library (must come FIRST before you use supabase) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Supabase Initialization -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const supabaseUrl = "https://mzvlybnvgpemdayoylfk.supabase.co";
+      const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16dmx5Ym52Z3BlbWRheW95bGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0MjkyODMsImV4cCI6MjA2MTAwNTI4M30.bRg54tsPook5UrfUM1p3y2WWkZqv_u7vbHpBGBKrQ4E";
+    window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    });
+  </script>
+  
+  <!-- Inline JS for dropdowns & logout -->
+  <script>
+    function toggleMenuDropdown() {
+      document.getElementById("menuDropdown").classList.toggle("show");
+      document.getElementById("userDropdown").classList.remove("show");
+    }
+
+    function toggleUserDropdown() {
+      document.getElementById("userDropdown").classList.toggle("show");
+      document.getElementById("menuDropdown").classList.remove("show");
+    }
+
+    function logout() {
+      sessionStorage.clear();
+      window.location.href = "index.html";
+    }
+
+    window.onload = () => {
+      // Disable back button after logout
+      if (!sessionStorage.getItem("loggedIn")) {
+        window.location.replace("index.html");
+      }
+    }
+
+    window.onclick = function(event) {
+      if (!event.target.matches('.menu-icon') && !event.target.closest('.menu-dropdown')) {
+        document.getElementById("menuDropdown").classList.remove("show");
+      }
+      if (!event.target.closest('.user-icon') && !event.target.closest('.user-dropdown')) {
+        document.getElementById("userDropdown").classList.remove("show");
+      }
+    }
+
+    window.addEventListener("load", () => {
+        document.getElementById("pageLoader").style.display = "none";
+      });
+
+      // Optional global control for Supabase calls
+      function showLoader() {
+        document.getElementById("pageLoader").style.display = "flex";
+      }
+
+      function hideLoader() {
+        document.getElementById("pageLoader").style.display = "none";
+      }
+  </script>
+</body>
+</html>
