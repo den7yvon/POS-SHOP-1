@@ -30,7 +30,7 @@
   
     .menu-dropdown {position: absolute; top: 40px; left: 0; background: white; color: #003366;
       border: 1px solid #ccc; border-radius: 6px; display: flex; flex-direction: column; width: 220px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.2);  overflow: hidden; z-index: 1000;  transform: scale(0);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);  overflow: hidden; z-index: 10000;  transform: scale(0);
       opacity: 0; transform-origin: top left; transition: transform 0.25s ease-out, opacity 0.2s ease-out;}
     
     .menu-dropdown a {padding: 10px; text-decoration: none; color: #003366; 
@@ -55,7 +55,7 @@
 
     .user-dropdown {position: absolute; top: 40px; right: 0; background: white;
       color: #003366; padding: 10px; border-radius: 6px; box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-      z-index: 1000; width: 160px; text-align: center; margin-right: 20px; transform-origin: top right;
+      z-index: 10000; width: 160px; text-align: center; margin-right: 20px; transform-origin: top right;
       transform: scale(0); opacity: 0; transition: transform 0.25s ease-out, opacity 0.2s ease-out;
       display: block; pointer-events: none;}
     
@@ -1378,4 +1378,5 @@
     }
   </script>
 </body> 
+
 </html>
