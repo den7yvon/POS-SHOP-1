@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POS |Analysis</title>
+  <link rel="shortcut icon" type="image/x-icon" href="Favicon.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    body {display: flex; font-family: 'Times New Roman', Times, serif; line-height: 1.4; min-height: 100vh;
+      flex-direction: column; margin: 0; background-color: #f1f4f8;}
+
+    .title {color: #003366; font-size: 24px; margin-bottom: 20px;}
+
+    .main {background-color: white; border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      padding: 25px; width: 90%; max-width: 400px; text-align: center;}
+
+    .top-nav {width: 100%; height: 40px; background-color: #003366; color: white; display: flex;
+      justify-content: space-between; align-items: center; padding: 0 15px; position: fixed;
+      top: 0; z-index: 100;}
+  
+    .nav-left, .nav-center, .nav-right {display: flex; align-items: center; position: relative;}
+  
+    .menu-icon {font-size: 24px; cursor: pointer; margin-right: 10px;}
+  
+    .active-page {font-size: 16px; font-weight: 600;}
+  
+    .menu-dropdown {position: absolute; top: 40px; left: 0; background: white; color: #003366;
+      border: 1px solid #ccc; border-radius: 6px; display: flex; flex-direction: column; width: 220px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);  overflow: hidden; z-index: 1000;  transform: scale(0);
+      opacity: 0; transform-origin: top left; transition: transform 0.25s ease-out, opacity 0.2s ease-out;}
+    
+    .menu-dropdown a {padding: 10px; text-decoration: none; color: #003366; 
+      border-bottom: 1px solid #eee; font-weight: 500;}
+    
+    .menu-dropdown a:hover {background-color: #f0f0f0;}
+    
+    .menu-dropdown.show { transform: scale(1); opacity: 1;}
+    
+    .nav-logo {font-size: 22px; font-weight: bold; margin-right: 70px;}
+
+    .user-icon {cursor: pointer; margin-right: 30px;}
+    
+    .circle {width: 36px; height: 36px; background-color: white; border-radius: 50%; position: relative;
+      display: flex; align-items: center; justify-content: center;}
+    
+    .head {width: 10px; height: 10px; background-color: #003366; border-radius: 50%;
+      position: absolute; top: 8px;}
+    
+    .shoulders {width: 20px; height: 8px; background-color: #003366; border-radius: 50%; position: absolute;
+      bottom: 8px;}
+
+    .user-dropdown {position: absolute; top: 40px; right: 0; background: white;
+      color: #003366; padding: 10px; border-radius: 6px; box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      z-index: 1000; width: 160px; text-align: center; margin-right: 20px; transform-origin: top right;
+      transform: scale(0); opacity: 0; transition: transform 0.25s ease-out, opacity 0.2s ease-out;
+      display: block; pointer-events: none;}
+    
+    .user-dropdown.show {  transform: scale(1); opacity: 1; pointer-events: auto;}
+    
+    .user-dropdown p {margin: 0 0 10px;}
+    
+    .user-dropdown button {background-color: #003366; color: white; border: none; padding: 8px 12px;
+      border-radius: 4px; cursor: pointer; width: 90%;}
+    
+    .user-dropdown button:hover {background-color: #0055aa;}
+
+    .main-content {margin-top: 30px; padding: 20px;}
+
+    .foot {width: 100%; background-color: white; color: #003366; text-align: center; padding: 2px 1px;
+      position: fixed; bottom: 0; left: 0; font-size: 15px;}
+
+    #pageLoader {position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9);
+        z-index: 9999; display: flex; align-items: center; justify-content: center;}
+  
+    .spinner {border: 6px solid #ccc; border-top: 6px solid #2f0fe4; border-radius: 50%; width: 40px; height: 40px;
+        animation: spin 1s linear infinite;}
+  
+    @keyframes spin {0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); }}
+
+    .overlay {position: fixed; top: 0; left: 0; width: 100%; height: calc(100% - 80px); display: flex; align-items: center;
+        justify-content: center; z-index: 5000; background: transparent; pointer-events: none;}
+
+    .access-card {background: white; width: 350px; padding: 0; border-radius: 14px; text-align: center;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.25); color: #003366; pointer-events: auto; transform: scale(0);
+        opacity: 0; animation: cardPopIn 0.45s ease-out forwards;}
+
+        @keyframes cardPopIn {0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.12); opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }}
+
+    .access-card-body {padding: 20px;}
+
+    .access-card-header {background: #003366; color: white; width: 100%; padding: 12px 0; font-size: 20px;
+        font-weight: 600; text-align: center; border-radius: 14px 14px 0 0;}
+
+    .access-card p {font-size: 14px; margin-bottom: 20px; color: black;}
+
+    .access-card input {width: 90%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px;
+        outline: none; margin-bottom: 18px;}
+
+    .access-card button {width: 95%; padding: 12px; background: #003366; color: white; border: none;
+        border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer;}
+
+    .access-card button:hover {background: #0055aa;}
+
+    .error-msg {color: red !important; font-size: 13px !important; margin-top: 8px !important;}
+
+    @keyframes shake {0% { transform: translateX(0); } 25% { transform: translateX(-5px); }
+        50% { transform: translateX(5px); } 75% { transform: translateX(-5px); }
+        100% { transform: translateX(0); }}
+
+    .shake {animation: shake 0.3s;}
+
+    .hidden {display: none;}
+
+    .analysis-content {color: #003366;}
+
+    .analysis-content h1 {text-align: center; font-size: 22px; margin-bottom: 10px; color: #333;}
+
+    .analysis-buttons {margin-top: 10px; display: flex; flex-direction: column; align-items: center; gap: 18px;}
+
+    .analysis-btn {width: 200px; padding: 10px 15px; border-radius: 8px; background-color: #003366;
+        color: white; font-size: 16px; font-weight: bold; border: none; cursor: pointer;
+        transform: translateY(40px); opacity: 0; animation: slideUp 0.8s ease forwards;}
+
+    .analysis-btn:nth-child(1) { animation-delay: 0.2s; }
+    .analysis-btn:nth-child(2) { animation-delay: 0.4s; }
+    .analysis-btn:nth-child(3) { animation-delay: 0.6s; }
+
+    @keyframes slideUp {0% { transform: translateY(40px); opacity: 0; }
+        100% { transform: translateY(0px); opacity: 1; }}
+
+    .analysis-btn:hover{background-color: #0055aa;}
+
+    .sales-analysis-page {padding-top: 50px;}
+
+    .sub-nav {position: fixed; top: 40px; left: 0; width: 100%; background: white; padding: 10px 15px;
+        display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        z-index: 99;}
+
+    .back-btn {background: #003366; color: white; border: none; padding: 8px 10px; border-radius: 6px;
+        font-weight: 600; cursor: pointer;}
+
+    .back-btn:hover{background-color: #0055aa;}
+
+    .sales-search {width: min-content; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc;
+        margin-right: 20px;}
+
+    .skeleton-container {padding: 20px; display: flex; flex-direction: column; gap: 18px; align-items: center;}
+
+    .skeleton-box {width: 100%; height: 90px; border-radius: 10px; background: linear-gradient(
+        100deg,  #e0e0e0 20%,  #f5f5f5 40%,   #e0e0e0 60%);
+        background-size: 200% 100%; animation: shimmer 1.4s infinite;}
+
+        @keyframes shimmer {0% {background-position: -150% 0;} 100% {background-position: 150% 0;}}
+
+    .loadingdata{font-size: 15px; font-weight: bold;}
+
+    .hidden {display: none;}
+
+    .year-card {background: white; margin: 20px 0; border-radius: 12px; padding: 0;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+
+    .year-header {display: flex; justify-content: space-between; align-items: center; background: #003366;
+        color: white; padding: 12px 20px; border-radius: 12px 12px 0 0;}
+
+    .year-card > :not(.year-header) {padding: 10px;}
+
+    .year-header h2 {margin: 0; color: white;}
+
+    .download-btn {background: white; color: #003366; border: none; padding: 8px 16px;
+        border-radius: 6px; font-weight: 600; cursor: pointer;}
+
+    .download-btn:hover{background-color: #bdd6f8;}
+
+    .month-card {margin: 15px 0; margin-right: 15px; margin-left: 15px; padding: 15px 15px 15px 18px; 
+        border-radius: 10px; background: white; border-left: 5px solid #003366; box-sizing: border-box;}
+
+    .month-name {font-size: 17px; font-weight: 700; color: black;}
+
+    .month-table-container, .year-summary-container {overflow-x: auto; padding: 8px 0;}
+
+    .month-table, .year-summary-table {min-width: 700px; border-collapse: collapse; width: 100%;}
+
+    .month-table th, .month-table td,.year-summary-table th, .year-summary-table td {
+        padding: 10px; border-bottom: 1px solid #ccc; text-align: center;}
+
+    .year-summary-header {text-align: center; margin-top: 10px; margin-bottom: 0; padding-top: 10px;
+        font-size: 20px; font-weight: 700; color: #003366; border-top: 2px solid #003366;}
+
+    .table-scroll {width: 100%; overflow-x: auto; margin-top: 0; box-sizing: border-box;}
+
+    .analysis-table {width: 100%; min-width: 900px; border-collapse: collapse; table-layout: fixed;
+        box-sizing: border-box;}
+
+    .analysis-table th,.analysis-table td {padding: 12px 10px; text-align: center;
+        border: 1px solid #cfd6e0; white-space: nowrap;}
+
+    .analysis-table th {background: #e7e7e7; color: Black; font-weight: 700;}
+
+    .analysis-table tbody tr:nth-child(even) {background: #f1f4fa;}
+
+    .graphical-analysis-page {padding-top: 50px;}
+
+    .hidden {display: none;}
+
+    .graph-container {width: 95%; height: 360px; padding: 15px;}
+
+    .graph-legend {display: flex; flex-wrap: wrap; gap: 15px; padding: 10px 15px; font-size: 14px;}
+
+    .legend-item {display: flex; align-items: center; gap: 6px;}
+
+    .legend-color {width: 14px; height: 14px; border-radius: 3px;}
+  </style>
+</head>
+<body class="dashboard-page">
+    <!-- Loader Spinner -->
+    <div id="pageLoader">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+      <div class="nav-left">
+        <div class="menu-icon" onclick="toggleMenuDropdown()">☰</div>
+        <span class="active-page" id="activePageName">Analysis</span>
+        <div class="menu-dropdown" id="menuDropdown">
+          <a href="dashboard.html">➤ Dashboard</a>
+          <a href="stock.html">➤ Stock</a>       
+          <a href="expenses.html">➤ Expenses</a> 
+          <a href="sales.html">➤ Sales Records</a>
+          <a href="orders.html">➤ Orders Management</a>
+          <a href="analysis.html">➤Analysis</a>
+        </div>
+      </div>
+
+      <div class="nav-center">
+        <span class="nav-logo">POS</span>
+      </div>
+
+      <div class="nav-right">
+        <div class="user-icon" onclick="toggleUserDropdown()">
+          <div class="circle">
+            <div class="head"></div>
+            <div class="shoulders"></div>
+          </div>
+        </div>
+        <div class="user-dropdown" id="userDropdown">
+          <p><strong>Piden Cyber, Electronics, Phones & Accessories</strong></p>
+          <button onclick="logout()">Logout</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Content Area Placeholder -->
+    <main class="main-content">
+      <!-- ADMIN ACCESS GATE -->
+      <div id="adminAccessOverlay" class="overlay">
+        <div id="accessCard" class="access-card">
+          <div class="access-card-header">Admin Access Only</div>
+          <div class="access-card-body">
+          <p>The analysis page is highly protected. To access it, kindly enter the Admin Access password:</p>
+
+          <input type="password" id="adminPasswordInput" placeholder="Enter Admin Password">
+
+          <button id="confirmAdminPasswordBtn">Confirm</button>
+          <p id="passwordError" class="error-msg"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE CONTENT (hidden until authenticated) -->
+      <div id="analysisContent" class="analysis-content hidden">
+
+        <h1>All analysis are recorded in here.</h1>
+
+        <div class="analysis-buttons">
+          <button class="analysis-btn" id="salesAnalysisBtn">Sales Analysis</button>
+          <button class="analysis-btn" id="graphicalAnalysisBtn">Graphical Analysis</button>
+          <button class="analysis-btn" id="inventoryBtn">Inventory</button>
+        </div>
+
+      </div>
+        <!-- SALES ANALYSIS PAGE (hidden by default) -->
+        <div id="salesAnalysisPage" class="hidden sales-analysis-page">
+
+          <!-- Fixed sub navigation bar -->
+          <div class="sub-nav">
+            <button id="backFromSales" class="back-btn">⬅ Back</button>
+
+            <input type="text" id="salesSearchInput" class="sales-search" placeholder="🔍e.g. July 2025">
+          </div>
+
+          <!-- LOADING SKELETON AREA -->
+          <div id="salesSkeleton" class="skeleton-container">
+            <div class="skeleton-box"></div>
+            <div class="skeleton-box"></div>
+            <div class="loadingdata">Loading Data...</div>
+            <div class="skeleton-box"></div>
+            <div class="skeleton-box"></div>
+          </div>
+
+          <!-- REAL CONTENT (hidden at first) -->
+          <div id="salesRecordsContainer" class="hidden">
+            <div id="yearlyAnalysisWrapper"></div>
+          </div>
+          
+          <div id="noResultsState" style="display:none; text-align:center; margin-top:60px;">
+            <div style="font-size:100px; line-height:1;">🕵️‍♂️</div>
+            <div style="margin-top:15px; font-size:18px; font-weight:600; color:#555;">
+              No records found for the search input.
+            </div>
+          </div>
+        </div>
+
+
+        <!-- GRAPHICAL ANALYSIS PAGE (hidden by default) -->
+        <div id="graphicalAnalysisPage" class="hidden graphical-analysis-page">
+
+          <!-- Fixed sub navigation bar -->
+          <div class="sub-nav">
+            <button id="backFromGraphical" class="back-btn">⬅ Back</button>
+
+            <input type="text" id="graphicalSearchInput" class="sales-search" placeholder="🔍e.g. YYYY 2025">
+          </div>
+
+          <!-- LOADING SKELETON AREA -->
+          <div id="graphicalSkeleton" class="skeleton-container">
+            <div class="skeleton-box"></div>
+            <div class="skeleton-box"></div>
+            <div class="loadingdata">Loading Data...</div>
+            <div class="skeleton-box"></div>
+            <div class="skeleton-box"></div>
+          </div>
+
+          <!-- REAL CONTENT (hidden at first) -->
+          <div id="graphicalRecordsContainer" class="hidden">
+            <div id="graphicalYearlyWrapper"></div>
+          </div>
+          
+          <div id="graphicalNoResults" style="display:none; text-align:center; margin-top:60px;">
+            <div style="font-size:100px; line-height:1;">🕵️‍♂️</div>
+            <div style="margin-top:15px; font-size:18px; font-weight:600; color:#555;">
+              No records found for the search input.
+            </div>
+          </div>
+        </div>
+
+    </main>
+
+  <!-- Footer -->
+  <footer class="foot">
+    &copy; 2025 Piden Company Limited.
+  </footer>
+
+  <!-- Supabase JS Library (must come FIRST before you use supabase) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Supabase Initialization -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const supabaseUrl = "https://mzvlybnvgpemdayoylfk.supabase.co";
+      const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16dmx5Ym52Z3BlbWRheW95bGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0MjkyODMsImV4cCI6MjA2MTAwNTI4M30.bRg54tsPook5UrfUM1p3y2WWkZqv_u7vbHpBGBKrQ4E";
+    window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    });
+  </script>
+  
+  <!-- Inline JS for dropdowns & logout -->
+  <script>
+    function toggleMenuDropdown() {
+      document.getElementById("menuDropdown").classList.toggle("show");
+      document.getElementById("userDropdown").classList.remove("show");
+    }
+
+    function toggleUserDropdown() {
+      document.getElementById("userDropdown").classList.toggle("show");
+      document.getElementById("menuDropdown").classList.remove("show");
+    }
+
+    function logout() {
+      sessionStorage.clear();
+      window.location.href = "index.html";
+    }
+
+    window.onload = () => {
+      // Disable back button after logout
+      if (!sessionStorage.getItem("loggedIn")) {
+        window.location.replace("index.html");
+      }
+    }
+
+    window.onclick = function(event) {
+      if (!event.target.matches('.menu-icon') && !event.target.closest('.menu-dropdown')) {
+        document.getElementById("menuDropdown").classList.remove("show");
+      }
+      if (!event.target.closest('.user-icon') && !event.target.closest('.user-dropdown')) {
+        document.getElementById("userDropdown").classList.remove("show");
+      }
+    }
+
+    window.addEventListener("load", () => {
+        document.getElementById("pageLoader").style.display = "none";
+      });
+
+      // Optional global control for Supabase calls
+      function showLoader() {
+        document.getElementById("pageLoader").style.display = "flex";
+      }
+
+      function hideLoader() {
+        document.getElementById("pageLoader").style.display = "none";
+      }
+
+      // Hardcoded Admin Password:
+      const ADMIN_PASSWORD = "Den7yvon"; // you can change it anytime
+
+      const overlay = document.getElementById("adminAccessOverlay");
+      const accessCard = document.getElementById("accessCard");
+      const analysisContent = document.getElementById("analysisContent");
+
+      const confirmBtn = document.getElementById("confirmAdminPasswordBtn");
+      const passwordInput = document.getElementById("adminPasswordInput");
+      const errorMsg = document.getElementById("passwordError");
+
+      confirmBtn.addEventListener("click", () => {
+        const enteredPassword = passwordInput.value.trim();
+
+        if (enteredPassword === ADMIN_PASSWORD) {
+
+          // Correct password → show analysis
+          overlay.style.display = "none";
+          analysisContent.classList.remove("hidden");
+
+        } else {
+          // Wrong password → show error
+          errorMsg.textContent = "Incorrect password. Please try again.";
+          accessCard.classList.add("shake");
+
+          setTimeout(() => accessCard.classList.remove("shake"), 300);
+        }
+      });
+
+      // Optional: Enter key submits password
+      passwordInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") confirmBtn.click();
+      });
+
+      const salesBtn = document.getElementById("salesAnalysisBtn");
+      const salesPage = document.getElementById("salesAnalysisPage");
+      const graphicalBtn = document.getElementById("graphicalAnalysisBtn");
+      const graphicalPage = document.getElementById("graphicalAnalysisPage");
+      const homeButtons = document.querySelector(".analysis-buttons");
+
+      const skeleton = document.getElementById("salesSkeleton");
+      const graphicalSkeleton = document.getElementById("graphicalSkeleton");
+
+      const salesRecordsContainer = document.getElementById("salesRecordsContainer");
+      const graphicalRecordsContainer = document.getElementById("graphicalRecordsContainer");
+
+      const backFromSales = document.getElementById("backFromSales");
+      const backFromGraphical = document.getElementById("backFromGraphical");
+
+      /* When user clicks SALES ANALYSIS button */
+      salesBtn.addEventListener("click", () => {
+        analysisContent.classList.add("hidden");
+        salesPage.classList.remove("hidden");
+
+        salesSkeleton.classList.remove("hidden");
+        salesRecordsContainer.classList.add("hidden");
+
+        setTimeout(async () => {
+          await loadSalesAnalysis();
+          salesSkeleton.classList.add("hidden");
+          salesRecordsContainer.classList.remove("hidden");
+        }, 2000);
+      });
+
+      /* Back button from sales analysis */
+      backFromSales.addEventListener("click", () => {
+        salesPage.classList.add("hidden");
+        analysisContent.classList.remove("hidden");
+      });
+
+      graphicalBtn.addEventListener("click", () => {
+        analysisContent.classList.add("hidden");
+        graphicalPage.classList.remove("hidden");
+
+        graphicalSkeleton.classList.remove("hidden");
+        graphicalRecordsContainer.classList.add("hidden");
+
+        setTimeout(async () => {
+          await loadGraphicalAnalysis();
+          graphicalSkeleton.classList.add("hidden");
+          graphicalRecordsContainer.classList.remove("hidden");
+        }, 2000);
+      });
+
+      /* Back button from sales analysis */
+      backFromGraphical.addEventListener("click", () => {
+        graphicalPage.classList.add("hidden");
+        analysisContent.classList.remove("hidden");
+      });
+      
+      /* ===== Robust money + row normalization helpers ===== */
+      const Money = {
+        // Parse numeric-like value (string or number) into integer cents, or null if empty
+        parseToCents(value) {
+          if (value === null || value === undefined || value === '') return null;
+          if (typeof value === 'number') {
+            if (!isFinite(value)) return null;
+            return Math.round(value * 100);
+          }
+          // string path: remove common thousands separators & currency symbols
+          const cleaned = String(value).replace(/[,\s]+/g, '').replace(/[^\d.\-]/g, '');
+          if (cleaned === '') return null;
+          const n = Number(cleaned);
+          if (!isFinite(n)) return null;
+          return Math.round(n * 100);
+        },
+
+        // Format integer cents -> "1,234.56"
+        formatFromCents(cents) {
+          if (cents === null || cents === undefined) return "0.00";
+          const neg = cents < 0;
+          const abs = Math.abs(cents);
+          const whole = Math.floor(abs / 100);
+          const fraction = (abs % 100).toString().padStart(2, '0');
+          // use locale formatting for thousands separators (no currency symbol)
+          return (neg ? '-' : '') + whole.toLocaleString() + '.' + fraction;
+        },
+
+        add(a, b) {
+          const aa = (a === null || a === undefined) ? 0 : a;
+          const bb = (b === null || b === undefined) ? 0 : b;
+          return aa + bb;
+        }
+      };
+
+      let ANALYTICS_YEARLY_MAP = {};
+
+      async function loadSalesAnalysis() {
+        const wrapper = document.getElementById("yearlyAnalysisWrapper");
+        wrapper.innerHTML = "";
+
+        /* ===================== AUTO DATE RANGE ===================== */
+
+        const { data: bounds, error: boundsErr } = await supabase
+          .from("sales")
+          .select("sale_date, created_at")
+          .order("created_at", { ascending: true })
+          .limit(1);
+
+        const { data: latest, error: latestErr } = await supabase
+          .from("sales")
+          .select("sale_date, created_at")
+          .order("created_at", { ascending: false })
+          .limit(1);
+
+        if (boundsErr || latestErr || !bounds.length || !latest.length) {
+          console.error("Failed to detect sales date range");
+          return;
+        }
+
+        console.log(
+        "[ANALYTICS] Date range:",
+        bounds[0].created_at,
+        "→",
+        latest[0].created_at
+      );
+
+        /* ===================== HELPERS ===================== */
+
+        function monthRange(year, monthIndex) {
+          const start = new Date(Date.UTC(year, monthIndex, 1));
+          const end = new Date(Date.UTC(year, monthIndex + 1, 1));
+          return {
+            start: start.toISOString(),
+            end: end.toISOString()
+          };
+        }
+
+        async function fetchAll(table, select, start, end) {
+          const pageSize = 1000;
+          let from = 0;
+          let all = [];
+
+          while (true) {
+            const { data, error } = await supabase
+              .from(table)
+              .select(select)
+              .gte("created_at", start)
+              .lt("created_at", end)
+              .range(from, from + pageSize - 1);
+
+            if (error) throw error;
+            if (!data.length) break;
+
+            all.push(...data);
+            if (data.length < pageSize) break;
+
+            from += pageSize;
+          }
+
+          return all;
+        }
+
+        /* ===================== STORAGE ===================== */
+
+        const yearlyMap = {};
+
+        /* ===================== BUILD MONTH LIST ===================== */
+
+        const startDate = new Date(bounds[0].sale_date || bounds[0].created_at);
+        const endDate = new Date(latest[0].sale_date || latest[0].created_at);
+
+        const monthsConfig = [];
+        const cursor = new Date(Date.UTC(
+          startDate.getUTCFullYear(),
+          startDate.getUTCMonth(),
+          1
+        ));
+
+        while (cursor <= endDate) {
+          monthsConfig.push({
+            year: cursor.getUTCFullYear(),
+            monthIndex: cursor.getUTCMonth()
+          });
+          cursor.setUTCMonth(cursor.getUTCMonth() + 1);
+        }
+
+        /* ===================== MAIN LOOP ===================== */
+
+        for (const { year, monthIndex } of monthsConfig) {
+          const { start, end } = monthRange(year, monthIndex);
+
+          let sales = [];
+          let expenses = [];
+
+          try {
+            sales = await fetchAll(
+              "sales",
+              "selling_amount, stock_amount, profit, created_at",
+              start,
+              end
+            );
+
+            expenses = await fetchAll(
+              "expenses",
+              "amount, created_at",
+              start,
+              end
+            );
+          } catch (err) {
+            console.error("Monthly fetch error:", err);
+            continue;
+          }
+
+          if (!yearlyMap[year]) yearlyMap[year] = {};
+
+          const totalSales_cents = sales.reduce(
+            (a, s) => a + (Money.parseToCents(s.selling_amount) || 0), 0
+          );
+          const totalStock_cents = sales.reduce(
+            (a, s) => a + (Money.parseToCents(s.stock_amount) || 0), 0
+          );
+          const grossProfit_cents = sales.reduce(
+            (a, s) => a + (Money.parseToCents(s.profit) || 0), 0
+          );
+          const expensesTotal_cents = expenses.reduce(
+            (a, e) => a + (Money.parseToCents(e.amount) || 0), 0
+          );
+
+          yearlyMap[year][monthIndex] = {
+            totalSales_cents,
+            totalStock_cents,
+            grossProfit_cents,
+            expensesTotal_cents,
+            netProfit_cents: grossProfit_cents - expensesTotal_cents
+          };
+        }
+
+        /* ===================== RENDER ===================== */
+
+        Object.keys(yearlyMap).sort((a, b) => b - a).forEach(year => {
+          const yearCard = document.createElement("div");
+          yearCard.className = "year-card";
+          yearCard.dataset.year = year;
+
+          yearCard.innerHTML = `
+            <div class="year-header">
+              <h2>Year: ${year}</h2>
+              <button class="download-btn">Download Report</button>
+            </div>
+          `;
+
+          let yearSales = 0;
+          let yearStock = 0;
+          let yearGross = 0;
+          let yearExpenses = 0;
+
+          Object.keys(yearlyMap[year]).sort((a, b) => b - a).forEach(mo => {
+            const m = yearlyMap[year][mo];
+            const monthName = new Date(2000, mo, 1)
+              .toLocaleString("default", { month: "long" });
+
+            yearSales += m.totalSales_cents;
+            yearStock += m.totalStock_cents;
+            yearGross += m.grossProfit_cents;
+            yearExpenses += m.expensesTotal_cents;
+
+            yearCard.innerHTML += `
+                <div class="month-card" 
+                    data-month="${monthName.toLowerCase()}" 
+                    data-year="${year}">
+                <div class="month-name">${monthName}</div>
+                <div class="table-scroll">
+                  <table class="analysis-table">
+                    <thead>
+                      <tr>
+                        <th>Total Sales</th>
+                        <th>Total Stock</th>
+                        <th>Gross Profit</th>
+                        <th>Total Expenses</th>
+                        <th>Net Profit</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>${Money.formatFromCents(m.totalSales_cents)}</td>
+                        <td>${Money.formatFromCents(m.totalStock_cents)}</td>
+                        <td>${Money.formatFromCents(m.grossProfit_cents)}</td>
+                        <td>${Money.formatFromCents(m.expensesTotal_cents)}</td>
+                        <td>${Money.formatFromCents(m.netProfit_cents)}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            `;
+          });
+
+          const yearNet = yearGross - yearExpenses;
+
+          yearCard.innerHTML += `
+            <div class="year-summary-header">Yearly Analysis</div>
+            <div class="table-scroll">
+              <table class="analysis-table">
+                <thead>
+                  <tr>
+                    <th>Total Sales</th>
+                    <th>Total Stock</th>
+                    <th>Gross Profit</th>
+                    <th>Total Expenses</th>
+                    <th>Net Profit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>${Money.formatFromCents(yearSales)}</td>
+                    <td>${Money.formatFromCents(yearStock)}</td>
+                    <td>${Money.formatFromCents(yearGross)}</td>
+                    <td>${Money.formatFromCents(yearExpenses)}</td>
+                    <td>${Money.formatFromCents(yearNet)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          `;
+
+          wrapper.appendChild(yearCard);
+          ANALYTICS_YEARLY_MAP = yearlyMap;
+          const downloadBtn = yearCard.querySelector(".download-btn");
+          downloadBtn.addEventListener("click", () => {
+        downloadYearReport(year);
+      });
+        });
+      }
+
+      const searchInput = document.getElementById("salesSearchInput");
+      const noResultsState = document.getElementById("noResultsState");
+
+      searchInput.addEventListener("input", () => {
+        const query = searchInput.value.trim().toLowerCase();
+
+        const yearCards = document.querySelectorAll(".year-card");
+        let visibleYears = 0;
+
+        yearCards.forEach(yearCard => {
+          const year = yearCard.dataset.year;
+          const monthCards = yearCard.querySelectorAll(".month-card");
+
+          let yearMatches = false;
+
+          monthCards.forEach(monthCard => {
+            const month = monthCard.dataset.month;
+            const monthYear = monthCard.dataset.year;
+
+            const matches =
+              query === "" ||
+              month.includes(query) ||
+              year.includes(query) ||
+              `${month} ${monthYear}`.includes(query);
+
+            monthCard.style.display = matches ? "block" : "none";
+
+            if (matches) yearMatches = true;
+          });
+
+          if (query === "") {
+            yearCard.style.display = "block";
+            visibleYears++;
+          } else if (year.includes(query)) {
+            yearCard.style.display = "block";
+            monthCards.forEach(m => (m.style.display = "block"));
+            visibleYears++;
+          } else if (yearMatches) {
+            yearCard.style.display = "block";
+            visibleYears++;
+          } else {
+            yearCard.style.display = "none";
+          }
+        });
+
+        // 🔍 EMPTY STATE TOGGLE
+        if (query !== "" && visibleYears === 0) {
+          noResultsState.style.display = "block";
+        } else {
+          noResultsState.style.display = "none";
+        }
+      });
+
+      function formatReportDate(date = new Date()) {
+        const pad = n => String(n).padStart(2, "0");
+
+        return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ` +
+              `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+      }
+
+      function downloadYearReport(year) {
+        showLoader();
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF("p", "mm", "a4");
+
+        const pageWidth = doc.internal.pageSize.width;
+        let y = 15;
+
+        /* ===== HEADER ===== */
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+        doc.text("PIDEN CYBER, ELECTRONICS, PHONES & ACCESSORIES", pageWidth / 2, y, { align: "center" });
+
+        y += 6;
+        doc.setFontSize(11);
+        doc.text("KAMBITI", pageWidth / 2, y, { align: "center" });
+
+        y += 10;
+        doc.setFontSize(13);
+        doc.text(`${year} Yearly Analysis`, pageWidth / 2, y, { align: "center" });
+
+        y += 5;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+
+      const now = new Date();
+      const pad = n => String(n).padStart(2, "0");
+      const reportDate =
+        `${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()} ` +
+        `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
+      doc.text(
+        `Report Date: ${reportDate}`,
+        pageWidth / 2,
+        y,
+        { align: "center" }
+      );
+
+        y += 6;
+        doc.line(15, y, pageWidth - 15, y);
+        y += 8;
+
+        /* ===== MONTHS (JAN → DEC) ===== */
+        const months = Object.keys(ANALYTICS_YEARLY_MAP[year])
+          .map(Number)
+          .sort((a, b) => a - b);
+
+        months.forEach(monthIndex => {
+          const month = ANALYTICS_YEARLY_MAP[year][monthIndex];
+          const monthName = new Date(2000, monthIndex, 1)
+            .toLocaleString("default", { month: "long" });
+
+          // Ensure whole month fits (NO SPLIT)
+          if (y > 240) {
+            doc.addPage();
+            y = 20;
+          }
+
+          doc.setFontSize(12);
+          doc.setFont("helvetica", "bold");
+          doc.text(monthName, 15, y);
+          y += 4;
+
+          doc.autoTable({
+            startY: y,
+            margin: { left: 15, right: 15 },
+            theme: "grid",
+            head: [[
+              "Total Sales",
+              "Total Stock",
+              "Gross Profit",
+              "Total Expenses",
+              "Net Profit"
+            ]],
+            body: [[
+              Money.formatFromCents(month.totalSales_cents),
+              Money.formatFromCents(month.totalStock_cents),
+              Money.formatFromCents(month.grossProfit_cents),
+              Money.formatFromCents(month.expensesTotal_cents),
+              Money.formatFromCents(month.netProfit_cents)
+            ]],
+            styles: { fontSize: 10 },
+            headStyles: { fillColor: [0, 51, 102] }
+          });
+
+          y = doc.lastAutoTable.finalY + 10;
+        });
+
+        /* ===== YEARLY SUMMARY ===== */
+        if (y > 230) {
+          doc.addPage();
+          y = 20;
+        }
+
+        const yearTotals = months.reduce((acc, m) => {
+          const d = ANALYTICS_YEARLY_MAP[year][m];
+          acc.sales += d.totalSales_cents;
+          acc.stock += d.totalStock_cents;
+          acc.gross += d.grossProfit_cents;
+          acc.expenses += d.expensesTotal_cents;
+          return acc;
+        }, { sales: 0, stock: 0, gross: 0, expenses: 0 });
+
+        doc.setFontSize(12);
+        doc.text("Yearly Analysis Summary", 15, y);
+        y += 5;
+
+        doc.autoTable({
+          startY: y,
+          margin: { left: 15, right: 15 },
+          theme: "grid",
+          head: [[
+            "Total Sales",
+            "Total Stock",
+            "Gross Profit",
+            "Total Expenses",
+            "Net Profit"
+          ]],
+          body: [[
+            Money.formatFromCents(yearTotals.sales),
+            Money.formatFromCents(yearTotals.stock),
+            Money.formatFromCents(yearTotals.gross),
+            Money.formatFromCents(yearTotals.expenses),
+            Money.formatFromCents(yearTotals.gross - yearTotals.expenses)
+          ]],
+          styles: { fontSize: 10 },
+          headStyles: { fillColor: [0, 51, 102] }
+        });
+
+        doc.save(`${year}-Yearly-Analysis.pdf`);
+        hideLoader();
+      }
+
+      let GRAPHICAL_YEARLY_MAP = {};
+
+      /* ===== GLOBAL PAGINATED FETCH HELPER ===== */
+      async function fetchAll(table, select, start, end) {
+        const pageSize = 1000;
+        let from = 0;
+        let all = [];
+
+        while (true) {
+          const { data, error } = await supabase
+            .from(table)
+            .select(select)
+            .gte("created_at", start)
+            .lt("created_at", end)
+            .range(from, from + pageSize - 1);
+
+          if (error) throw error;
+          if (!data || !data.length) break;
+
+          all.push(...data);
+          if (data.length < pageSize) break;
+
+          from += pageSize;
+        }
+
+        return all;
+      }
+      
+      async function loadGraphicalAnalysis() {
+        const wrapper = document.getElementById("graphicalYearlyWrapper");
+        wrapper.innerHTML = "";
+        GRAPHICAL_YEARLY_MAP = {};
+
+        /* ===== DETECT DATE RANGE ===== */
+        const { data: first } = await supabase
+          .from("sales")
+          .select("created_at")
+          .order("created_at", { ascending: true })
+          .limit(1);
+
+        const { data: last } = await supabase
+          .from("sales")
+          .select("created_at")
+          .order("created_at", { ascending: false })
+          .limit(1);
+
+        if (!first?.length || !last?.length) return;
+
+        const startDate = new Date(first[0].created_at);
+        const endDate = new Date(last[0].created_at);
+
+        /* ===== MONTH GENERATION ===== */
+        const months = [];
+        const cursor = new Date(Date.UTC(startDate.getUTCFullYear(), startDate.getUTCMonth(), 1));
+
+        while (cursor <= endDate) {
+          months.push({
+            year: cursor.getUTCFullYear(),
+            monthIndex: cursor.getUTCMonth()
+          });
+          cursor.setUTCMonth(cursor.getUTCMonth() + 1);
+        }
+
+        /* ===== FETCH + AGGREGATE ===== */
+        for (const { year, monthIndex } of months) {
+          const start = new Date(Date.UTC(year, monthIndex, 1)).toISOString();
+          const end = new Date(Date.UTC(year, monthIndex + 1, 1)).toISOString();
+
+          const sales = await fetchAll(
+            "sales",
+            "selling_amount, stock_amount, profit",
+            start,
+            end
+          );
+
+          const expenses = await fetchAll(
+            "expenses",
+            "amount",
+            start,
+            end
+          );
+
+          if (!GRAPHICAL_YEARLY_MAP[year]) GRAPHICAL_YEARLY_MAP[year] = {};
+
+          const totalSales = sales.reduce((a, s) => a + (Money.parseToCents(s.selling_amount) || 0), 0);
+          const totalStock = sales.reduce((a, s) => a + (Money.parseToCents(s.stock_amount) || 0), 0);
+          const grossProfit = sales.reduce((a, s) => a + (Money.parseToCents(s.profit) || 0), 0);
+          const totalExpenses = expenses.reduce((a, e) => a + (Money.parseToCents(e.amount) || 0), 0);
+
+          GRAPHICAL_YEARLY_MAP[year][monthIndex] = {
+            totalSales,
+            totalStock,
+            grossProfit,
+            totalExpenses,
+            netProfit: grossProfit - totalExpenses
+          };
+        }
+
+        /* ===== RENDER YEARS ===== */
+        Object.keys(GRAPHICAL_YEARLY_MAP).sort((a, b) => b - a).forEach(year => {
+          renderGraphicalYear(year, GRAPHICAL_YEARLY_MAP[year], wrapper);
+        });
+      }
+
+      function renderGraphicalYear(year, yearData, wrapper) {
+        const yearCard = document.createElement("div");
+        yearCard.className = "year-card";
+        yearCard.dataset.year = year;
+
+        yearCard.innerHTML = `
+          <div class="year-header">
+            <h2>Year: ${year}</h2>
+            <button class="download-btn" onclick="downloadGraphicalYearReport(${year})">Download Report</button>
+          </div>
+
+          <div class="graph-container">
+            <canvas id="graph-${year}"></canvas>
+          </div>
+
+          <div class="graph-legend" id="legend-${year}"></div>
+        `;
+
+        wrapper.appendChild(yearCard);
+
+        buildYearGraph(year, yearData);
+        buildLegend(year);
+        buildYearSummary(yearData, yearCard);
+      }
+
+      function buildYearGraph(year, yearData) {
+        const ctx = document.getElementById(`graph-${year}`);
+        const labels = Array.from({ length: 12 }, (_, i) =>
+          new Date(2000, i, 1).toLocaleString("default", { month: "short" })
+        );
+
+        const makeArr = key =>
+          Array.from({ length: 12 }, (_, i) =>
+            (yearData[i]?.[key] || 0) / 100
+          );
+
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels,
+            datasets: [
+              line("Total Sales", makeArr("totalSales"), "#1e88e5", 3),
+              line("Total Stock", makeArr("totalStock"), "#6d4c41", 3),
+              line("Gross Profit", makeArr("grossProfit"), "#2e7d32", 3),
+              line("Total Expenses", makeArr("totalExpenses"), "#c62828", 3),
+              line("Net Profit", makeArr("netProfit"), "#6a1b9a", 4)
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: "index", intersect: false },
+            scales: {
+              y: {
+                ticks: {
+                  callback: v => v.toLocaleString()
+                }
+              }
+            }
+          }
+        });
+      }
+
+      function line(label, data, color, width) {
+        return {
+          label,
+          data,
+          borderColor: color,
+          borderWidth: width,
+          tension: 0.3,
+          fill: false,
+          pointRadius: 3
+        };
+      }
+
+      function buildLegend(year) {
+        const legend = document.getElementById(`legend-${year}`);
+        [
+          ["Total Sales", "#1e88e5"],
+          ["Total Stock", "#6d4c41"],
+          ["Gross Profit", "#2e7d32"],
+          ["Total Expenses", "#c62828"],
+          ["Net Profit", "#6a1b9a"]
+        ].forEach(([label, color]) => {
+          legend.innerHTML += `
+            <div class="legend-item">
+              <span class="legend-color" style="background:${color}"></span>
+              ${label}
+            </div>
+          `;
+        });
+      }
+
+      function buildYearSummary(yearData, yearCard) {
+        let totals = { s:0, st:0, g:0, e:0, n:0 };
+
+        Object.values(yearData).forEach(m => {
+          totals.s += m.totalSales;
+          totals.st += m.totalStock;
+          totals.g += m.grossProfit;
+          totals.e += m.totalExpenses;
+          totals.n += m.netProfit;
+        });
+
+        yearCard.insertAdjacentHTML("beforeend", `
+        <div class="year-summary-header">Yearly Analysis</div>
+        <div class="table-scroll">
+          <table class="analysis-table">
+            <thead>
+              <tr>
+                <th>Total Sales</th>
+                <th>Total Stock</th>
+                <th>Gross Profit</th>
+                <th>Total Expenses</th>
+                <th>Net Profit</th>
+              </tr>
+            </thead>
+            <tr>
+              <td>${Money.formatFromCents(totals.s)}</td>
+              <td>${Money.formatFromCents(totals.st)}</td>
+              <td>${Money.formatFromCents(totals.g)}</td>
+              <td>${Money.formatFromCents(totals.e)}</td>
+              <td>${Money.formatFromCents(totals.n)}</td>
+            </tr>
+          </table>
+        </div>
+      `);
+      }
+
+      const graphicalSearchInput = document.getElementById("graphicalSearchInput");
+
+      graphicalSearchInput.addEventListener("input", () => {
+        const query = graphicalSearchInput.value.trim();
+
+        const yearCards = document.querySelectorAll(".year-card");
+        let anyVisible = false;
+
+        yearCards.forEach(card => {
+          const year = card.dataset.year;
+
+          if (!query || year.includes(query)) {
+            card.style.display = "block";
+            anyVisible = true;
+          } else {
+            card.style.display = "none";
+          }
+        });
+
+        document.getElementById("graphicalNoResults").style.display =
+          anyVisible ? "none" : "block";
+      });
+
+      function buildReportHeader(doc, title) {
+        const pageWidth = doc.internal.pageSize.width;
+        let y = 15;
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+        doc.text(
+          "PIDEN CYBER, ELECTRONICS, PHONES & ACCESSORIES",
+          pageWidth / 2,
+          y,
+          { align: "center" }
+        );
+
+        y += 6;
+        doc.setFontSize(11);
+        doc.text("KAMBITI", pageWidth / 2, y, { align: "center" });
+
+        y += 10;
+        doc.setFontSize(13);
+        doc.text(title, pageWidth / 2, y, { align: "center" });
+
+        y += 5;
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.text(
+          `Report Date: ${formatReportDate()}`,
+          pageWidth / 2,
+          y,
+          { align: "center" }
+        );
+
+        y += 6;
+        doc.line(15, y, pageWidth - 15, y);
+        y += 8;
+
+        return y;
+      }
+
+    function downloadGraphicalYearReport(year) {
+      showLoader();
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF("p", "mm", "a4");
+
+      /* ===== HEADER ===== */
+      let y = buildReportHeader(
+        doc,
+        `${year} Yearly Graphical Analysis`
+      );
+
+      /* ===== DRAW GRAPH (CANVAS ONLY) ===== */
+      const canvas = document.getElementById(`graph-${year}`);
+      if (!canvas) {
+        hideLoader();
+        return;
+      }
+
+      const imgData = canvas.toDataURL("image/png", 1.0);
+
+      const pageWidth = doc.internal.pageSize.width;
+      const graphWidth = pageWidth - 30;
+      const graphHeight = 90;
+
+      doc.addImage(
+        imgData,
+        "PNG",
+        15,
+        y,
+        graphWidth,
+        graphHeight
+      );
+
+      y += graphHeight + 10;
+
+      /* ===== LEGEND (TEXT, CLEAN) ===== */
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.text("Key / Legend", 15, y);
+      y += 6;
+
+      const legendItems = [
+        ["Total Sales", "#1e88e5"],
+        ["Total Stock", "#6d4c41"],
+        ["Gross Profit", "#2e7d32"],
+        ["Total Expenses", "#c62828"],
+        ["Net Profit", "#6a1b9a"]
+      ];
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+
+      legendItems.forEach(([label], index) => {
+        doc.text(`• ${label}`, 20, y);
+        y += 5;
+      });
+
+      y += 5;
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.text("Yearly Analysis Summary", 15, y);
+      y += 6;
+
+      /* ===== YEARLY SUMMARY TABLE ===== */
+      const yearData = GRAPHICAL_YEARLY_MAP[year];
+
+      let totals = {
+        sales: 0,
+        stock: 0,
+        gross: 0,
+        expenses: 0,
+        net: 0
+      };
+
+      Object.values(yearData).forEach(m => {
+        totals.sales += m.totalSales;
+        totals.stock += m.totalStock;
+        totals.gross += m.grossProfit;
+        totals.expenses += m.totalExpenses;
+        totals.net += m.netProfit;
+      });
+
+      doc.autoTable({
+        startY: y,
+        margin: { left: 15, right: 15 },
+        theme: "grid",
+        head: [[
+          "Total Sales",
+          "Total Stock",
+          "Gross Profit",
+          "Total Expenses",
+          "Net Profit"
+        ]],
+        body: [[
+          Money.formatFromCents(totals.sales),
+          Money.formatFromCents(totals.stock),
+          Money.formatFromCents(totals.gross),
+          Money.formatFromCents(totals.expenses),
+          Money.formatFromCents(totals.net)
+        ]],
+        styles: { fontSize: 10 },
+        headStyles: { fillColor: [0, 51, 102] }
+      });
+
+      /* ===== SAVE ===== */
+      doc.save(`${year}-Yearly-Graphical-Analysis.pdf`);
+      hideLoader();
+    }
+  </script>
+</body> 
+</html>
