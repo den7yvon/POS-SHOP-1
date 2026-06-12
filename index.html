@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIDEN | LOGIN</title>
+    <link rel="shortcut icon" type="image/x-icon" href="Favicon.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {display: flex;align-items: center; justify-content: center;
+            font-family: 'Poppins', sans-serif; line-height: 1.4; min-height: 90vh;
+            flex-direction: column; margin: 0; background-color: #f1f4f8;}
+        
+        #pageLoader {position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9);
+            z-index: 9999; display: flex; align-items: center; justify-content: center;}
+  
+        .spinner {border: 6px solid #ccc; border-top: 6px solid #2f0fe4; border-radius: 50%; width: 40px; height: 40px;
+            animation: spin 1s linear infinite;}
+    
+        .title {color: #003366; text-align: center;font-size: 24px; margin-bottom: 5px;}
+
+        .advert {color: #777; text-align: center; font-size: 15px; margin-bottom: 20px; font-weight: normal;}
+
+        .page-wrap {width: 90%; padding: 0 16px; display: flex; justify-content: center;}
+        
+        .main {position: relative; background-color: white; border-radius: 15px; 
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); padding: 25px; width: 100%;
+            max-width: 320px;  text-align: center; overflow: hidden; z-index: 1;  margin: 0 auto;}
+
+        .main::before {content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 25px;
+            background-image: url('Favicon.jpg'); background-repeat: no-repeat;
+            background-position: center; background-size: 50%; opacity: 0.2; 
+            z-index: 0; pointer-events: none;}
+
+        h2 {color: #003366; margin-bottom: 5px;}
+
+        h3 {color: #777; margin-bottom: 20px; font-weight: normal;}
+
+        label {display: block; margin: 10px 0 5px; color: #444; font-size: 14px;
+            font-weight: 600; text-align: left;}
+
+        input {width: 100%; padding: 10px 12px; margin-bottom: 15px; border: 1px solid #ccc;
+            border-radius: 6px; font-size: 15px; box-sizing: border-box;}
+
+        button {width: 100%; padding: 12px; border: none; background-color: #003366; color: white;
+            font-size: 16px; border-radius: 6px; cursor: pointer; font-weight: bold;
+            transition: background-color 0.3s ease;}
+
+        button:hover {background-color: #0055aa;}
+
+        footer {background-color: transparent; color: #003366; text-align: center; padding: 15px 10px;
+            position: fixed; bottom: 0; width: 100%; font-size: 13px;}
+
+        .popup {display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background-color: #003366; color: white; padding: 20px 30px; border-radius: 10px;
+            font-size: 18px; text-align: center; z-index: 999;}
+
+        .loader {border: 4px solid #f3f3f3; border-top: 4px solid #003366; border-radius: 50%;
+            width: 30px; height: 30px; margin: 10px auto 0; animation: spin 0.8s linear infinite;}
+
+        @keyframes spin {0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); }}
+
+        .marquee {font-size: 22px; color: #003366; margin-top: 10px; margin-bottom: 0px;}
+
+        .login-links {margin-top: 18px; display: flex; flex-direction: row; gap: 10px;}
+
+        .login-links button {background: none; border: none; color: #003366; font-size: 14px;
+            cursor: pointer;  padding: 6px;  transition: color 0.2s ease;}
+
+        .login-links button:hover {color: #0055aa; text-decoration: underline;}
+
+        .popup-overlay {position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none;
+            align-items: center; justify-content: center; z-index: 999;
+            animation: slideUp 0.4s ease;}
+
+        .popup-card {background: #fff; width: 95%; max-width: 300px; max-height: 70vh;
+            border-radius: 12px; display: flex; flex-direction: column;
+            animation: slideUp 0.4s ease;}
+
+        @keyframes slideUp {from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }}
+
+        .popup-header {background-color: #003366; color: white; padding: 12px; display: flex;
+            justify-content: space-between; align-items: center; font-weight: bold;
+            border-top-right-radius: 12px;
+            border-top-left-radius: 12px;}
+
+        .popup-title {font-size: 18px; font-weight: bold;}
+
+        .popup-close {cursor: pointer; font-size: 20px;}
+
+        .popup-body {padding: 1px;  flex: 1;  overflow-y: auto;  display: flex;  flex-direction: column;
+            gap: 1px;}
+
+        .popup-body label {display: block; font-weight: 600; margin-top: 0px; margin-bottom: 4px; margin-left: 10px}
+
+        .popup-body input {width: 95%; padding: 8px; font-size: 14px; border: 1px solid #ccc;
+            border-radius: 6px; margin-bottom: 4px; margin-left: 10px}
+
+        .popup-body p{margin-left: 10px}
+
+        .popup-footer {padding: 15px; border-top: 1px solid #eee; text-align: center;}
+
+        .popup-footer button {background-color: #003366; color: white; border: none; padding: 10px 20px;
+            width: 90%; font-size: 15px; border-radius: 10px; cursor: pointer;}
+
+        .popup-footer button:hover {background-color: #0055aa;}
+
+        /* Loop for a success popup*/
+        .popup-content {background: white; border-radius: 12px; width: 90%; max-width: 300px; overflow: hidden;
+            animation: slideUpPopup 0.4s ease;}
+
+        .checkmark {width: 80px; height: 80px; stroke: #003366; stroke-width: 4; stroke-linecap: round;
+            stroke-linejoin: round; stroke-miterlimit: 10; animation: drawCircle 0.6s ease-in-out forwards;
+            display: block; overflow: visible; box-sizing: content-box;}
+
+        .checkmark-circle {stroke-dasharray: 166; stroke-dashoffset: 166;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;}
+
+        .checkmark-check {stroke-dasharray: 48; stroke-dashoffset: 48;
+            animation: stroke 0.3s 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;}
+
+        @keyframes stroke {to {stroke-dashoffset: 0;}}
+
+        @keyframes drawCircle {0% {transform: scale(0); opacity: 0;} 100% {transform: scale(1); opacity: 1;}}
+
+        .tick-animation {display: flex; justify-content: center; align-items: center; margin: 20px 0;}
+
+        .overlay {position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 9990;}
+
+        .hidden {display: none;}
+
+        .popup-content.small {width: 300px; padding: 5px 5px; text-align: center; align-items: center;}
+
+        .popup-buttons button.edit-back{background-color: #003366; color: white; cursor: pointer; width: 50%;
+            font-weight: bold; margin-bottom: 10px;}
+
+        .popup-buttons button.edit-back:hover{background-color: #0055aa;}
+
+        .popup-buttons button {margin: 10px 5px 0; padding: 10px 15px; border: none; border-radius: 6px;
+            font-weight: bold; cursor: pointer;}
+        /*End of loop for success popup*/
+
+        h4 {color: #003366; font-size: 20px; margin-bottom: 1px;}
+
+        h5 {color: #777; margin-bottom: 20px; font-size: 15px; font-weight: normal;}    
+        
+        .password-wrap {position: relative; display: flex;  align-items: center;}
+
+        .password-wrap input {width: 100%; padding-right: 40px;  background: transparent;}
+
+        .password-wrap .eye {position: absolute; right: 12px;  cursor: pointer; user-select: none;
+            font-size: 16px;  opacity: 0.7;}
+
+        .password-wrap .eye:hover {opacity: 1;}
+
+        .welcome-wrap {overflow: hidden; width: 100%; text-align: center;}
+
+        .marquee {display: inline-block; animation: floatText 6s ease-in-out infinite;}
+
+        @keyframes floatText {0% { opacity: 0.6; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(-6px); }
+            100% { opacity: 0.6; transform: translateY(0); }}
+    
+        .terms-section {margin-top: 15px;  font-size: 13px;}
+
+        .terms-header {display: flex; align-items: center;  gap: 8px;  user-select: none;
+            font-weight: 600; color: #003366; width: 90%; margin-left: 10px;}
+
+        .terms-header input[type="checkbox"] {margin: 0; cursor: pointer; width: 16px;
+            height: 16px; flex-shrink: 0;}
+
+        .terms-text {flex-grow: 1;}
+
+        .terms-toggle {font-size: 14px; cursor: pointer; transition: transform 0.3s ease;}
+
+        .terms-toggle.open {transform: rotate(180deg);}
+
+        .terms-content {max-height: 0; overflow: hidden; transition: max-height 0.35s ease;
+            margin-top: 8px; padding-left: 18px; color: #555;}
+
+        .terms-content.open {max-height: 700px;}
+
+        .terms-content ol {padding-left: 16px;}
+
+        .terms-content li {margin-bottom: 6px; line-height: 1.4;}
+
+        .referral-section {margin-top: 10px;}
+
+        .referral-label {font-weight: 600; display: block; margin-bottom: 5px;}
+
+        .referral-options {display: flex;  gap: 20px;  margin-bottom: 5px;}
+
+        .referral-option {display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 14px;}
+
+        .referral-option input[type="radio"] {margin: 0; cursor: pointer; width: 16px; margin-right: 10px;
+            height: 16px; flex-shrink: 0;}
+
+        #referralCodeWrapper {margin-top: 6px;}
+
+        .hidden {display: none;}
+    </style>
+</head>
+<body>
+    <!-- Loader Spinner -->
+    <div id="pageLoader">
+        <div class="spinner"></div>
+    </div>
+
+    <h1 class="title">PIDEN COMPANY LIMITED</h1>
+    <h7 class="advert"> Manage sales, stock, expenses, orders and analyze everything — all in one smart POS</h7>
+    <div class="page-wrap">
+    <div class="main">
+        <h2>PIDEN POINT OF SALE</h2>
+        <h3>Enter your login credentials</h3>
+    
+        <form id="loginForm">
+            <label>Phone Number:</label>
+            <input type="text" id="username" placeholder="e.g. 0748408498" required>
+    
+            <label>Password:</label>
+            <div class="password-wrap">
+                <input type="password" id="password" placeholder="Enter your Password" required>
+                <span class="eye" aria-label="Toggle password visibility" 
+                onclick="togglePassword('password', this)" >👁️</span>
+            </div>
+    
+            <button type="submit" id="loginBtn">SIGN IN</button>
+            <div id="loader" class="loader" style="display: none;"></div>
+    
+            <!-- ✅ NEW LINKS SECTION -->
+            <div class="login-links">
+                <button type="button" id="registerBusinessBtn">
+                    Register Business
+                </button>
+    
+                <button type="button" id="forgotPasswordBtn">
+                    Forgot Password?
+                </button>
+            </div>
+        </form>
+    </div>
+    </div>
+
+    <div id="successPopup" class="popup">Login Successful!</div>
+
+    <div class="welcome-wrap">
+        <h3 class="marquee">WELCOME</h3>
+    </div>
+
+    <!-- Register Business Popup -->
+    <div id="registerPopup" class="popup-overlay">
+        <div class="popup-card">
+
+            <!-- Header -->
+            <div class="popup-header">
+                <span class="popup-title">REGISTER BUSINESS</span>
+                <span class="popup-close" id="closeRegisterPopup">&times;</span>
+            </div>
+
+            <!-- Body -->
+            <div class="popup-body">
+                <label>Business Name</label>
+                <input type="text" id="businessName" placeholder="e.g. PIDEN CYBER" required>
+                <label>Phone No.</label>
+                <input type="text" id="phone" placeholder="e.g 0748408498" required>
+                <label>Owner's Name</label>
+                <input type="text" id="businessOwner" placeholder="e.g. DENNIS" required>
+                <label>Street/ Location/ Building</label>
+                <input type="text" id="location" placeholder="e.g. CBD, RNG PLAZA SHP G20" required>
+                <label>Country</label>
+                <input type="text" id="country" placeholder="e.g. KENYA" required>
+                <label>County</label>
+                <input type="text" id="county" placeholder="e.g NAIROBI" required>
+                 <label>Business Description/Slogan</label>
+                <input type="text" id="description" placeholder="e.g. Dealers in POS..." required></input>
+                
+                <label>Login Password</label>
+                <div class="password-wrap">
+                    <input type="password" id="loginPassword" placeholder="Enter Login Password" required>
+                    <span class="eye"aria-label="Toggle password visibility" 
+                     onclick="togglePassword('loginPassword', this)">👁️</span>
+                </div>                
+                <div class="password-wrap">
+                    <input type="password" id="confirmLoginPassword" placeholder="Confirm Login Password" required>
+                    <span class="eye" aria-label="Toggle password visibility" 
+                    onclick="togglePassword('confirmLoginPassword', this)">👁️</span>
+                </div>
+
+                <label>Admin Password</label>
+                <div class="password-wrap">
+                    <input type="password" id="adminPassword" placeholder="Enter Admin Password" required>
+                    <span class="eye" aria-label="Toggle password visibility" 
+                     onclick="togglePassword('adminPassword', this)">👁️</span>
+                </div>                
+                <div class="password-wrap">
+                    <input type="password" id="confirmAdminPassword" placeholder="Confirm Admin Password" required>
+                    <span class="eye" aria-label="Toggle password visibility" 
+                    onclick="togglePassword('confirmAdminPassword', this)">👁️</span>
+                </div>
+
+                <!-- Referral Section -->
+                <div class="referral-section">
+                    <label class="referral-label">Referred by Someone?</label>
+                
+                    <div class="referral-options">
+                        <label class="referral-option">
+                            <input type="radio" name="referralChoice" value="yes" id="refYes">Yes
+                        </label>
+                    
+                        <label class="referral-option">
+                            <input type="radio" name="referralChoice" value="no" id="refNo">No
+                        </label>
+                    </div>
+                
+                    <!-- Hidden by default -->
+                    <div id="referralCodeWrapper" class="hidden">
+                    <label>Enter Referral Code:</label>
+                    <input
+                        type="text"
+                        id="referralCode"
+                        placeholder="Marketer's Phone e.g. 0748408498"
+                    />
+                    </div>
+                </div>
+
+            <!-- Terms & Conditions -->
+            <div class="terms-section">
+                <div class="terms-header">
+                    <input type="checkbox" id="agreeTerms">
+                
+                    <span class="terms-text">Agree to Terms & Conditions</span>
+                
+                    <span class="terms-toggle" id="toggleTerms">▼</span>
+                </div>
+
+                <div class="terms-content" id="termsContent">
+                    <ol>
+                        <li>All activation credit fees and service payments made are non-refundable.</li>
+                        <li>CHARGES: All new users must enjoy a <b>3 day</b> free trial after which they will pay the activation credit fee of <b>KES. 200</b> only
+                            which will be forward deducted as part of user service payments until depleted. After depletion of activation fee credit,
+                            Service payments are charged at <b>KES 0.50</b> per completed sale (Per individual item not as a band).</li>
+                        <li>Service payments are computed and billed automatically while approval of payments made may take up to 24 hrs.</li>
+                        <li>The POS may be temporarily disabled after <b>three (3) consecutive days</b> of service payment default.</li>
+                        <li>All service payments must be made only through official payment channels as specified in issued billing quotations.</li>
+                        <li>The POS system is provided “as is” and may be subject to periodic updates.</li>
+                        <li>Support services are available exclusively through the official contact channels provided within the system.</li>
+                    </ol>
+                </div>            
+            </div>
+
+            </div>
+            <!-- Footer -->
+            <div class="popup-footer">
+                <button id="completeRegistration" type="button">COMPLETE</button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="successAdd" class="overlay hidden">
+        <div class="popup-content small">
+        <h4>Business Registered Successfully!</h4>
+        <h5>Welcome to PIDEN POINT OF SALE SYSTEM. Kindly proceed to login and start your journey with us.</h5>
+        <div class="tick-animation">
+            <svg class="checkmark" viewBox="0 0 52 52">
+            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="checkmark-check" fill="none" d="M14 27l7 7 17-17"/>
+            </svg>
+        </div>
+        <div class="popup-buttons">
+            <button class="edit-back" onclick="returnToLogin()">Proceed</button>
+        </div>
+        </div>
+    </div>
+  
+      <!-- Reset Password Popup -->
+      <div id="resetPopup" class="popup-overlay">
+        <div class="popup-card">
+
+            <!-- Header -->
+            <div class="popup-header">
+                <span class="popup-title">RESET LOGIN PASSWORD</span>
+                <span class="popup-close" id="closeResetPopup">&times;</span>
+            </div>
+
+            <!-- Body -->
+            <div class="popup-body">
+                <p>To reset your password, kindly verify the phone number used to register
+                    your business as well as the Admin Password you used.
+                </p>
+                <label>Verify Phone No.</label>
+                <input type="text" id="verifyPhone" placeholder="e.g 0748408498" required>
+              
+                <label>Verify Admin Password</label>
+                <div class="password-wrap">
+                    <input type="password" id="verifyAdminPassword" placeholder="Enter Admin Password" required>
+                    <span class="eye" aria-label="Toggle password visibility" 
+                    onclick="togglePassword('verifyAdminPassword', this)">👁️</span>
+                </div>     
+
+                <label>Set New Login Password</label>
+                <div class="password-wrap">
+                    <input type="password" id="newLoginPassword" placeholder="Enter Login Password" required>
+                    <span class="eye" aria-label="Toggle password visibility" 
+                    onclick="togglePassword('newLoginPassword', this)">👁️</span>
+                </div>                
+                <div class="password-wrap">
+                    <input type="password" id="confirmNewLoginPassword" placeholder="Confirm Login Password" required>
+                    <span class="eye" aria-label="Toggle password visibility" 
+                     onclick="togglePassword('confirmNewLoginPassword', this)">👁️</span>
+                </div>
+                <p>
+                    Need help?  
+                    <a href="Tel:+254748408498">
+                      <i class="fas fa-phone"></i> Call us: 0748408498
+                    </a> |
+                    <a href="https://wa.me/254748408498" target="_blank">
+                      <i class="fab fa-whatsapp"></i> WhatsApp us: +254748408498
+                    </a>
+                  </p>
+            </div>
+
+            <!-- Footer -->
+            <div class="popup-footer">
+                <button id="completeReset">COMPLETE</button>
+            </div>
+        </div>
+       </div>
+    
+       <div id="successReset" class="overlay hidden">
+            <div class="popup-content small">
+            <h4>Login Password Reset Successfully!</h4>
+            <h5>Sorry you had forgotten your password. Kindly proceed to login and continue your journey with us.</h5>
+            <div class="tick-animation">
+                <svg class="checkmark" viewBox="0 0 52 52">
+                <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark-check" fill="none" d="M14 27l7 7 17-17"/>
+                </svg>
+            </div>
+            <div class="popup-buttons">
+                <button class="edit-back" onclick="returnLogin()">Proceed</button>
+            </div>
+            </div>
+        </div>
+
+        <footer>
+            &copy; <span id="currentYear"></span> PIDEN V2.0. All rights reserved <br> Contact us:
+            <a href="tel:+254748408498">
+              <i class="fas fa-phone"></i> Call
+            </a> |
+            <a href="https://wa.me/254748408498" target="_blank">
+              <i class="fab fa-whatsapp"></i> WhatsApp: +254748408498
+            </a>
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script type="module">
+          import { SUPABASE_ANON_KEY } from "./p.js";        
+          document.addEventListener("DOMContentLoaded", () => {
+            const supabaseUrl = "https://mzvlybnvgpemdayoylfk.supabase.co";        
+            window.supabase = supabase.createClient(
+              supabaseUrl,
+              SUPABASE_ANON_KEY
+            );
+          });
+        </script>
+
+    <script>
+        window.addEventListener("load", () => {
+            // Clear any previous session data
+            sessionStorage.clear();
+
+            document.getElementById("pageLoader").style.display = "none";
+        });
+
+        function togglePassword(inputId, eyeEl) {
+            const input = document.getElementById(inputId);
+
+            if (input.type === "password") {
+                input.type = "text";
+                eyeEl.textContent = "🙈";
+            } else {
+                input.type = "password";
+                eyeEl.textContent = "👁️";
+            }
+        }
+
+        const toggleTerms = document.getElementById("toggleTerms");
+        const termsContent = document.getElementById("termsContent");
+
+        toggleTerms.addEventListener("click", (e) => {
+            e.stopPropagation(); // prevents checkbox interference
+            termsContent.classList.toggle("open");
+            toggleTerms.classList.toggle("open");
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+        const refYes = document.getElementById("refYes");
+        const refNo = document.getElementById("refNo");
+        const referralWrapper = document.getElementById("referralCodeWrapper");
+        const referralInput = document.getElementById("referralCode");
+
+        refYes.addEventListener("change", () => {
+            referralWrapper.classList.remove("hidden");
+            referralInput.focus();
+        });
+
+        refNo.addEventListener("change", () => {
+            referralWrapper.classList.add("hidden");
+            referralInput.value = ""; // 🧹 prevent accidental submission
+        });
+        });
+
+        document.getElementById("currentYear").textContent = new Date().getFullYear();
+        const loginForm = document.getElementById("loginForm");
+        const loader = document.getElementById("loader");
+        const popup= document.getElementById("successPopup");
+        const username= document.getElementById("username");
+        const password= document.getElementById("password");
+
+        loginForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const phone = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+
+            if (!phone || !password) {
+                alert("Please enter phone number and password.");
+                return;
+            }
+
+            loader.style.display = "block";
+
+            /* 1️⃣ Verify phone number */
+            const { data, error } = await window.supabase
+                .from("profile")
+                .select("*")
+                .eq("phone", phone)
+                .limit(1);
+
+            if (error) {
+                loader.style.display = "none";
+                alert("Login error. Please try again.");
+                console.error(error);
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                loader.style.display = "none";
+                alert("No business is registered under that phone number.");
+                return;
+            }
+
+            let business = data[0];
+
+            /* 2️⃣ Validate password */
+            if (business.loginpassword !== password) {
+                loader.style.display = "none";
+                alert("Incorrect password.");
+                return;
+            }
+
+            /* 3️⃣ Business eligibility check */
+            if (business.businessstatus === "Not Eligible") {
+                loader.style.display = "none";
+                alert(
+                    "Your business is not eligible to access the POS. Kindly contact our PIDEN team for immediate assistance."
+                );
+                return;
+            }
+
+            const now = new Date();
+            let updates = {};
+
+            /* 4️⃣ Account stage check */
+            if (business.accountstage === "Free Trial") {
+                const freeTrialEnd = new Date(business.freetrialend);
+
+                if (now > freeTrialEnd) {
+                    updates.accountstage = "Active";
+                    business.accountstage = "Active";
+                }
+            }
+
+            /* 5️⃣ Free trial status check */
+            if (business.freetrialstatus === "Active") {
+                const freeTrialEnd = new Date(business.freetrialend);
+
+                if (now > freeTrialEnd) {
+                    updates.freetrialstatus = "Expired";
+                    business.freetrialstatus = "Expired";
+                }
+            }
+
+            /* Update DB only if changes are required */
+            if (Object.keys(updates).length > 0) {
+                const { error: updateError } = await window.supabase
+                    .from("profile")
+                    .update(updates)
+                    .eq("id", business.id);
+
+                if (updateError) {
+                    loader.style.display = "none";
+                    alert("Failed to update account status. Please try again.");
+                    console.error(updateError);
+                    return;
+                }
+            }
+
+            /* Refresh business data after updates */
+            const { data: refreshedData } = await window.supabase
+                .from("profile")
+                .select("*")
+                .eq("id", business.id)
+                .limit(1);
+
+            business = refreshedData[0];
+
+            /* 6️⃣ Store session data */
+            await window.supabase
+                .from("profile")
+                .update({ lastlogin: new Date().toISOString() })
+                .eq("id", business.id);
+
+            // 🔐 Create a safe session object (NO PASSWORDS)
+            const safeBusinessProfile = {
+                id: business.id,
+                businessid: business.businessid,
+                businessname: business.businessname,
+                phone: business.phone,
+                businessowner: business.businessowner,
+                location: business.location,
+                country: business.country,
+                county: business.county,
+                description: business.description,
+                accountstage: business.accountstage,
+                businessstatus: business.businessstatus,
+                freetrialstatus: business.freetrialstatus,
+                freetrialend: business.freetrialend,
+                activationfeestatus: business.activationfeestatus,
+                activationcredit: business.activationcredit,
+                activationcreditstatus: business.activationfeestatus,
+                lastlogin: business.lastlogin,
+                created_at: business.created_at
+            };
+
+            // ✅ Store ONLY safe data
+            sessionStorage.setItem("loggedIn", "true");
+            sessionStorage.setItem("businessProfile", JSON.stringify(safeBusinessProfile));
+            sessionStorage.setItem("businessid", business.businessid);
+
+            loader.style.display = "none";
+
+            popup.style.display = "block";
+
+            setTimeout(() => {
+                popup.style.display = "none";
+                window.location.href = "dashboard.html";
+            }, 1000);
+        });
+
+        function showLoader() {
+            document.getElementById("pageLoader").style.display = "flex";
+        }
+
+        function hideLoader() {
+            document.getElementById("pageLoader").style.display = "none";
+        }
+
+        const registerBtn = document.getElementById("registerBusinessBtn");
+        const registerPopup = document.getElementById("registerPopup");
+        const closePopup = document.getElementById("closeRegisterPopup");
+        const resetBtn = document.getElementById("forgotPasswordBtn");
+        const resetPopup = document.getElementById("resetPopup");
+        const closeResetPopup = document.getElementById("closeResetPopup");
+
+        function clearRegisterFields() {
+            // 1. Clear all text inputs + textarea
+            registerPopup.querySelectorAll("input[type='text'], input[type='password'], textarea")
+                .forEach(el => el.value = "");
+
+            // 2. Reset radio buttons (VERY IMPORTANT FIX)
+            document.querySelectorAll("input[name='referralChoice']").forEach(radio => {
+                radio.checked = false;
+            });
+
+            // 3. Reset checkbox (terms)
+            document.getElementById("agreeTerms").checked = false;
+
+            // 4. Hide referral section again
+            document.getElementById("referralCodeWrapper").classList.add("hidden");
+
+            // 5. Clear referral input explicitly
+            document.getElementById("referralCode").value = "";
+        }
+
+        function clearResetFields() {
+            resetPopup.querySelectorAll("input, textarea").forEach(el => el.value = "");
+        }
+
+        registerBtn.onclick = () => {
+            registerPopup.style.display = "flex";
+            const popupBody = registerPopup.querySelector(".popup-body");
+            if (popupBody) {
+                popupBody.scrollTop = 0;
+            }
+        };
+
+        resetBtn.onclick = () => {
+            resetPopup.style.display = "flex";
+        };
+
+        closePopup.onclick = () => {
+            registerPopup.style.display = "none";
+            clearRegisterFields();
+        };
+
+        closeResetPopup.onclick = () => {
+            resetPopup.style.display = "none";
+            clearResetFields();
+        };
+
+        function showTopError(message) {
+            const note = document.getElementById("topNotification");
+            note.textContent = message;
+            note.style.background = "#dc3545";
+            note.classList.add("show");
+
+            setTimeout(() => {
+                note.classList.remove("show");
+            }, 2500);
+        }
+
+        document.getElementById("completeRegistration").onclick = async () => {
+            const get = id => document.getElementById(id).value.trim();
+
+            // 1️⃣ Basic validation
+            const requiredFields = [
+                "businessName", "businessOwner", "location",
+                "country", "county", "phone",
+                "description", "loginPassword", "confirmLoginPassword",
+                "adminPassword", "confirmAdminPassword"
+            ];
+
+            for (const id of requiredFields) {
+                if (!get(id)) {
+                    alert("Please fill all fields.");
+                    return;
+                }
+            }
+
+            if (get("loginPassword") !== get("confirmLoginPassword")) {
+                alert("Login passwords do not match.");
+                return;
+            }
+
+            if (get("adminPassword") !== get("confirmAdminPassword")) {
+                alert("Admin passwords do not match.");
+                return;
+            }
+
+            if (get("loginPassword") === get("adminPassword")) {
+                alert("Admin password must be different from Login password.");
+                return;
+            }
+
+            if (!document.getElementById("agreeTerms").checked) {
+                alert("You must agree to the Terms & Conditions.");
+                return;
+            }
+
+            // 🔹 Referral logic
+            const referralChoice = document.querySelector('input[name="referralChoice"]:checked')?.value;
+            const referralCodeInput = document.getElementById("referralCode");
+
+            let referral;
+            let referralCommission;
+
+            if (referralChoice === "yes") {
+            if (!referralCodeInput.value.trim()) {
+                alert("Please enter the referral code.");
+                return;
+            }
+
+            referral = referralCodeInput.value.trim();
+            referralCommission = "Pending";
+            }
+
+            if (referralChoice === "no") {
+            referral = "Not Referred";
+            referralCommission = "None";
+            }         
+
+            // 🔹 Referral choice MUST be selected
+            if (!referralChoice) {
+            alert("Please indicate whether you were referred or not.");
+            return;
+            }
+
+            showLoader();
+
+            // 2️⃣ Check if phone already exists
+            const { data: phoneExists, error: phoneError } = await window.supabase
+                .from("profile")
+                .select("id")
+                .eq("phone", get("phone"))
+                .limit(1);
+
+            if (phoneError) {
+                hideLoader();
+                alert(phoneError.message);
+                return;
+            }
+
+            if (phoneExists.length > 0) {
+                hideLoader();
+                alert("A business with this phone number already exists. Kindly login or use a different phone number to proceed");
+                return;
+            }
+
+            // 3️⃣ Generate business ID
+            const { data: ids, error: idError } = await window.supabase
+                .from("profile")
+                .select("businessid");
+
+            if (idError) {
+                hideLoader();
+                alert(idError.message);
+                return;
+            }
+
+            let maxNumber = 0;
+
+            ids.forEach(row => {
+                if (!row.businessid) return;
+
+                const match = row.businessid.match(/\d+$/);
+                if (match) {
+                    const num = parseInt(match[0], 10);
+                    if (num > maxNumber) {
+                        maxNumber = num;
+                    }
+                }
+            });
+
+            const businessId = `PIDEN${maxNumber + 1}`;
+
+            // 4️⃣ Compute system fields
+            const now = new Date();
+            const freeTrialEnd = new Date(now.getTime() + 72 * 60 * 60 * 1000);
+
+            // 5️⃣ Insert profile
+            const { error: insertError } = await window.supabase
+                .from("profile")
+                .insert([{
+                    businessname: get("businessName"),
+                    businessowner: get("businessOwner"),
+                    location: get("location"),
+                    country: get("country"),
+                    county: get("county"),
+                    phone: get("phone"),
+                    description: get("description"),
+                    loginpassword: get("loginPassword"),
+                    adminpassword: get("adminPassword"),
+                    referral: referral,
+                    referralcommission: referralCommission,
+
+                    businessid: businessId,
+                    businessstatus: "Eligible",
+                    accountstage: "Free Trial",
+                    freetrialstatus: "Active",
+                    freetrialend: freeTrialEnd.toISOString(),
+                    activationfeestatus: "Pending",
+                    activationcredit: 0.00,
+                    activationcreditstatus: "Pending",
+                    lastlogin: null
+                }]);
+
+            hideLoader();
+
+            if (insertError) {
+                alert(insertError.message);
+                return;
+            }
+
+            registerPopup.style.display = "none";
+            const popupBody = registerPopup.querySelector(".popup-body");
+            if (popupBody) {
+                popupBody.scrollTop = 0;
+            }
+
+            clearRegisterFields();
+            showSuccessAddPopup();
+        }
+
+        function showSuccessAddPopup() {
+            document.getElementById("successAdd").classList.remove("hidden");
+        }
+
+        function returnToLogin() {
+            document.getElementById("successAdd").classList.add("hidden");
+            registerPopup.style.display = "none";
+            clearRegisterFields();
+        }
+
+        document.getElementById("completeReset").onclick = async () => {
+            const phone = document.getElementById("verifyPhone").value.trim();
+            const adminPass = document.getElementById("verifyAdminPassword").value.trim();
+            const newPass = document.getElementById("newLoginPassword").value.trim();
+            const confirmPass = document.getElementById("confirmNewLoginPassword").value.trim();
+
+            // 1️⃣ Basic validation
+            if (!phone || !adminPass || !newPass || !confirmPass) {
+                alert("Please fill all fields.");
+                return;
+            }
+
+            if (newPass !== confirmPass) {
+                alert("New login passwords do not match.");
+                return;
+            }
+
+            showLoader();
+
+            // 2️⃣ Fetch business by phone
+            const { data, error } = await window.supabase
+                .from("profile")
+                .select("*")
+                .eq("phone", phone)
+                .limit(1);
+
+            if (error) {
+                hideLoader();
+                alert("System error. Please try again.");
+                console.error(error);
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                hideLoader();
+                alert("No business is registered under that phone number.");
+                return;
+            }
+
+            const business = data[0];
+
+            // 3️⃣ Verify admin password
+            if (business.adminpassword !== adminPass) {
+                hideLoader();
+                alert("Admin password is incorrect.");
+                return;
+            }
+
+            // 4️⃣ Update login password
+            const { error: updateError } = await window.supabase
+                .from("profile")
+                .update({ loginpassword: newPass })
+                .eq("id", business.id);
+
+            hideLoader();
+
+            if (updateError) {
+                alert("Failed to reset password. Please try again.");
+                console.error(updateError);
+                return;
+            }
+
+            // 5️⃣ Success
+            resetPopup.style.display = "none";
+            clearResetFields();
+            showSuccessReset();
+        };
+
+        function showSuccessReset() {
+            document.getElementById("successReset").classList.remove("hidden");
+        }
+
+        function returnLogin() {
+            document.getElementById("successReset").classList.add("hidden");
+            resetPopup.style.display = "none";
+            clearRegisterFields();
+        }
+    </script>
+</body>
+</html>
