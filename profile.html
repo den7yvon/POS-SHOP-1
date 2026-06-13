@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POS | Profile</title>
+  <link rel="shortcut icon" type="image/x-icon" href="Favicon.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  
+  <!-- jsPDF core -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- jsPDF AutoTable plugin -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body {display: flex; line-height: 1.4; min-height: 100vh;
+      flex-direction: column; margin: 0; background-color: #f1f4f8;}
+
+    * {font-family: 'Poppins', sans-serif;}
+
+    .title {color: #003366; font-size: 24px; margin-bottom: 20px;}
+
+    .main {background-color: white; border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      padding: 25px; width: 90%; max-width: 400px; text-align: center;}
+
+    .top-nav {width: 100%; height: 40px; background-color: #003366; color: white; display: flex;
+      justify-content: space-between; align-items: center; padding: 0 15px; position: fixed;
+      top: 0; z-index: 100;}
+  
+    .nav-left, .nav-center, .nav-right {display: flex; align-items: center; position: relative;}
+  
+    .menu-icon {font-size: 24px; cursor: pointer; margin-right: 10px;}
+  
+    .active-page {font-size: 16px; font-weight: 600;}
+     
+    .nav-logo {font-size: 22px; font-weight: bold; margin-right: 70px;}
+
+    .user-icon {cursor: pointer; margin-right: 0px;}
+    
+    .circle {width: 36px; height: 36px; background-color: white; border-radius: 50%; position: relative;
+      display: flex; align-items: center; justify-content: center;}
+    
+    .head {width: 10px; height: 10px; background-color: #003366; border-radius: 50%;
+      position: absolute; top: 8px;}
+    
+    .shoulders {width: 20px; height: 8px; background-color: #003366; border-radius: 50%; position: absolute;
+      bottom: 8px;}
+
+    .user-dropdown {position: absolute; top: 40px; right: 0; background: white;
+      color: #003366; padding: 10px; border-radius: 6px; box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      z-index: 1000; width: 160px; text-align: center; margin-right: 0px; transform-origin: top right;
+      transform: scale(0); opacity: 0; transition: transform 0.25s ease-out, opacity 0.2s ease-out;
+      display: block; pointer-events: none;}
+    
+    .user-dropdown.show {transform: scale(1); opacity: 1; pointer-events: auto;}
+    
+    .user-dropdown p {margin: 0 0 10px;}
+    
+    .user-dropdown button {background-color: #003366; color: white; border: none; padding: 8px 12px;
+      border-radius: 4px; cursor: pointer; width: 90%;}
+    
+    .user-dropdown button:hover {background-color: #0055aa;}
+
+    .main-content {margin-top: 0px; padding: 10px;}
+
+    .foot {width: 100%; background-color: white; color: #003366; text-align: center; padding: 2px 1px;
+      position: fixed; bottom: 0; left: 0; font-size: 15px;}
+
+    #pageLoader {position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9);
+        z-index: 9999; display: flex; align-items: center; justify-content: center;}
+  
+    .spinner {border: 6px solid #ccc; border-top: 6px solid #2f0fe4; border-radius: 50%; width: 40px; height: 40px;
+        animation: spin 1s linear infinite;}
+  
+    @keyframes spin {0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); }}
+
+    * {margin: 0; padding: 0; box-sizing: border-box;}
+  
+    :root {--page-footer-height: 0px;}
+    
+    .side-menu-overlay {position: fixed; inset: 0; background: rgba(0,0,0,0.35);
+      opacity: 0; visibility: hidden; transition: opacity 0.3s ease;}
+
+    .side-menu {position: fixed; top: 0; left: 0; width: 280px;
+      height: calc(100% - var(--page-footer-height)); bottom: var(--page-footer-height); 
+      background: #ffffff; box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+      transform: translateX(-100%); transition: transform 0.35s ease;
+      z-index: 999; display: flex; flex-direction: column; overflow-y: auto;}
+
+    .side-menu.show {transform: translateX(0);}
+
+    .side-menu-overlay.show {opacity: 1; visibility: visible;}
+
+    .side-menu-header {display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 20px;}
+
+    .side-menu-title {font-size: 18px; font-weight: 700; color: #003366;}
+
+    .side-menu-close {background: none; border: none; font-size: 26px; cursor: pointer; color: #003366;}
+
+    .side-menu-nav {display: flex; flex-direction: column; padding: 4px 0;}
+
+    .side-menu-nav a {display: flex; align-items: center; gap: 12px; padding: 12px 20px;
+      text-decoration: none; color: #003366; font-weight: 500; transition: background 0.2s ease, padding-left 0.2s ease;}
+
+    .side-menu-nav a:hover {background-color: #f1f4f8; padding-left: 26px;}
+
+    .side-menu-nav i {width: 20px; text-align: center; font-size: 16px;}
+
+    .side-menu hr {border: none; border-top: 1px solid #e0e0e0; margin: 0;}
+
+    .profile-container {max-width: 900px; margin: 90px auto 40px; padding: 0 15px;}
+
+    .profile-card {background: #ffffff; border-radius: 14px; box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      overflow: hidden;}
+
+    .profile-header {background: linear-gradient(135deg, #003366, #0055aa); color: #ffffff;
+      padding: 25px;}
+
+    .profile-header h2 {margin: 0; font-size: 24px; font-weight: 700;}
+
+    .profile-header p {margin-top: 6px; font-size: 14px; opacity: 0.85;}
+
+    .profile-body {padding: 25px;}
+
+    .profile-grid {display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px 30px; margin-top: 20px;}
+
+    .profile-item {display: flex; flex-direction: column;}
+
+    .profile-item label {font-size: 12px; color: #6b7280; margin-bottom: 4px;}
+
+    .profile-item span {font-size: 15px; font-weight: 600; color: #111827;}
+
+    .profile-description {margin-top: 25px; padding-top: 20px; border-top: 1px solid #e5e7eb;}
+
+    .profile-description label {font-size: 12px; color: #6b7280;}
+
+    .profile-description p {margin-top: 6px; font-size: 14px; line-height: 1.6; color: #374151;}
+
+    .profile-footer {margin-top: 30px; display: flex; justify-content: flex-end;}
+
+    .profile-footer button {padding: 10px 18px; border-radius: 8px; border: none; background: #003366;
+      color: #ffffff; font-weight: 600; cursor: pointer;}
+
+    .profile-footer button:hover {background: #0055aa;}
+
+    @media (max-width: 600px) {
+      .profile-container {margin-top: 60px; width: 100%; padding: 0px; margin-bottom: 25px;}
+
+      .profile-header {padding: 10px;}
+
+      .profile-grid {grid-template-columns: 1fr; gap: 10px; margin-top: 0px;}
+      
+      .profile-header h2 {font-size: 18px;}
+
+      .profile-header p {margin-top: 6px; font-size: 12px;}
+
+      .profile-description {margin-top: 5px; padding-top: 5px; }
+
+      .profile-description p {margin-top: 4px; font-size: 12px; font-weight: 600;}
+    }
+
+        /* Loop for a success popup*/
+        .popup-content {background: white; border-radius: 12px; width: 90%; max-width: 300px; overflow: hidden;
+            animation: slideUpPopup 0.4s ease;}
+
+        .checkmark {width: 80px; height: 80px; stroke: #003366; stroke-width: 4; stroke-linecap: round;
+            stroke-linejoin: round; stroke-miterlimit: 10; animation: drawCircle 0.6s ease-in-out forwards;
+            display: block; overflow: visible; box-sizing: content-box;}
+
+        .checkmark-circle {stroke-dasharray: 166; stroke-dashoffset: 166;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;}
+
+        .checkmark-check {stroke-dasharray: 48; stroke-dashoffset: 48;
+            animation: stroke 0.3s 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;}
+
+        @keyframes stroke {to {stroke-dashoffset: 0;}}
+
+        @keyframes drawCircle {0% {transform: scale(0); opacity: 0;} 100% {transform: scale(1); opacity: 1;}}
+
+        .tick-animation {display: flex; justify-content: center; align-items: center; margin: 20px 0;}
+
+        .overlay {position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 9990;}
+
+        .hidden {display: none;}
+
+        .popup-content.small {width: 300px; padding: 5px 5px; text-align: center; align-items: center;
+          padding-top: 20px;}
+
+        .popup-buttons button.edit-back{background-color: #003366; color: white; cursor: pointer; width: 50%;
+            font-weight: bold; margin-bottom: 10px;}
+
+        .popup-buttons button.edit-back:hover{background-color: #0055aa;}
+
+        .popup-buttons button {margin: 10px 5px 0; padding: 10px 15px; border: none; border-radius: 6px;
+            font-weight: bold; cursor: pointer;}
+        /*End of loop for success popup*/   
+
+    .profile-overlay,.edit-popup-overlay {position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+      z-index: 999; display: flex; align-items: center; justify-content: center; opacity: 0;
+      pointer-events: none; transition: opacity 0.3s ease;}
+
+    .profile-overlay.show,.edit-popup-overlay.show { opacity: 1; pointer-events: auto;}
+
+    .profile-popup {background: #fff; width: 95%; max-width: 300px; border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3); z-index: 1000; transform: translateY(120px);
+      opacity: 0; transition: transform 0.35s ease, opacity 0.35s ease;}
+
+    .profile-popup.show {transform: translateY(0); opacity: 1;}
+
+    .hidden {display: none;}
+
+    .popup-header {background-color: #003366; color: white; padding: 12px; display: flex;
+      justify-content: space-between; align-items: center; font-weight: bold;
+      border-top-right-radius: 12px; border-top-left-radius: 12px;}
+
+    .popup-header h3 {margin: 0; font-size: 18px;}
+
+    .close-btn {background: none; font-weight: bold; border: none; color: #fff; font-size: 18px;
+      cursor: pointer;}
+
+    .popup-body {padding: 20px;}
+
+    .popup-text {font-size: 14px; margin-bottom: 15px; color: #374151;}
+
+    .popup-body input,.popup-body textarea {width: 100%; padding: 10px; margin-bottom: 12px;
+      border-radius: 6px; border: 1px solid #ccc;}
+
+    .popup-footer {padding: 15px 20px; border-top: 1px solid #e5e7eb;}
+
+    .primary-btn {width: 100%; padding: 11px; background: #003366; color: #fff; border: none;
+      border-radius: 8px; font-weight: 600; cursor: pointer;}
+
+    .primary-btn:hover {background: #0055aa;}
+
+    .error-text {color: #dc2626; font-size: 13px; display: none; margin-bottom: 10px;}
+
+    .edit-popup-card {background: #fff; width: 95%; max-width: 300px; max-height: 70vh; border-radius: 12px;
+      display: flex; flex-direction: column; transform: translateY(120px); opacity: 0;
+      transition: transform 0.35s ease, opacity 0.35s ease;}
+
+    .edit-popup-overlay.show .edit-popup-card {transform: translateY(0); opacity: 1;}
+
+    .edit-popup-header {background-color: #003366; color: white; padding: 12px; display: flex;
+        justify-content: space-between; align-items: center; font-weight: bold;
+        border-top-right-radius: 12px; border-top-left-radius: 12px;}
+
+    .edit-popup-title {font-size: 18px; font-weight: bold;}
+
+    .edit-popup-close {cursor: pointer; font-size: 20px; background-color: #003366; color: white;
+        font-weight: bold; border: #003366;}
+
+    .edit-popup-body {padding: 1px;  flex: 1;  overflow-y: auto;  display: flex;  flex-direction: column;
+        gap: 1px;}
+
+    .edit-popup-body label {display: block; font-weight: 600; margin-top: 0px; margin-bottom: 4px; margin-left: 10px}
+
+    .edit-popup-body input {width: 95%; padding: 8px; font-size: 14px; border: 1px solid #ccc;
+        border-radius: 6px; margin-bottom: 4px; margin-left: 10px}
+
+    .edit-popup-body p{margin-left: 10px}
+
+    .edit-popup-footer {padding: 15px; border-top: 1px solid #eee; text-align: center;}
+
+    .edit-popup-footer button {background-color: #003366; color: white; border: none; padding: 10px 20px;
+       width: 90%; font-size: 15px; border-radius: 10px; cursor: pointer;}
+
+    .edit-popup-footer button:hover {background-color: #0055aa;}
+
+    .password-wrap {position: relative; display: flex;  align-items: center;}
+
+    .password-wrap input {width: 100%; padding-right: 40px;  background: transparent;}
+
+    .password-wrap .eye {position: absolute; right: 12px;  cursor: pointer; user-select: none;
+        font-size: 16px;  opacity: 0.7;}
+
+    .password-wrap .eye:hover {opacity: 1;}
+  </style>
+</head>
+<body class="dashboard-page">
+    <!-- Loader Spinner -->
+    <div id="pageLoader">
+      <div class="spinner"></div>
+    </div>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <div class="nav-left">
+      <div class="menu-icon" onclick="openSideMenu()">☰</div>
+      <span class="active-page" id="activePageName">Profile</span>
+      <!-- SIDE MENU OVERLAY -->
+      <div class="side-menu-overlay" id="sideMenuOverlay" onclick="closeSideMenu()"></div>
+
+      <!-- SIDE MENU -->
+      <aside class="side-menu" id="sideMenu">
+        <!-- Header -->
+        <div class="side-menu-header">
+          <span class="side-menu-title">PIDEN POS</span>
+          <button class="side-menu-close" onclick="closeSideMenu()">×</button>
+        </div>
+
+        <hr>
+
+        <!-- Navigation -->
+        <nav class="side-menu-nav">
+          <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+          <a href="sell.html"><i class="fas fa-cash-register"></i> Make A Sale</a>
+          <a href="stock.html"><i class="fas fa-boxes"></i> Manage Stock</a>
+          <a href="sales.html"><i class="fas fa-chart-line"></i> Daily Sales Records</a>
+          <a href="expenses.html"><i class="fas fa-receipt"></i> Business Expenses</a>
+          <a href="orders.html"><i class="fas fa-clipboard-list"></i> Orders Management</a>
+          <a href="analysis.html"><i class="fas fa-chart-pie"></i> Analysis Section</a>
+          <a href="profile.html"><i class="fas fa-user-circle"></i> Business Profile</a>
+          <a href="billing.html"><i class="fas fa-credit-card"></i> Billing Section</a>
+          <a href="manual.html"><i class="fas fa-book-open"></i> User Manual</a>
+        </nav>
+      </aside>
+    </div>
+
+    <div class="nav-center">
+      <span class="nav-logo">POS</span>
+    </div>
+
+    <div class="nav-right">
+      <div class="user-icon" onclick="toggleUserDropdown()">
+        <div class="circle">
+          <div class="head"></div>
+          <div class="shoulders"></div>
+        </div>
+      </div>
+      <div class="user-dropdown" id="userDropdown">
+        <p><strong id="businessName">Loading...</strong></p>
+        <button onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Content Area Placeholder -->
+  <main class="main-content">
+    <div id="profileContainer" class="profile-container">
+      <!-- Data will be rendered here -->
+    </div>
+
+    <!-- OVERLAY -->
+
+    <!-- ADMIN PASSWORD POPUP -->
+    <div id="profileOverlay" class="profile-overlay hidden">
+      <div id="adminAccessPopup" class="profile-popup hidden">
+        <div class="popup-header">
+          <h3>Admin Access</h3>
+          <button class="close-btn" onclick="closeAdminPopup()">✕</button>
+        </div>
+
+        <div class="popup-body">
+          <p class="popup-text">
+            To edit business profile, kindly verify Admin Password to be granted access.
+          </p>
+
+          <div class="password-wrap">
+            <input type="password" id="adminPasswordInput" placeholder="Enter Admin Password" required>
+            <span class="eye" aria-label="Toggle password visibility" 
+            onclick="togglePassword('adminPasswordInput', this)">👁️</span>
+          </div> 
+
+          <div id="adminPasswordError" class="error-text">
+            Incorrect password.
+          </div>
+
+          <button id="primaryBtn" class="primary-btn" onclick="verifyAdminPasswordForProfile()">
+            Proceed
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDIT PROFILE POPUP -->
+    <div id="editProfilePopup" class="edit-popup-overlay hidden">
+      <div class="edit-popup-card">
+        <div class="edit-popup-header">
+          <h3 class="edit-popup-title">Edit Profile</h3>
+          <button class="edit-popup-close" onclick="closeEditProfilePopup()">✕</button>
+        </div>
+
+        <div class="edit-popup-body" id="editProfileBody">
+          <!-- injected dynamically -->
+        </div>
+
+        <div class="edit-popup-footer">
+          <button onclick="submitProfileUpdate()">
+            Complete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="successEdit" class="overlay hidden">
+      <div class="popup-content small">
+      <h3>Profile Edited Successfully!</h3>
+      <div class="tick-animation">
+          <svg class="checkmark" viewBox="0 0 52 52">
+          <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+          <path class="checkmark-check" fill="none" d="M14 27l7 7 17-17"/>
+          </svg>
+      </div>
+      <div class="popup-buttons">
+          <button class="edit-back" onclick="returnToProfile()">Done</button>
+      </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="foot">
+    &copy; <span id="currentYear"></span> PIDEN V2.0. All rights reserved
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <script src="session-watchdog.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module">
+    import { SUPABASE_ANON_KEY } from "./p.js";  
+    const supabaseUrl = "https://mzvlybnvgpemdayoylfk.supabase.co";  
+    window.supabase = supabase.createClient(
+      supabaseUrl,
+      SUPABASE_ANON_KEY
+    );  
+    // ✅ SIGNAL THAT SUPABASE IS READY
+    window.dispatchEvent(new Event("supabase-ready"));
+  </script>
+  
+  <!-- Inline JS for dropdowns & logout -->
+  <script>
+    document.getElementById("currentYear").textContent = new Date().getFullYear();
+
+   let businessId = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const business = JSON.parse(sessionStorage.getItem("businessProfile"));
+
+        if (!business || !business.businessid) {
+          window.location.href = "index.html";
+          return;
+        }
+
+        businessId = business.businessid; // ✅ IMPORTANT FIX
+
+        const businessName = business.businessname || "Biz";
+        document.getElementById("businessName").textContent = businessName;
+        window.businessProfile = business;
+    });
+
+    function togglePassword(inputId, eyeEl) {
+      const input = document.getElementById(inputId);
+
+      if (input.type === "password") {
+          input.type = "text";
+          eyeEl.textContent = "🙈";
+      } else {
+          input.type = "password";
+          eyeEl.textContent = "👁️";
+       }
+    }
+
+    function openSideMenu() {
+      document.getElementById("sideMenu").classList.add("show");
+      document.getElementById("sideMenuOverlay").classList.add("show");
+    }
+
+    function closeSideMenu() {
+      document.getElementById("sideMenu").classList.remove("show");
+      document.getElementById("sideMenuOverlay").classList.remove("show");
+    }
+
+    function toggleUserDropdown() {
+      document.getElementById("userDropdown").classList.toggle("show");
+    }
+
+    function logout() {
+      sessionStorage.clear();
+      window.location.href = "index.html";
+    }
+
+    window.onload = () => {
+      // Disable back button after logout
+      if (!sessionStorage.getItem("loggedIn")) {
+        window.location.replace("index.html");
+      }
+    }
+  
+    window.onclick = function(event) {
+      if (!event.target.closest('.user-icon') && !event.target.closest('.user-dropdown')) {
+        document.getElementById("userDropdown").classList.remove("show");
+      }
+    }
+
+    window.addEventListener("load", () => {
+        document.getElementById("pageLoader").style.display = "none";
+    });
+
+    // Optional global control for Supabase calls
+    function showLoader() {
+       document.getElementById("pageLoader").style.display = "flex";
+    }
+
+    function hideLoader() {
+       document.getElementById("pageLoader").style.display = "none";
+    }
+
+    document.addEventListener("DOMContentLoaded", renderProfile);
+
+    function renderProfile() {
+      const container = document.getElementById("profileContainer");
+      const business = window.businessProfile;
+
+      if (!business) return;
+
+      container.innerHTML = `
+        <div class="profile-card">
+
+          <div class="profile-header">
+            <h2>${business.businessname || "Business Name"}</h2>
+            <p>Owned by ${business.businessowner || "Business Owner"}</p>
+          </div>
+
+          <div class="profile-body">
+
+            <div class="profile-grid">
+              <div class="profile-item">
+                <label>Phone Number</label>
+                <span>${business.phone || "—"}</span>
+              </div>
+
+              <div class="profile-item">
+                <label>Location</label>
+                <span>${business.location || "—"}</span>
+              </div>
+
+              <div class="profile-item">
+                <label>Country</label>
+                <span>${business.country || "—"}</span>
+              </div>
+
+              <div class="profile-item">
+                <label>County</label>
+                <span>${business.county || "—"}</span>
+              </div>
+            </div>
+
+            <div class="profile-description">
+              <label>Business Description</label>
+              <p>${business.description || "No description provided."}</p>
+            </div>
+
+            <div class="profile-footer">
+              <button id="editProfileBtn">Edit Profile</button>
+            </div>
+
+          </div>
+        </div>
+      `;
+      document.getElementById("editProfileBtn").onclick = openAdminPopup;
+    }
+
+    function openAdminPopup() {
+      const overlay = document.getElementById("profileOverlay");
+      const popup = document.getElementById("adminAccessPopup");
+
+      overlay.classList.remove("hidden");
+      popup.classList.remove("hidden");
+
+      setTimeout(() => {
+        overlay.classList.add("show");
+        popup.classList.add("show");
+      }, 10);
+    }
+
+    function closeAdminPopup() {
+      const overlay = document.getElementById("profileOverlay");
+      const popup = document.getElementById("adminAccessPopup");
+
+      popup.classList.remove("show");
+      overlay.classList.remove("show");
+
+      setTimeout(() => {
+        popup.classList.add("hidden");
+        overlay.classList.add("hidden");
+        document.getElementById("adminPasswordInput").value = "";
+        document.getElementById("adminPasswordError").style.display = "none";
+      }, 350);
+    }
+
+    const passwordInput = document.getElementById("adminPasswordInput");
+    const adminBtn = document.getElementById("primaryBtn");
+
+    // Optional: Enter key submits password
+    passwordInput.addEventListener("keypress", (e) => {
+       if (e.key === "Enter") adminBtn.click();
+    });
+
+    async function verifyAdminPasswordForProfile() {
+      const input = document.getElementById("adminPasswordInput").value.trim();
+      const errorEl = document.getElementById("adminPasswordError");
+
+      if (!input) return;
+
+      showLoader();
+      const { data, error } = await supabase
+        .from("profile")
+        .select("adminpassword")
+        .eq("businessid", businessId)
+        .limit(1);
+
+      if (error || !data.length) {
+        alert("Verification failed. Please login again.");
+        hideLoader();
+        return;
+      }
+
+      if (data[0].adminpassword !== input) {
+        hideLoader();
+        errorEl.style.display = "block";
+        return;
+      }
+
+      errorEl.style.display = "none";
+      closeAdminPopup();
+      hideLoader();
+      openEditProfilePopup();
+    }
+
+    function openEditProfilePopup() {
+      const popup = document.getElementById("editProfilePopup");
+      const body = document.getElementById("editProfileBody");
+      const b = window.businessProfile;
+
+      body.innerHTML = `
+        <label>Business Name</label>
+        <input id="ep_businessname" value="${b.businessname || ""}"/>
+
+        <label>Business Owner</label>
+        <input id="ep_businessowner" value="${b.businessowner || ""}"/>
+
+        <label>Phone Number</label>
+        <input id="ep_phone" value="${b.phone || ""}"/>
+
+        <label>Location</label>
+        <input id="ep_location" value="${b.location || ""}"/>
+
+        <label>Country</label>
+        <input id="ep_country" value="${b.country || ""}"/>
+
+        <label>County</label>
+        <input id="ep_county" value="${b.county || ""}"/>
+
+        <label>Description</label>
+        <input id="ep_description" value="${b.description || ""}"/>
+      `;
+
+      popup.classList.remove("hidden");
+
+      setTimeout(() => popup.classList.add("show"), 10);
+    }
+
+    function closeEditProfilePopup() {
+      const popup = document.getElementById("editProfilePopup");
+
+      popup.classList.remove("show");
+
+      setTimeout(() => popup.classList.add("hidden"), 350);
+    }
+
+    async function submitProfileUpdate() {
+      const b = window.businessProfile;
+
+      const updates = {
+        businessname: document.getElementById("ep_businessname").value.trim(),
+        businessowner: document.getElementById("ep_businessowner").value.trim(),
+        phone: document.getElementById("ep_phone").value.trim(),
+        location: document.getElementById("ep_location").value.trim(),
+        country: document.getElementById("ep_country").value.trim(),
+        county: document.getElementById("ep_county").value.trim(),
+        description: document.getElementById("ep_description").value.trim()
+      };
+
+      const changed = {};
+      Object.keys(updates).forEach(key => {
+        if (updates[key] !== (b[key] || "")) {
+          changed[key] = updates[key];
+        }
+      });
+
+      if (Object.keys(changed).length === 0) {
+        if (confirm("No business data was changed. Would you like to close the edit popup?")) {
+          closeEditProfilePopup();
+        }
+        return;
+      }
+      showLoader();
+      const { error } = await supabase
+        .from("profile")
+        .update(changed)
+        .eq("businessid", businessId);
+
+      if (error) {
+        alert("Failed to update profile.");
+        console.error(error);
+        hideLoader();
+        return;
+      }
+
+      // ✅ Update session storage
+      const updatedProfile = { ...b, ...changed };
+      sessionStorage.setItem("businessProfile", JSON.stringify(updatedProfile));
+      window.businessProfile = updatedProfile;
+      
+      closeEditProfilePopup(); 
+      hideLoader();
+      showSuccess(); // your existing success popup      
+      renderProfile();
+    }
+   
+    function showSuccess() {
+      document.getElementById("successEdit").classList.remove("hidden");
+    }
+
+    function returnToProfile() {
+      document.getElementById("successEdit").classList.add("hidden");
+    }
+  </script>
+</body>
+</html>
