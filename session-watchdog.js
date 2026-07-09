@@ -1,7 +1,7 @@
 // ⏱️ AUTO LOGOUT TIME (in milliseconds)
 // 1 hour = 60 * 60 * 1000
 const AUTO_LOGOUT_TIME = 60 * 60 * 1000;
-
+ 
 // For testing (example: 30 seconds)
 // const AUTO_LOGOUT_TIME = 30 * 1000;
 let inactivityTimer;
