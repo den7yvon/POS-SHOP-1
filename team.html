@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POS | VERIFY</title>
+  <link rel="shortcut icon" type="image/x-icon" href="Favicon.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0d1b2a">
+  <style>
+    body {display: flex;  line-height: 1.4; min-height: 100vh;
+      flex-direction: column; margin: 0; background-color: #f1f4f8;}
+
+    * {font-family: 'Poppins', sans-serif;}
+
+    .title {color: #003366; font-size: 24px; margin-bottom: 20px;}
+
+    .main {background-color: white; border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      padding: 25px; width: 90%; max-width: 400px; text-align: center;}
+
+    .top-nav {width: 100%; height: 40px; background-color: #003366; color: white; display: flex;
+      justify-content: space-between; align-items: center; padding: 8px 15px; position: fixed;
+      top: 0; z-index: 100;}
+  
+    .nav-left, .nav-right {display: flex; align-items: center; position: relative;}
+
+    .nav-right{margin-right: 40px;}
+
+    .main-content {margin-top: 60px; padding: 10px; padding-bottom: 10px;}
+
+    .foot {width: 100%; background-color: white; color: #003366; text-align: center; padding: 2px 1px;
+      position: fixed; bottom: 0; left: 0; font-size: 15px;}
+    
+    /* ===== FULLSCREEN LOADER ===== */
+    #pageLoader {position: fixed; inset: 0; background: #ffffff; z-index: 9999; display: flex;
+      align-items: center; justify-content: center;
+    }
+
+    .piden-loader {text-align: center; font-family: "Segoe UI", system-ui, sans-serif;}
+
+    .piden-text {font-size: 36px; font-weight: 700; letter-spacing: 6px; color: #003366;}
+
+    .piden-text span {display: inline-block; animation: pulse 1.6s infinite ease-in-out; opacity: 0.3;}
+
+    .piden-text span:nth-child(1) { animation-delay: 0s; }
+    .piden-text span:nth-child(2) { animation-delay: 0.15s; }
+    .piden-text span:nth-child(3) { animation-delay: 0.3s; }
+    .piden-text span:nth-child(4) { animation-delay: 0.45s; }
+    .piden-text span:nth-child(5) { animation-delay: 0.6s; }
+
+    @keyframes pulse {0% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); }
+      100% { opacity: 0.3; transform: translateY(0); }}
+
+    .back-btn{background:white; border:1px solid rgba(255,255,255,.35); color: #003366; padding:8px 16px;
+        border-radius:10px; cursor:pointer; font-size:14px; font-weight:500; transition:.25s;}
+
+    .back-btn:hover{background:rgba(161, 198, 233, 0.945);}
+
+    .verify-wrapper{max-width:900px; margin:0 auto; padding-bottom:60px;}
+
+    .verify-card{background:#fff; border-radius:18px; box-shadow:0 10px 30px rgba(0,0,0,.08); overflow:hidden;
+        border-top: 6px solid #003366;}
+
+    .verify-body{padding:30px;}
+
+    .verify-title{text-align:center; color:#003366; font-size:26px; font-weight:700; margin-bottom:18px;}
+
+    .verify-text{color:#555; line-height:1.8; margin-bottom:25px;}
+
+    .verify-text strong{color:#b30000;}
+
+    .verify-label{display:block; margin-bottom:8px; margin-top:15px; color:#003366; font-weight:600;}
+
+    .verify-input{width:100%; box-sizing:border-box; padding:13px 15px; border:1px solid #d8dfe7; border-radius:12px;
+        outline:none; font-size:15px; transition:.25s;}
+
+    .verify-input:focus{border-color:#003366; box-shadow:0 0 0 4px rgba(0,51,102,.08);}
+
+    .verify-btn{width:100%; height:50px; margin-top:22px; border:none; border-radius:12px; background:#003366;
+        color:#fff; font-size:15px; font-weight:600; cursor:pointer; transition:.25s;}
+
+    .verify-btn:hover{background:#004d99;}
+
+    .verify-btn:disabled{opacity:.7; cursor:not-allowed;}
+
+    .status-message{margin-top:18px; font-weight:600; text-align:center; display:none;}
+
+    .status-success{color:#12833a;}
+
+    .status-error{color:#c00000;}
+
+    /*=====================================
+            STAFF ID CARD
+    =====================================*/
+    .staff-card{margin-top:25px; border:2px solid #003366; border-radius:16px; overflow:hidden; display:none;
+        background:#fff;}
+
+    .staff-header{background:#003366; color:#fff;  text-align:center; padding:14px; font-size:20px; font-weight:700;
+        letter-spacing:.5px;}
+
+    .staff-body{display:flex; justify-content:space-between; gap:25px; padding:25px; flex-wrap:wrap;}
+
+    .staff-left{flex:1; min-width:240px;}
+
+    .staff-right{width:220px; text-align:center; border-left:1px solid #d8d8d8; padding-left:20px;}
+
+    .staff-item{margin-bottom:18px;}
+
+    .staff-label{color:#666; font-size:13px; margin-bottom:4px;}
+
+    .staff-value{color:#003366; font-size:17px; font-weight:700; word-break:break-word;}
+
+    .rank-box{margin-bottom:18px;}
+
+    .rank-title{color:#666; font-size:13px;}
+
+    .rank-value{color:#003366; font-size:17px; font-weight:700; margin-top:5px;}
+
+    .qr-box{display:flex; justify-content:center; align-items:center; margin-top:10px;}
+
+    #qrCode{background:#fff; padding:8px; border:1px solid #ddd; border-radius:10px;}
+
+    .scan-note{margin-top:10px; font-size:12px; color:#777;}
+
+    /*=====================================
+            RESPONSIVE
+    =====================================*/
+    @media(max-width:700px){
+        .verify-body{padding:20px;}
+        .verify-title{font-size:22px;}
+        .staff-body{flex-direction:column; gap:25px;}
+        .staff-right{width:100%; border-left:none; border-top:1px solid #ddd; padding-left:0; padding-top:20px;}}
+
+    @media(max-width:450px){
+        .verify-title{font-size:20px;}
+        .staff-header{font-size:18px;}
+        .staff-value,.rank-value{font-size:15px;}}
+    </style>
+</head>
+<body class="dashboard-page">
+  <!-- PIDEN Loader -->
+  <div id="pageLoader">
+    <div class="piden-loader">
+      <div class="piden-text">
+        <span>P</span><span>I</span><span>D</span><span>E</span><span>N</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Navigation -->
+  <div class="top-nav">
+    <div class="nav-left">
+        <button id="backHomeBtn" class="back-btn">
+            ← Back to Home
+        </button>
+    </div>
+    <div class="nav-right">
+        <span style="font-weight:600;">Verify Team</span>
+    </div>
+  </div>
+
+  <!-- Content Area Placeholder -->
+  <main class="main-content">
+    <div class="verify-wrapper">
+        <div class="verify-card">    
+            <div class="verify-body">    
+                <div class="verify-title"> VERIFY TEAM PIDEN </div>    
+                <div class="verify-text">
+                    Use this platform to verify whether you are speaking with an official member of the 
+                    <strong>PIDEN Team</strong>.<br><br>
+                    Anyone claiming to represent PIDEN without a valid <strong>Staff ID</strong> should 
+                    <strong>not be trusted</strong> with any money, information or business transactions.
+                    If you encounter such a person, kindly report them immediately through our 
+                    <strong>Fraud Reporting</strong> page.
+                </div>    
+                <label class="verify-label">Enter Staff ID</label>    
+                <input type="text" id="staffIdInput" class="verify-input" placeholder="e.g STAFF7" autocomplete="off">    
+                <button id="verifyBtn" class="verify-btn"> Verify</button>    
+                <div id="statusMessage" class="status-message"></div>
+
+                <!--=====================================
+                        VERIFIED STAFF CARD
+                =====================================-->    
+                <div  id="staffCard" class="staff-card">    
+                    <div class="staff-header">PIDEN STAFF ID CARD</div>    
+                    <div class="staff-body">    
+                        <!-- LEFT SIDE -->    
+                        <div class="staff-left">    
+                            <div class="staff-item">    
+                                <div class="staff-label"> Staff Names</div>    
+                                <div id="staffNames" class="staff-value">  </div>    
+                            </div>    
+                            <div class="staff-item">    
+                                <div class="staff-label"> Staff ID</div>    
+                                <div id="staffID" class="staff-value"> </div>    
+                            </div>    
+                        </div>    
+                        <!-- RIGHT SIDE -->    
+                        <div class="staff-right">    
+                            <div class="rank-box">    
+                                <div class="rank-title"> Rank </div>    
+                                <div id="staffRank" class="rank-value"> </div>    
+                            </div>    
+                            <div class="qr-box">    
+                                <div id="qrCode"></div>    
+                            </div>    
+                            <div class="scan-note"> Scan to verify this staff member. </div>    
+                        </div>    
+                    </div>    
+                </div>    
+            </div>    
+        </div>    
+    </div>
+  </main>
+ 
+  <!-- Footer -->
+  <footer class="foot">
+    &copy; <span id="currentYear"></span> PIDEN V2.0. All rights reserved
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module">
+    import { SUPABASE_ANON_KEY } from "./p.js";  
+    const supabaseUrl = "https://mzvlybnvgpemdayoylfk.supabase.co";  
+    window.supabase = supabase.createClient(
+      supabaseUrl,
+      SUPABASE_ANON_KEY
+    );  
+    // ✅ SIGNAL THAT SUPABASE IS READY
+    window.dispatchEvent(new Event("supabase-ready"));
+  </script>
+  
+  <!-- Inline JS for dropdowns & logout -->
+  <script>
+    // Handle browser back/forward cache issues
+    window.addEventListener("pageshow", function (event) {
+            const loader = document.getElementById("pageLoader");
+
+            // Always hide loader if it exists
+            if (loader) {
+            loader.style.display = "none";
+            }
+
+            // If page was restored from bfcache, force reload once
+            if (event.persisted && !sessionStorage.getItem("reloaded")) {
+                sessionStorage.setItem("reloaded", "true");
+                window.location.reload();
+            }
+    });
+
+    document.getElementById("currentYear").textContent = new Date().getFullYear();
+
+      // Optional global control for Supabase calls
+      function showLoader() {
+        const loader = document.getElementById("pageLoader");
+        if (loader) loader.style.display = "flex";
+      }
+
+      function hideLoader() {
+        const loader = document.getElementById("pageLoader");
+        if (!loader) return;
+
+        loader.style.opacity = "0";
+        loader.style.transition = "opacity 0.3s ease";
+
+        setTimeout(() => {
+          loader.style.display = "none";
+          loader.style.opacity = "1";
+        }, 300);
+      }
+
+    /*==================================================
+                    ELEMENTS
+    ==================================================*/
+    const backHomeBtn=document.getElementById("backHomeBtn");
+    const verifyBtn=document.getElementById("verifyBtn");
+    const staffIdInput=document.getElementById("staffIdInput");
+    const statusMessage=document.getElementById("statusMessage");
+    const staffCard=document.getElementById("staffCard");
+    const staffNames=document.getElementById("staffNames");
+    const staffID=document.getElementById("staffID");
+    const staffRank=document.getElementById("staffRank");
+    const qrCode=document.getElementById("qrCode");
+
+    /*==================================================
+                NORMALIZE STAFF ID
+    ==================================================*/
+    function normalizeStaffID(value){
+        if(!value) return "";
+        value=value.toUpperCase().replace(/\s+/g,"");
+        if(!value.startsWith("STAFF")){
+            const number=value.replace(/\D/g,"");
+            if(number){
+                value="STAFF"+number;
+            }
+        }
+        return value;
+    }
+
+    /*==================================================
+                STATUS MESSAGE
+    ==================================================*/
+    function showStatus(message,isSuccess){
+        statusMessage.style.display="block";
+        statusMessage.textContent=message;
+        statusMessage.classList.remove("status-success","status-error");
+        statusMessage.classList.add(
+            isSuccess ? "status-success" : "status-error"
+        );
+    }
+
+    /*==================================================
+                CLEAR RESULTS
+    ==================================================*/
+    function clearVerification(){
+        statusMessage.style.display="none";
+        statusMessage.textContent="";
+        statusMessage.classList.remove("status-success","status-error");
+        staffCard.style.display="none";
+        staffNames.textContent="";
+        staffID.textContent="";
+        staffRank.textContent="";
+        qrCode.innerHTML="";
+    }
+
+    /*==================================================
+                LOADING BUTTON
+    ==================================================*/
+    function setLoading(isLoading){
+        verifyBtn.disabled=isLoading;
+        verifyBtn.textContent=isLoading
+            ? "Verifying..."
+            : "Verify";
+    }
+
+    /*==================================================
+                VERIFY STAFF
+    ==================================================*/
+    async function verifyStaff(){
+        const enteredID=normalizeStaffID(
+            staffIdInput.value
+        );
+        if(!enteredID){
+            alert("Please enter a Staff ID.");
+            return;
+        }
+        staffIdInput.value=enteredID;
+        clearVerification();
+        setLoading(true);
+        try{
+            const {data,error}=await window.supabase
+                .from("staff")
+                .select("staffid,names,position")
+                .eq("staffid",enteredID)
+                .single();
+            if(error || !data){
+                showStatus(
+                    "No staff member was found with that Staff ID.",
+                    false
+                );
+                return;
+            }
+            showStatus(
+                "✓ Staff Member Verified",
+                true
+            );
+            displayStaffCard(data);
+        }
+        catch(err){
+            console.error(err);
+            showStatus(
+                "Unable to verify staff member. Please try again.",
+                false
+            );
+        }
+        finally{
+            setLoading(false);
+        }
+    }
+
+
+/*==================================================
+                QR CODE
+==================================================*/
+function generateQRCode(staff){
+
+qrCode.innerHTML="";
+
+const qrText=
+`PIDEN VERIFIED STAFF
+
+Staff ID: ${staff.staffid}
+Names: ${staff.names}
+Position: ${staff.position}
+
+This is a verified staff member of the PIDEN Team.
+Thank you for verifying this staff member.
+
+Verification Page:
+https://piden.co.ke/verify.html`;
+
+new QRCode(qrCode,{
+    text:qrText,
+    width:120,
+    height:120,
+    colorDark:"#003366",
+    colorLight:"#ffffff",
+    correctLevel:QRCode.CorrectLevel.H
+});
+
+}
+
+    /*==================================================
+        OVERRIDE DISPLAY FUNCTION
+    ==================================================*/
+    function displayStaffCard(staff){
+        staffNames.textContent=staff.names;
+        staffID.textContent=staff.staffid;
+        staffRank.textContent=staff.position;
+        generateQRCode(staff);
+        staffCard.style.display="block";
+    }
+
+    /*==================================================
+            INPUT CHANGES
+    ==================================================*/
+    staffIdInput.addEventListener("input",()=>{
+        clearVerification();
+    });
+
+    /*==================================================
+            ENTER KEY
+    ==================================================*/
+    staffIdInput.addEventListener("keydown",(e)=>{
+        if(e.key==="Enter"){
+        verifyStaff();
+        }
+    });
+
+    /*==================================================
+            VERIFY BUTTON
+    ==================================================*/
+    verifyBtn.addEventListener("click",()=>{
+        verifyStaff();
+    });
+
+    /*==================================================
+            BACK BUTTON
+    ==================================================*/
+    backHomeBtn.addEventListener("click",()=>{
+        window.location.href="index.html";
+    });
+
+    /*==================================================
+            INITIALIZATION
+    ==================================================*/
+    window.addEventListener("supabase-ready",()=>{
+        clearVerification();
+    });
+
+    document.addEventListener("DOMContentLoaded",()=>{
+        clearVerification();
+    });
+  </script>
+</body>
+</html>

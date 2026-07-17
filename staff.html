@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POS | STAFF</title>
+  <link rel="shortcut icon" type="image/x-icon" href="Favicon.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0d1b2a">
+  <style>
+    body {display: flex;  line-height: 1.4; min-height: 100vh;
+      flex-direction: column; margin: 0; background-color: #f1f4f8;}
+
+    * {font-family: 'Poppins', sans-serif;}
+
+    .title {color: #003366; font-size: 24px; margin-bottom: 20px;}
+
+    .main {background-color: white; border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      padding: 25px; width: 90%; max-width: 400px; text-align: center;}
+
+    .top-nav {width: 100%; height: 40px; background-color: #003366; color: white; display: flex;
+      justify-content: space-between; align-items: center; padding: 8px 15px; position: fixed;
+      top: 0; z-index: 100;}
+  
+    .nav-left, .nav-right {display: flex; align-items: center; position: relative;}
+
+    .nav-right{margin-right: 40px;}
+
+    .main-content {margin-top: 60px; padding: 10px; padding-bottom: 10px;}
+
+    .foot {width: 100%; background-color: white; color: #003366; text-align: center; padding: 2px 1px;
+      position: fixed; bottom: 0; left: 0; font-size: 15px;}
+    
+    /* ===== FULLSCREEN LOADER ===== */
+    #pageLoader {position: fixed; inset: 0; background: #ffffff; z-index: 9999; display: flex;
+      align-items: center; justify-content: center;
+    }
+
+    .piden-loader {text-align: center; font-family: "Segoe UI", system-ui, sans-serif;}
+
+    .piden-text {font-size: 36px; font-weight: 700; letter-spacing: 6px; color: #003366;}
+
+    .piden-text span {display: inline-block; animation: pulse 1.6s infinite ease-in-out; opacity: 0.3;}
+
+    .piden-text span:nth-child(1) { animation-delay: 0s; }
+    .piden-text span:nth-child(2) { animation-delay: 0.15s; }
+    .piden-text span:nth-child(3) { animation-delay: 0.3s; }
+    .piden-text span:nth-child(4) { animation-delay: 0.45s; }
+    .piden-text span:nth-child(5) { animation-delay: 0.6s; }
+
+    @keyframes pulse {0% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); }
+      100% { opacity: 0.3; transform: translateY(0); }}
+
+    .back-btn{background:white; border:1px solid rgba(255,255,255,.35); color: #003366; padding:8px 16px;
+        border-radius:10px; cursor:pointer; font-size:14px; font-weight:500; transition:.25s;}
+
+    .back-btn:hover{background:rgba(161, 198, 233, 0.945);}
+
+    .dashboard-wrapper{max-width:1100px;margin:0 auto;padding-bottom:70px;}    
+    .card{background:#fff;border-radius:18px;box-shadow:0 10px 28px rgba(0,0,0,.08);overflow:hidden;
+        margin-bottom:22px; border-top: 6px solid #003366;}
+    .card-body{padding:25px;}
+    .card-title{text-align:center;font-size:24px;font-weight:700;color:#003366;margin-bottom:18px;}
+    .card-text{color:#555;line-height:1.7;margin-bottom:20px;}
+    .hidden{display:none!important;}
+
+    .form-label{display:block;font-weight:600;color:#003366;margin:16px 0 8px;}
+
+    .form-input{width:100%;padding:13px 15px;border:1px solid #d7dee8;border-radius:12px;
+        font-size:15px;box-sizing:border-box;transition:.25s;outline:none;}
+        
+    .form-input:focus{border-color:#003366;box-shadow:0 0 0 4px rgba(0,51,102,.08);}
+
+    .error-input{border-color:#c00000!important;}
+
+    .primary-btn{width:100%;height:48px;border:none;border-radius:12px;background:#003366;color:#fff;
+        font-size:15px;font-weight:600;cursor:pointer;transition:.25s;margin-top:20px;}
+
+    .primary-btn:hover{background:#004d99;}
+
+    .primary-btn:disabled{opacity:.7;cursor:not-allowed;}
+
+    .password-wrapper{position:relative;}
+
+    .password-wrapper input{padding-right:50px;}
+
+    .password-toggle{position:absolute;right:15px;top:50%;transform:translateY(-50%);cursor:pointer;color:#777;
+        font-size:18px;}
+
+    .password-toggle:hover{color:#003366;}
+
+    .link-btn{text-align:center;margin-top:16px;}
+
+    .link-btn a{text-decoration:none;color:#003366;font-weight:600;}
+
+    .link-btn a:hover{text-decoration:underline;}
+
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;justify-content:center;
+        align-items:flex-end;z-index:3000;}
+    .modal{width:100%;max-width:520px;background:#fff;border-radius:18px;animation:slideUp .3s ease;
+        margin: 10px; height: 75vh; overflow: auto;}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;background:#003366;
+        color:#fff;padding:10px 15px;font-size:20px;font-weight:700;}
+    .close-modal{cursor:pointer;font-size:20px;}
+    .modal-body{padding:10px;}
+    .modal-note{color:#666;line-height:1.2;margin-bottom:10px;}
+    .help-links{text-align:center;margin:10px 0;font-size:12px;}
+    .help-links a{text-decoration:none;color:#003366;font-weight:600;}    
+    .help-links a:hover{text-decoration:underline;}
+    @keyframes slideUp{from{transform:translateY(100%);} to{transform:translateY(0);}}
+
+    .staff-id-card{border:2px solid #003366;border-radius:16px;overflow:hidden;}
+
+    .staff-id-header{background:#003366;color:#fff;padding:15px;text-align:center;font-size:21px;font-weight:700;}
+
+    .staff-id-body{display:flex;justify-content:space-between;gap:30px;padding:25px;flex-wrap:wrap;}
+
+    .staff-left{flex:1;min-width:250px;}
+
+    .staff-right{width:220px;text-align:center;border-left:1px solid #ddd;padding-left:25px;}
+
+    .staff-item{margin-bottom:18px;}
+
+    .staff-label{font-size:13px;color:#777;}
+
+    .staff-value{font-size:17px;font-weight:700;color:#003366;word-break:break-word;}
+
+    .rank-title{font-size:13px;color:#777;}
+
+    .rank-value{font-size:17px;font-weight:700;color:#003366;margin-bottom:18px;}
+
+    #staffQRCode{display:flex;justify-content:center;margin-top:10px;}
+
+    .qr-note{font-size:12px;color:#777;margin-top:10px;}
+
+    .performance-text{color:#555;line-height:1.7;margin-bottom:18px;}
+    .performance-table-wrapper{margin-top:20px;border:1px solid #ddd;border-radius:12px;
+        overflow:auto;max-height:350px;display:none;}
+    .performance-table{width:100%;border-collapse:collapse;min-width:850px;}
+    .performance-table th{background:#003366;color:#fff;padding:12px;text-align:left;position:sticky;top:0;}
+    .performance-table td{padding:12px;border-bottom:1px solid #e6e6e6;white-space:nowrap;}
+    .performance-empty{text-align:center;color:#666;padding:25px;display:none;}
+    .performance-summary{margin-top:22px;border-top:2px solid #eee;padding-top:18px;display:none;}
+    .performance-summary h3{margin:0 0 15px;color:#003366;font-size:18px;}
+    .summary-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed #ddd;font-size:15px;}
+    .summary-row:last-child{border-bottom:none;}
+    .summary-label{font-weight:600;color:#444;}
+    .summary-value{font-weight:700;color:#003366;}
+
+    .success-modal{text-align:center;padding:25px;}
+    .success-modal i{font-size:60px;color:#17a34a;margin-bottom:15px;}
+    .success-modal h2{color:#003366;margin-bottom:10px;}
+    .success-modal p{color:#555;line-height:1.7;}
+
+    @media(max-width:768px){
+    .card-body{padding:20px;}
+    .card-title{font-size:21px;}
+    .staff-id-body{flex-direction:column;}
+    .staff-right{width:100%;border-left:none;border-top:1px solid #ddd;padding-left:0;padding-top:20px;}
+    .summary-row{font-size:14px;}
+    }
+
+    @media(max-width:480px){
+    .card-title{font-size:19px;}
+    .staff-id-header{font-size:18px;}
+    .staff-value,.rank-value{font-size:15px;}
+    .primary-btn{height:46px;}
+    .form-input{font-size:14px;}
+    }
+
+    .current-user-row{background:#dceeff; font-weight:600;}
+    </style>
+</head>
+<body class="dashboard-page">
+  <!-- PIDEN Loader -->
+  <div id="pageLoader">
+    <div class="piden-loader">
+      <div class="piden-text">
+        <span>P</span><span>I</span><span>D</span><span>E</span><span>N</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Navigation -->
+  <div class="top-nav">
+    <div class="nav-left">
+        <button id="backHomeBtn" class="back-btn">
+            ← Back to Home
+        </button>
+    </div>
+
+    <div class="nav-right">
+        <span style="font-weight:600;">Staff Login</span>
+    </div>
+  </div>
+
+  <!-- Content Area Placeholder -->
+  <main class="main-content">
+    <div class="dashboard-wrapper">  
+        <div id="loginCard" class="card">    
+            <div class="card-body">    
+                <div class="card-title"> Enter your Staff Credentials </div>    
+                <label class="form-label"> Phone Number</label>
+                <input id="loginPhone" class="form-input" type="text" placeholder="Enter your phone number">    
+                <label class="form-label"> Password </label>    
+                <div class="password-wrapper">    
+                    <input id="loginPassword" class="form-input" type="password" placeholder="Enter your password">    
+                    <i class="fa-solid fa-eye password-toggle" id="toggleLoginPassword"> </i>    
+                </div>    
+                <button id="loginBtn" class="primary-btn"> Sign In </button>
+
+                <div class="link-btn"> 
+                    <a href="#" id="forgotPasswordLink">Forgot Password? </a>    
+                </div>    
+            </div>    
+        </div>
+    
+        <div id="dashboardSection" class="hidden">    
+            <!-- STAFF ID CARD -->    
+            <div class="card">       
+                <div class="staff-id-card">    
+                    <div class="staff-id-header"> PIDEN STAFF ID CARD </div>    
+                    <div class="staff-id-body">    
+                        <div class="staff-left">    
+                            <div class="staff-item">    
+                                <div class="staff-label"> Staff ID </div>
+                                <div id="staffID" class="staff-value"></div>    
+                            </div>    
+                            <div class="staff-item">
+                                <div class="staff-label">Names</div>    
+                                <div id="staffNames" class="staff-value"></div>    
+                            </div>    
+                            <div class="staff-item">
+                                <div class="staff-label">Phone Number</div>    
+                                <div id="staffPhone" class="staff-value"></div>    
+                            </div>    
+                            <div class="staff-item">    
+                                <div class="staff-label">Team </div>    
+                                <div id="staffTeam" class="staff-value"></div>    
+                            </div>    
+                        </div>
+    
+                        <div class="staff-right">    
+                            <div class="rank-title">Position</div>    
+                            <div id="staffPosition" class="rank-value"></div>   
+
+                            <div id="staffQRCode"></div>    
+                            <div class="qr-note">Scan to verify this staff member.</div>    
+                        </div>    
+                    </div>    
+                </div>   
+            </div>
+    
+            <!-- PERFORMANCE -->    
+            <div class="card">       
+                <div class="card-body">    
+                    <div class="card-title">CLIENT ONBOARDING PERFORMANCE</div>    
+                    <div class="performance-text">    
+                        View all clients you have successfully onboarded to PIDEN and monitor their 
+                        activation status together with your commission progress.    
+                    </div>    
+
+                    <button id="performanceBtn" class="primary-btn">Check</button>    
+
+                    <div id="performanceEmpty" class="performance-empty"></div>
+    
+                    <div id="performanceTableWrapper" class="performance-table-wrapper">    
+                        <table class="performance-table">    
+                            <thead>    
+                                <tr>    
+                                    <th>S/No</th>
+                                    <th>Client</th>
+                                    <th>County</th>
+                                    <th>Status</th>
+                                    <th>Commission</th>    
+                                </tr>    
+                            </thead>    
+                            <tbody id="performanceBody">   </tbody>    
+                        </table>    
+                    </div>
+
+                    <div id="performanceSummary" class="performance-summary">    
+                        <h3>SUMMARY</h3>    
+                        <div class="summary-row">
+                            <span class="summary-label">Total Clients</span>
+                            <span id="totalClients" class="summary-value">0</span>
+                        </div>    
+                        <div class="summary-row">
+                            <span class="summary-label">Active Clients</span>
+                            <span id="activeClients" class="summary-value">0</span>
+                        </div>    
+                        <div class="summary-row">
+                            <span class="summary-label">Inactive Clients</span>
+                            <span id="inactiveClients" class="summary-value">0</span>
+                        </div>    
+                        <div class="summary-row">
+                            <span class="summary-label">Paid Commission</span>
+                            <span id="paidCommission" class="summary-value">KES 0</span>
+                        </div>    
+                        <div class="summary-row">
+                            <span class="summary-label">Pending Commission</span>
+                            <span id="pendingCommission" class="summary-value">KES 0</span>
+                        </div>    
+                        <div class="summary-row">
+                            <span class="summary-label">Inactive Clients Waiting Commission</span>
+                            <span id="waitingCommission" class="summary-value">KES 0</span>
+                        </div>    
+                    </div>    
+                </div>    
+            </div>  
+            
+            <!-- PERFORMANCE RANK CARD -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title">PERFORMANCE RANKS</div>
+                    <div class="performance-text">
+                        Compare your onboarding performance against the other marketers in your team.
+                        Rankings are determined by the number of active clients each staff member has
+                        successfully onboarded.
+                    </div>
+
+                    <button id="rankBtn" class="primary-btn">Check</button>
+                    <div id="rankEmpty" class="performance-empty"></div>
+                    <div id="rankTableWrapper" class="performance-table-wrapper">
+                        <h3 id="rankTeamTitle" class="table-heading"> </h3>
+                        <table class="performance-table">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Names</th>
+                                    <th>Active Clients</th>
+                                    <th>Inactive Clients</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rankBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TEAM LEADER ANALYSIS-->
+            <div id="leaderCard" class="card hidden">
+                <div class="card-body">
+                    <div class="card-title">TEAM LEADER ANALYSIS</div>
+                    <div class="performance-text">
+                        Review your team's overall onboarding performance,
+                        monitor active and inactive clients,
+                        and keep track of your earned commissions.
+                    </div>
+                    <button id="leaderBtn" class="primary-btn"> Check </button>
+                    <div id="leaderEmpty" class="performance-empty"></div>
+                    <div id="leaderTableWrapper" class="performance-table-wrapper">
+                        <h3 id="leaderTeamTitle" class="table-heading"> </h3>
+                        <table class="performance-table">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Name</th>
+                                    <th>Active Clients</th>
+                                    <th>Inactive Clients</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="leaderSummary" class="performance-summary">
+                        <h3>TEAM SUMMARY</h3>
+                        <div class="summary-row">
+                            <span class="summary-label"> Total Team Clients</span>
+                            <span id="teamTotalClients" class="summary-value"> 0 </span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label"> Active Team Clients </span>
+                            <span id="teamActiveClients" class="summary-value"> 0 </span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label"> Inactive Team Clients</span>
+                            <span id="teamInactiveClients" class="summary-value"> 0 </span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label"> Paid Commission </span>
+                            <span id="teamPaidCommission" class="summary-value"> KES 0 </span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label"> Pending Commission</span>
+                            <span id="teamPendingCommission" class="summary-value"> KES 0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label"> Inactive Clients Waiting Commission</span>
+                            <span id="teamWaitingCommission" class="summary-value"> KES 0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>    
+    </div>
+       
+    <div id="resetModal" class="modal-overlay">    
+        <div class="modal">    
+            <div class="modal-header">    
+                <span>RESET LOGIN PASSWORD</span>   
+                <span id="closeResetModal" class="close-modal"> &times; </span>    
+            </div>    
+            <div class="modal-body">    
+                <div class="modal-note">    
+                    Verify your phone number and answer your security question as entered during job application
+                    before creating a new login password.    
+                </div>
+    
+                <label class="form-label">Phone Number</label>    
+                <input id="resetPhone" class="form-input" type="text">
+    
+                <label class="form-label">Security Question</label>    
+                <div class="modal-note"> What is your favourite colour?</div>    
+                <input id="securityAnswer" class="form-input" type="text" placeholder="Enter your answer">
+    
+                <label class="form-label">New Login Password</label>    
+                <div class="password-wrapper">    
+                    <input id="newPassword" class="form-input" type="password">    
+                    <i class="fa-solid fa-eye password-toggle" id="toggleNewPassword"></i>    
+                </div>
+    
+                <label class="form-label">Confirm Login Password</label>    
+                <div class="password-wrapper">    
+                    <input id="confirmPassword" class="form-input" type="password">    
+                    <i class="fa-solid fa-eye password-toggle" id="toggleConfirmPassword"></i>    
+                </div>
+
+                <div class="help-links"> Need help?    
+                    <br><br>    
+                    <a href="tel:+254748408498">Call: +254748408498</a>|    
+                    <a href="https://wa.me/254748408498" target="_blank"> WhatsApp</a>    
+                </div>
+
+                <button id="completeResetBtn" class="primary-btn">Complete</button>    
+            </div>    
+        </div>    
+    </div>
+
+    <!-- PASSWORD RESET SUCCESS -->
+
+    <div id="resetSuccessModal" class="modal-overlay">
+        <div class="modal">
+            <div class="success-modal">
+                <i class="fa-solid fa-circle-check"></i>
+                <h2>Password Updated</h2>
+                <p>Your login password has been changed successfully.
+                    <br><br>
+                    You can now sign in using your new password.
+                </p>
+                <button id="closeSuccessBtn" class="primary-btn">
+                    Continue to Login
+                </button>
+            </div>
+        </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="foot">
+    &copy; <span id="currentYear"></span> PIDEN V2.0. All rights reserved
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module">
+    import { SUPABASE_ANON_KEY } from "./p.js";  
+    const supabaseUrl = "https://mzvlybnvgpemdayoylfk.supabase.co";  
+    window.supabase = supabase.createClient(
+      supabaseUrl,
+      SUPABASE_ANON_KEY
+    );  
+    // ✅ SIGNAL THAT SUPABASE IS READY
+    window.dispatchEvent(new Event("supabase-ready"));
+  </script>
+  
+  <!-- Inline JS for dropdowns & logout -->
+  <script>
+    // Handle browser back/forward cache issues
+    window.addEventListener("pageshow", function (event) {
+            const loader = document.getElementById("pageLoader");
+
+            // Always hide loader if it exists
+            if (loader) {
+            loader.style.display = "none";
+            }
+
+            // If page was restored from bfcache, force reload once
+            if (event.persisted && !sessionStorage.getItem("reloaded")) {
+                sessionStorage.setItem("reloaded", "true");
+                window.location.reload();
+            }
+    });
+
+    document.getElementById("currentYear").textContent = new Date().getFullYear();
+
+      // Optional global control for Supabase calls
+      function showLoader() {
+        const loader = document.getElementById("pageLoader");
+        if (loader) loader.style.display = "flex";
+      }
+
+      function hideLoader() {
+        const loader = document.getElementById("pageLoader");
+        if (!loader) return;
+
+        loader.style.opacity = "0";
+        loader.style.transition = "opacity 0.3s ease";
+
+        setTimeout(() => {
+          loader.style.display = "none";
+          loader.style.opacity = "1";
+        }, 300);
+      }
+
+        /*==================================================
+                STAFF AUTHENTICATION
+    ==================================================*/
+
+    const STAFF_SESSION_KEY = "staffSession";
+    const COMMISSION_PER_CLIENT = 100;
+
+    let supabaseClient = null;
+    let currentStaff = null;
+
+    window.addEventListener("supabase-ready", () => {
+        supabaseClient = window.supabase;
+        initialiseStaffPage();
+    });
+
+    function initialiseStaffPage() {
+        cacheElements();
+        attachEvents();
+        initialisePasswordReset();
+        initialiseDashboard();
+        initialisePerformance();
+        initialiseRanks();
+        initialiseLeaderAnalysis();
+        restoreSession();
+    }
+
+    /*==================================================
+                ELEMENTS
+    ==================================================*/
+
+    let loginCard;
+    let dashboardSection;
+    let loginPhone;
+    let loginPassword;
+    let loginBtn;
+    let toggleLoginPassword;
+    let backHomeBtn;
+    let navRight;
+
+    function cacheElements() {
+        loginCard = document.getElementById("loginCard");
+        dashboardSection = document.getElementById("dashboardSection");
+
+        loginPhone = document.getElementById("loginPhone");
+        loginPassword = document.getElementById("loginPassword");
+
+        loginBtn = document.getElementById("loginBtn");
+        toggleLoginPassword = document.getElementById("toggleLoginPassword");
+
+        backHomeBtn = document.getElementById("backHomeBtn");
+        navRight = document.querySelector(".nav-right");
+    }
+
+    /*==================================================
+                EVENTS
+    ==================================================*/
+
+    function attachEvents() {
+        toggleLoginPassword.addEventListener("click", () => {
+            togglePassword(loginPassword, toggleLoginPassword);
+        });
+        loginBtn.addEventListener("click", loginStaff);
+        loginPassword.addEventListener("keypress", e => {
+            if (e.key === "Enter") loginStaff();
+        });
+        loginPhone.addEventListener("keypress", e => {
+            if (e.key === "Enter") loginStaff();
+        });
+        backHomeBtn.onclick = goHome;
+    }
+
+    function goHome(){
+        window.location.href="index.html";
+    }
+
+    /*==================================================
+                PASSWORD TOGGLE
+    ==================================================*/
+
+    function togglePassword(input, icon) {
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            input.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
+    }
+
+    /*==================================================
+                    LOGIN
+    ==================================================*/
+
+    async function loginStaff() {
+        const phone = loginPhone.value.trim();
+        const password = loginPassword.value;
+        if (!phone || !password) {
+            alert("Please enter both phone number and password.");
+            return;
+        }
+        showLoader();
+        try {
+            const { data: staff, error } = await supabaseClient
+                .from("staff")
+                .select("*")
+                .eq("phone", phone)
+                .maybeSingle();
+
+            if (error) throw error;
+
+            if (!staff) {
+                hideLoader();
+                alert("Phone number not found.");
+                return;
+            }
+
+            if (staff.password !== password) {
+                hideLoader();
+                alert("Incorrect password.");
+                return;
+            }
+
+            currentStaff = {
+                staffid: staff.staffid,
+                phone: staff.phone,
+                names: staff.names,
+                position: staff.position,
+                team: staff.team,
+                loginTime: new Date().toISOString()
+            };
+
+            sessionStorage.setItem(
+                STAFF_SESSION_KEY,
+                JSON.stringify(currentStaff)
+            );
+
+            enterDashboard();
+
+        } catch (err) {
+            console.error(err);
+            alert("Unable to sign in. Please try again.");
+
+        }
+        hideLoader();
+    }
+
+    /*==================================================
+                RESTORE SESSION
+    ==================================================*/
+
+    function restoreSession() {
+        const saved = sessionStorage.getItem(STAFF_SESSION_KEY);
+        if (!saved) return;
+        try {
+            currentStaff = JSON.parse(saved);
+            enterDashboard();
+        } catch {
+            sessionStorage.removeItem(STAFF_SESSION_KEY);
+        }
+    }
+
+    /*==================================================
+                ENTER DASHBOARD
+    ==================================================*/
+
+    function enterDashboard() {
+        loginCard.classList.add("hidden");
+        dashboardSection.classList.remove("hidden");
+
+        navRight.innerHTML = `
+            <span style="font-weight:600;">
+                Staff Dashboard
+            </span>
+        `;
+        backHomeBtn.innerHTML = `
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        `;
+
+        backHomeBtn.onclick = logoutStaff;
+        populateDashboard();
+        updateLeaderVisibility();
+    }
+
+    /*==================================================
+                    LOGOUT
+    ==================================================*/
+
+    function logoutStaff() {
+        sessionStorage.removeItem(STAFF_SESSION_KEY);
+
+        currentStaff = null;
+        staffQRCode.innerHTML="";
+        rankBody.innerHTML="";
+        leaderBody.innerHTML="";
+        performanceBody.innerHTML = "";
+
+        rankData=[];
+        leaderData=[];
+        performanceData = [];
+        leaderSummaryData = {
+            totalClients: 0,
+            activeClients: 0,
+            inactiveClients: 0,
+            paidCommission: 0,
+            pendingCommission: 0,
+            waitingCommission: 0
+        };
+      
+        performanceTableWrapper.style.display = "none";
+        performanceSummary.style.display = "none";
+        performanceEmpty.style.display = "none";
+        rankTableWrapper.style.display="none";
+        leaderTableWrapper.style.display="none";
+        leaderSummary.style.display="none";
+        rankEmpty.style.display="none";
+        leaderEmpty.style.display="none";
+
+        dashboardSection.classList.add("hidden");
+        loginCard.classList.remove("hidden");
+
+        loginPhone.value = "";
+        loginPassword.value = "";
+        leaderCard.style.display="none";
+
+        backHomeBtn.innerHTML = "← Back to Home";
+        backHomeBtn.onclick=goHome;
+        navRight.innerHTML = `
+            <span style="font-weight:600;">
+                Staff Login
+            </span>
+        `;
+        performanceBtn.disabled = false;
+        performanceBtn.innerHTML = `
+            Check
+        `;
+        rankBtn.disabled = false;
+        rankBtn.innerHTML = `
+            Check
+        `;
+        leaderBtn.disabled = false;
+        leaderBtn.innerHTML = `
+            Check
+        `;
+    }
+
+    /*==================================================
+                PASSWORD RESET
+    ==================================================*/
+
+    let forgotPasswordLink;
+    let resetModal;
+    let closeResetModal;
+    let resetPhone;
+    let securityAnswer;
+    let newPassword;
+    let confirmPassword;
+    let toggleNewPassword;
+    let toggleConfirmPassword;
+    let completeResetBtn;
+    let resetSuccessModal;
+    let closeSuccessBtn;
+
+    /*==================================================
+            CACHE RESET ELEMENTS
+    ==================================================*/
+    function initialisePasswordReset(){
+        forgotPasswordLink=document.getElementById("forgotPasswordLink");
+
+        resetModal=document.getElementById("resetModal");
+        closeResetModal=document.getElementById("closeResetModal");
+
+        resetPhone=document.getElementById("resetPhone");
+        securityAnswer=document.getElementById("securityAnswer");
+
+        newPassword=document.getElementById("newPassword");
+        confirmPassword=document.getElementById("confirmPassword");
+
+        toggleNewPassword=document.getElementById("toggleNewPassword");
+        toggleConfirmPassword=document.getElementById("toggleConfirmPassword");
+
+        completeResetBtn=document.getElementById("completeResetBtn");
+
+        resetSuccessModal=document.getElementById("resetSuccessModal");
+        closeSuccessBtn=document.getElementById("closeSuccessBtn");
+
+        forgotPasswordLink.onclick=e=>{
+            e.preventDefault();
+            resetModal.style.display="flex";
+        };
+
+        closeResetModal.onclick=closeReset;
+
+        toggleNewPassword.onclick=()=>togglePassword(newPassword,toggleNewPassword);
+        toggleConfirmPassword.onclick=()=>togglePassword(confirmPassword,toggleConfirmPassword);
+
+        completeResetBtn.onclick=completePasswordReset;
+
+        closeSuccessBtn.onclick=()=>{
+            resetSuccessModal.style.display="none";
+        };
+    }
+
+    /*==================================================
+                CLOSE RESET
+    ==================================================*/
+
+    function closeReset() {
+        resetModal.style.display = "none";
+        clearResetForm();
+    }
+
+    /*==================================================
+                CLEAR RESET
+    ==================================================*/
+
+    function clearResetForm() {
+        resetPhone.value = "";
+        securityAnswer.value = "";
+        newPassword.value = "";
+        confirmPassword.value = "";
+    }
+
+    /*==================================================
+            COMPLETE RESET
+    ==================================================*/
+
+    async function completePasswordReset() {
+        const phone = resetPhone.value.trim();
+        const answer = securityAnswer.value.trim();
+        const pass1 = newPassword.value;
+        const pass2 = confirmPassword.value;
+
+        if (!phone || !answer || !pass1 || !pass2) {
+            alert("Please complete all fields.");
+            return;
+        }
+
+        if (pass1 !== pass2) {
+            alert("Passwords do not match.");
+            return;
+        }
+
+        showLoader();
+        try {
+            const { data: staff, error } = await supabaseClient
+                .from("staff")
+                .select("*")
+                .eq("phone", phone)
+                .maybeSingle();
+            if (error) throw error;
+
+            if (!staff) {
+                hideLoader();
+                alert("Phone number was not found.");
+                return;
+            }
+
+            if (
+                staff.security.toLowerCase().trim() !==
+                answer.toLowerCase().trim()
+            ) {
+                hideLoader();
+                alert("Security answer is incorrect.");
+                return;
+            }
+
+            const { error: updateError } = await supabaseClient
+                .from("staff")
+                .update({
+                    password: pass1
+                })
+                .eq("phone", phone);
+
+            if (updateError) throw updateError;
+            hideLoader();
+            closeReset();
+            resetSuccessModal.style.display = "flex";
+        }
+
+        catch (err) {
+            console.error(err);
+            hideLoader();
+            alert("Unable to update password.");
+        }
+    }
+
+    /*==================================================
+                STAFF DASHBOARD
+    ==================================================*/
+
+    let staffID;
+    let staffNames;
+    let staffPhone;
+    let staffTeam;
+    let staffPosition;
+    let staffQRCode;
+
+    function initialiseDashboard(){
+        staffID=document.getElementById("staffID");
+        staffNames=document.getElementById("staffNames");
+        staffPhone=document.getElementById("staffPhone");
+        staffTeam=document.getElementById("staffTeam");
+        staffPosition=document.getElementById("staffPosition");
+        staffQRCode=document.getElementById("staffQRCode");
+    }
+
+    /*==================================================
+            POPULATE DASHBOARD
+    ==================================================*/
+
+    function populateDashboard(){
+        if(!currentStaff) return;
+        staffID.textContent=currentStaff.staffid||"-";
+        staffNames.textContent=currentStaff.names||"-";
+        staffPhone.textContent=currentStaff.phone||"-";
+        staffTeam.textContent=currentStaff.team||"Not Assigned";
+        staffPosition.textContent=currentStaff.position||"-";
+        generateStaffQRCode();
+        toggleLeaderCard();
+    }
+
+    /*==================================================
+                QR CODE
+    ==================================================*/
+function generateStaffQRCode(){
+staffQRCode.innerHTML="";
+const qrText=
+`PIDEN VERIFIED STAFF
+
+Staff ID: ${currentStaff.staffid}
+Names: ${currentStaff.names}
+Position: ${currentStaff.position}
+Phone: ${currentStaff.phone}
+
+This is a verified staff member of the PIDEN team.
+Thank you for verifying this staff member.
+
+Verification Page:
+https://piden.co.ke/verify.html`;
+
+new QRCode(staffQRCode,{
+    text:qrText,
+    width:140,
+    height:140,
+    correctLevel:QRCode.CorrectLevel.H
+    });
+}
+
+    /*==================================================
+            CLIENT PERFORMANCE DATA
+    ==================================================*/
+
+    let performanceBtn;
+    let performanceBody;
+    let performanceEmpty;
+    let performanceSummary;
+    let performanceTableWrapper;
+    let totalClients;
+    let activeClients;
+    let inactiveClients;
+    let paidCommission;
+    let pendingCommission;
+    let waitingCommission;
+    let performanceData=[];
+
+    function initialisePerformance(){
+        performanceBtn=document.getElementById("performanceBtn");
+        performanceBody=document.getElementById("performanceBody");
+        performanceEmpty=document.getElementById("performanceEmpty");
+        performanceSummary=document.getElementById("performanceSummary");
+        performanceTableWrapper=document.getElementById("performanceTableWrapper");
+        totalClients=document.getElementById("totalClients");
+        activeClients=document.getElementById("activeClients");
+        inactiveClients=document.getElementById("inactiveClients");
+        paidCommission=document.getElementById("paidCommission");
+        pendingCommission=document.getElementById("pendingCommission");
+        waitingCommission=document.getElementById("waitingCommission");
+        performanceBtn.onclick=loadPerformance;
+    }
+
+    /*==================================================
+                LOAD PERFORMANCE
+    ==================================================*/
+
+    async function loadPerformance(){
+        if(!currentStaff) return;
+
+        performanceBtn.disabled=true;
+        performanceBtn.textContent="Loading...";
+        performanceEmpty.style.display="none";
+        performanceSummary.style.display="none";
+        performanceTableWrapper.style.display="none";
+        performanceBody.innerHTML="";
+        try{
+            const {data,error}=await supabaseClient
+            .from("profile")
+            .select(`
+                businessname,
+                county,
+                activationfeestatus,
+                referralcommission,
+                createdat
+            `)
+            .eq("referral",currentStaff.phone)
+            .order("createdat",{ascending:false});
+
+            if(error) throw error;
+            performanceData=data||[];
+            calculatePerformanceSummary();
+        }
+
+        catch(err){
+            console.error(err);
+            performanceEmpty.style.display="block";
+            performanceEmpty.textContent="Unable to load onboarding performance.";
+        }
+
+        performanceBtn.disabled=false;
+        performanceBtn.innerHTML=`
+        <i class="fa-solid fa-rotate-right"></i>
+        Refresh
+        `;
+    }
+
+    /*==================================================
+            PERFORMANCE SUMMARY
+    ==================================================*/
+
+    function calculatePerformanceSummary(){
+        let total=performanceData.length;
+        let active=0;
+        let inactive=0;
+        let paid=0;
+        let pending=0;
+        let waiting=0;
+
+        performanceData.forEach(client=>{
+            const activeStatus=client.activationfeestatus==="Paid";
+            const commissionPaid=client.referralcommission==="Paid";
+            if(activeStatus){
+                active++;
+                if(commissionPaid){
+                    paid++;
+                }else{
+                    pending++;
+                }
+            }else{
+                inactive++;
+                waiting++;
+            }
+        });
+
+        totalClients.textContent=total;
+        activeClients.textContent=active;
+        inactiveClients.textContent=inactive;
+        paidCommission.textContent=
+        "KES "+(paid*COMMISSION_PER_CLIENT).toLocaleString();
+        pendingCommission.textContent=
+        "KES "+(pending*COMMISSION_PER_CLIENT).toLocaleString();
+        waitingCommission.textContent=
+        "KES "+(waiting*COMMISSION_PER_CLIENT).toLocaleString();
+        renderPerformance();
+    }
+
+    /*==================================================
+            RENDER PERFORMANCE
+    ==================================================*/
+
+    function renderPerformance(){
+        performanceBody.innerHTML="";
+        if(performanceData.length===0){
+            performanceTableWrapper.style.display="none";
+            performanceSummary.style.display="none";
+            performanceEmpty.style.display="block";
+            performanceEmpty.innerHTML=`
+                <i class="fa-regular fa-folder-open"
+                style="font-size:48px;color:#003366;margin-bottom:12px;"></i>
+                <br>
+                No clients have been linked to your account yet.
+            `;
+            return;
+        }
+
+        performanceEmpty.style.display="none";
+        performanceTableWrapper.style.display="block";
+        performanceSummary.style.display="block";
+        performanceData.forEach((client,index)=>{
+            const row=document.createElement("tr");
+            const status=
+            client.activationfeestatus==="Paid"
+            ?"Active"
+            :"Pending";
+            row.innerHTML=`
+                <td>${index+1}</td>
+                <td>${client.businessname||"-"}</td>
+                <td>${client.county||"-"}</td>
+                <td>${status}</td>
+                <td>${client.referralcommission||"Pending"}</td>
+            `;
+
+            performanceBody.appendChild(row);
+        });
+    }
+
+    /*==================================================
+                PERFORMANCE RANKS
+    ==================================================*/
+    let rankBtn;
+    let rankEmpty;
+    let rankBody;
+    let rankTableWrapper;
+    let rankTeamTitle;
+    let rankData=[];
+
+    /*==================================================
+                TEAM LEADER ANALYSIS
+    ==================================================*/
+    const LEADER_COMMISSION=20;
+    let leaderCard;
+    let leaderBtn;
+    let leaderEmpty;
+    let leaderBody;
+    let leaderTableWrapper;
+    let leaderTeamTitle;
+    let leaderSummary;
+    let teamTotalClients;
+    let teamActiveClients;
+    let teamInactiveClients;
+    let teamPaidCommission;
+    let teamPendingCommission;
+    let teamWaitingCommission;
+    let leaderData=[];
+
+    /*==================================================
+                INITIALISE RANKS
+    ==================================================*/
+
+    function initialiseRanks(){
+        rankBtn=document.getElementById("rankBtn");
+        rankEmpty=document.getElementById("rankEmpty");
+        rankBody=document.getElementById("rankBody");
+        rankTableWrapper=document.getElementById("rankTableWrapper");
+        rankTeamTitle=document.getElementById("rankTeamTitle");
+        rankBtn.onclick=loadRanks;
+    }
+
+    /*==================================================
+            INITIALISE TEAM LEADER
+    ==================================================*/
+    function initialiseLeaderAnalysis(){
+        leaderCard=document.getElementById("leaderCard");
+        leaderBtn=document.getElementById("leaderBtn");
+        leaderEmpty=document.getElementById("leaderEmpty");
+        leaderBody=document.getElementById("leaderBody");
+        leaderTableWrapper=document.getElementById("leaderTableWrapper");
+        leaderTeamTitle=document.getElementById("leaderTeamTitle");
+        leaderSummary=document.getElementById("leaderSummary");
+        teamTotalClients=document.getElementById("teamTotalClients");
+        teamActiveClients=document.getElementById("teamActiveClients");
+        teamInactiveClients=document.getElementById("teamInactiveClients");
+        teamPaidCommission=document.getElementById("teamPaidCommission");
+        teamPendingCommission=document.getElementById("teamPendingCommission");
+        teamWaitingCommission=document.getElementById("teamWaitingCommission");
+        leaderBtn.onclick=loadLeaderAnalysis;
+    }
+
+    /*==================================================
+            TOGGLE LEADER CARD
+    ==================================================*/
+    function toggleLeaderCard(){
+        if(!currentStaff){
+            leaderCard.classList.add("hidden");
+            return;
+        }
+        if(currentStaff.position==="Sales and Marketing Team Leader"){
+            leaderCard.classList.remove("hidden");
+        }
+        else{
+            leaderCard.classList.add("hidden");
+        }
+   }
+
+    /*==================================================
+                TEAM COMPARISON HELPERS
+    ==================================================*/
+    function sameTeamValue(value){
+        return (value ?? "").trim();
+    }
+
+    function isCurrentStaffRow(phone){
+        return phone===currentStaff.phone;
+    }
+
+    /*==================================================
+                    LOAD RANKS
+    ==================================================*/
+    async function loadRanks(){
+        if(!currentStaff) return;
+            rankBtn.disabled=true;
+            rankBtn.textContent="Loading...";
+            rankEmpty.style.display="none";
+            rankTableWrapper.style.display="none";
+            rankBody.innerHTML="";
+            rankData=[];
+
+        showLoader();
+        try{
+            let staffQuery=
+                supabaseClient
+                .from("staff")
+                .select("names,phone,team,position");
+            if(currentStaff.team==null){
+                staffQuery=staffQuery
+                    .is("team",null);
+            }
+            else{
+                staffQuery=staffQuery
+                    .eq("team",currentStaff.team);
+            }
+            const {data:staffMembers,error:staffError}=await staffQuery
+                .eq("position","Sales and Marketing Team");
+            if(staffError) throw staffError;
+            if(!staffMembers || staffMembers.length===0){
+                throw new Error("No staff found.");
+            }
+            const phones=staffMembers.map(staff=>staff.phone);
+            const {data:profiles,error:profileError}=await supabaseClient
+                .from("profile")
+                .select(`
+                    referral,
+                    activationfeestatus
+                `)
+                .in("referral",phones);
+            if(profileError) throw profileError;
+            buildRanks(staffMembers,profiles||[]);
+        }
+        catch(err){
+            console.error(err);
+            rankEmpty.style.display="block";
+            rankEmpty.innerHTML=`
+                <i class="fa-regular fa-folder-open"
+                style="font-size:48px;color:#003366;margin-bottom:12px;"></i>
+                <br>
+                Unable to load team rankings.
+            `;
+        }
+        hideLoader();
+        rankBtn.disabled=false;
+        rankBtn.innerHTML=`
+            <i class="fa-solid fa-rotate-right"></i>
+            Refresh
+        `;
+    }
+
+    /*==================================================
+                    BUILD RANKS
+    ==================================================*/
+    function buildRanks(staffMembers,profiles){
+        rankData=[];
+        staffMembers.forEach(staff=>{
+            const staffClients=
+                profiles.filter(profile=>profile.referral===staff.phone);
+            let active=0;
+            let inactive=0;
+            staffClients.forEach(client=>{
+                if(client.activationfeestatus==="Paid"){
+                    active++;
+                }
+                else{
+                    inactive++;
+                }
+            });
+            rankData.push({
+                names:staff.names,
+                phone:staff.phone,
+                active,
+                inactive
+            });
+        });
+        rankData.sort((a,b)=>{
+            if(b.active!==a.active){
+                return b.active-a.active;
+            }
+            return a.names.localeCompare(b.names);
+        });
+        renderRanks();
+    }
+
+    /*==================================================
+                    RENDER RANKS
+    ==================================================*/
+    function renderRanks(){
+        rankBody.innerHTML="";
+        if(rankData.length===0){
+            rankTableWrapper.style.display="none";
+            rankEmpty.style.display="block";
+            rankEmpty.innerHTML=`
+                <i class="fa-regular fa-folder-open"
+                style="font-size:48px;color:#003366;margin-bottom:12px;"></i>
+                <br>
+                No ranking data available.
+            `;
+            return;
+        }
+        rankTableWrapper.style.display="block";
+        rankTeamTitle.textContent=
+            "Team : "+
+            (currentStaff.team || "Unassigned");
+        rankData.forEach((staff,index)=>{
+            const row=document.createElement("tr");
+            if(isCurrentStaffRow(staff.phone)){
+                row.classList.add("current-user-row");
+            }
+            row.innerHTML=`
+                <td>${index+1}</td>
+                <td>${staff.names}</td>
+                <td>${staff.active}</td>
+                <td>${staff.inactive}</td>
+            `;
+            rankBody.appendChild(row);
+        });
+    }
+
+    let leaderSummaryData = {
+        totalClients: 0,
+        activeClients: 0,
+        inactiveClients: 0,
+        paidCommission: 0,
+        pendingCommission: 0,
+        waitingCommission: 0
+    };
+
+    /*==================================================
+            TEAM LEADER VISIBILITY
+    ==================================================*/
+
+    function updateLeaderVisibility(){
+        if(!currentStaff){
+            return;
+        }
+        if(currentStaff.position!=="Sales and Marketing Team Leader"){
+            leaderCard.style.display="none";
+            return;
+        }
+        leaderCard.style.display="block";
+    }
+
+    /*==================================================
+                LOAD LEADER ANALYSIS
+    ==================================================*/
+    async function loadLeaderAnalysis(){
+        if(!currentStaff) return;
+        leaderBtn.disabled = true;
+        leaderBtn.textContent = "Loading...";
+        leaderEmpty.style.display = "none";
+        leaderSummary.style.display = "none";
+        leaderTableWrapper.style.display = "none";
+        leaderBody.innerHTML = "";
+        leaderData = [];
+        showLoader();
+        try{
+            const teamName = currentStaff.team;
+            if(!teamName){
+                throw new Error(
+                    "No team assigned."
+                );
+            }
+            await buildLeaderAnalysis(teamName);
+        }
+
+        catch(err){
+            console.error(err);
+            leaderEmpty.style.display = "block";
+            leaderEmpty.innerHTML = `
+                <i class="fa-regular fa-folder-open"
+                style="font-size:48px;color:#003366;margin-bottom:12px;"></i>
+                <br>
+                Unable to load team analysis.
+            `;
+        }
+        hideLoader();
+        renderLeaderTable();
+        calculateLeaderSummary();
+        leaderBtn.disabled = false;
+        leaderBtn.innerHTML = `
+            <i class="fa-solid fa-rotate-right"></i>
+            Refresh
+        `;
+    }
+
+    /*==================================================
+                BUILD LEADER ANALYSIS
+    ==================================================*/
+    async function buildLeaderAnalysis(teamName){
+        leaderData = [];
+        leaderSummaryData = {
+            totalClients: 0,
+            activeClients: 0,
+            inactiveClients: 0,
+            paidCommission: 0,
+            pendingCommission: 0,
+            waitingCommission: 0
+        };
+        const { data: staffMembers, error: staffError }
+            = await supabaseClient
+            .from("staff")
+            .select(`
+                names,
+                phone,
+                position,
+                team
+            `)
+            .eq("team", teamName);
+        if(staffError){
+            throw staffError;
+        }
+        if(!staffMembers || !staffMembers.length){
+            throw new Error(
+                "No staff found."
+            );
+        }
+        const phones = staffMembers.map(
+            member => member.phone
+        );
+        const { data: profiles, error: profileError }
+                = await supabaseClient
+                .from("profile")
+                .select(`
+                    referral,
+                    activationfeestatus,
+                    referralcommission
+                `)
+                .in("referral", phones);
+            if(profileError){
+                throw profileError;
+            }
+            
+        const clientData = profiles || [];
+            staffMembers.forEach(staff => {
+
+        const staffClients =
+            clientData.filter(
+                client =>
+                    client.referral === staff.phone
+            );
+
+        let active = 0;
+        let inactive = 0;
+        staffClients.forEach(client => {
+            const activeStatus =
+                client.activationfeestatus === "Paid";
+            if(activeStatus){
+                active++;
+            }
+            else{
+                inactive++;
+            }
+        });
+        leaderData.push({
+            names: staff.names,
+            phone: staff.phone,
+            active,
+            inactive
+        });
+        });
+        leaderData.sort((a,b)=>{
+        if(b.active !== a.active){
+            return b.active - a.active;
+        }
+        return a.names.localeCompare(
+            b.names
+        );
+        });
+        leaderSummaryData.totalClients =
+                clientData.length;
+        leaderSummaryData.activeClients =
+                clientData.filter(
+                    client =>
+                        client.activationfeestatus === "Paid"
+                ).length;
+        leaderSummaryData.inactiveClients =
+                clientData.filter(
+                    client =>
+                        client.activationfeestatus !== "Paid"
+                ).length;
+
+        let paidCount = 0;
+        let pendingCount = 0;
+        let waitingCount = 0;
+        clientData.forEach(client => {
+            const activeStatus =
+                client.activationfeestatus === "Paid";
+            const commissionPaid =
+                client.referralcommission === "Paid";
+            if(activeStatus){
+                if(commissionPaid){
+                    paidCount++;
+                }
+                else{
+                    pendingCount++;
+                }
+            }
+            else{
+                waitingCount++;
+            }
+        });
+        leaderSummaryData.paidCommission =
+            paidCount *
+            LEADER_COMMISSION;
+        leaderSummaryData.pendingCommission =
+            pendingCount *
+            LEADER_COMMISSION;
+        leaderSummaryData.waitingCommission =
+            waitingCount *
+            LEADER_COMMISSION;
+    }
+
+    /*==================================================
+            CALCULATE TEAM TOTALS
+    ==================================================*/
+    function calculateLeaderSummary(){
+        teamTotalClients.textContent =
+        leaderSummaryData.totalClients.toLocaleString();
+        teamActiveClients.textContent =
+            leaderSummaryData.activeClients.toLocaleString();
+        teamInactiveClients.textContent =
+            leaderSummaryData.inactiveClients.toLocaleString();
+        teamPaidCommission.textContent =
+            "KES " +
+            leaderSummaryData.paidCommission.toLocaleString();
+        teamPendingCommission.textContent =
+            "KES " +
+            leaderSummaryData.pendingCommission.toLocaleString();
+        teamWaitingCommission.textContent =
+            "KES " +
+            leaderSummaryData.waitingCommission.toLocaleString();
+        leaderSummary.style.display = "block";
+    }
+
+    /*==================================================
+            RENDER TEAM LEADER TABLE
+    ==================================================*/
+    function renderLeaderTable(){
+        leaderBody.innerHTML = "";
+        if(leaderData.length===0){
+            leaderEmpty.style.display="block";
+            leaderTableWrapper.style.display="none";
+            leaderSummary.style.display="none";
+            leaderEmpty.innerHTML=`
+                <i class="fa-regular fa-folder-open"
+                style="font-size:46px;color:#003366;">
+                </i>
+                <br><br>
+                No staff members found under this team.
+            `;
+            return;
+        }
+        leaderEmpty.style.display="none";
+        leaderTableWrapper.style.display="block";
+        leaderSummary.style.display="block";
+        leaderTeamTitle.textContent=
+            "Team : "+
+            (currentStaff.team || "Unassigned");
+        leaderData.sort((a,b)=>{
+            if(b.active!==a.active){
+                return b.active-a.active;
+            }
+            return b.total-a.total;
+        });
+        leaderData.forEach((staff,index)=>{
+            const row=document.createElement("tr");
+            if(staff.phone===currentStaff.phone){
+                row.classList.add("highlight-row");
+            }
+            row.innerHTML=`
+                <td>${index+1}</td>
+                <td>${staff.names}</td>
+                <td>${staff.active}</td>
+                <td>${staff.inactive}</td>
+            `;
+            leaderBody.appendChild(row);
+        });
+    }
+  </script>
+</body>
+</html>

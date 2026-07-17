@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POS | Market</title>
+  <link rel="shortcut icon" type="image/x-icon" href="Favicon.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0d1b2a">
+  <style>
+    body {display: flex;  line-height: 1.4; min-height: 100vh;
+      flex-direction: column; margin: 0; background-color: #f1f4f8;}
+
+    * {font-family: 'Poppins', sans-serif;}
+
+    .title {color: #003366; font-size: 24px; margin-bottom: 20px;}
+
+    .main {background-color: white; border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      padding: 25px; width: 90%; max-width: 400px; text-align: center;}
+
+    .top-nav {width: 100%; height: 40px; background-color: #003366; color: white; display: flex;
+      justify-content: center; align-items: center; padding: 0 15px; position: fixed;
+      top: 0; z-index: 100;}
+    
+    .menu-icon {font-size: 24px; cursor: pointer; margin-right: 10px;}
+  
+    .active-page {font-size: 16px; font-weight: 600;}
+    
+    .nav-logo {font-size: 22px; font-weight: bold; margin-right: 70px;}
+
+    .user-icon {cursor: pointer; margin-right: 30px;}
+    
+    .circle {width: 36px; height: 36px; background-color: white; border-radius: 50%; position: relative;
+      display: flex; align-items: center; justify-content: center;}
+    
+    .head {width: 10px; height: 10px; background-color: #003366; border-radius: 50%;
+      position: absolute; top: 8px;}
+    
+    .shoulders {width: 20px; height: 8px; background-color: #003366; border-radius: 50%; position: absolute;
+      bottom: 8px;}
+
+    .user-dropdown {position: absolute; top: 40px; right: 0; background: white;
+      color: #003366; padding: 10px; border-radius: 6px; box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      z-index: 1000; width: 160px; text-align: center; margin-right: 20px; transform-origin: top right;
+      transform: scale(0); opacity: 0; transition: transform 0.25s ease-out, opacity 0.2s ease-out;
+      display: block; pointer-events: none;}
+    
+    .user-dropdown.show {  transform: scale(1); opacity: 1; pointer-events: auto;}
+    
+    .user-dropdown p {margin: 0 0 10px;}
+    
+    .user-dropdown button {background-color: #003366; color: white; border: none; padding: 8px 12px;
+      border-radius: 4px; cursor: pointer; width: 90%;}
+    
+    .user-dropdown button:hover {background-color: #0055aa;}
+
+    .main-content {margin-top: 30px; padding: 20px; margin-right: 40px; padding-bottom: 10px;}
+
+    .foot {width: 100%; background-color: white; color: #003366; text-align: center; padding: 2px 1px;
+      position: fixed; bottom: 0; left: 0; font-size: 13px; z-index: 100;}
+    
+    /* ===== FULLSCREEN LOADER ===== */
+    #pageLoader {position: fixed; inset: 0; background: #ffffff; z-index: 9999; display: flex;
+      align-items: center; justify-content: center;
+    }
+
+    .piden-loader {text-align: center; font-family: "Segoe UI", system-ui, sans-serif;}
+
+    .piden-text {font-size: 36px; font-weight: 700; letter-spacing: 6px; color: #003366;}
+
+    .piden-text span {display: inline-block; animation: pulse 1.6s infinite ease-in-out; opacity: 0.3;}
+
+    .piden-text span:nth-child(1) { animation-delay: 0s; }
+    .piden-text span:nth-child(2) { animation-delay: 0.15s; }
+    .piden-text span:nth-child(3) { animation-delay: 0.3s; }
+    .piden-text span:nth-child(4) { animation-delay: 0.45s; }
+    .piden-text span:nth-child(5) { animation-delay: 0.6s; }
+
+    @keyframes pulse {0% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); }
+      100% { opacity: 0.3; transform: translateY(0); }}
+
+    .dashboard-card {width: 100%; border-radius: 16px; padding: 20px; margin-bottom: 0px;
+      position: relative; overflow: hidden; background-color: #ffffff;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);}
+
+    .welcome-card::after {content: ""; position: absolute; inset: 0;
+      background-image: url("welcomebackground.jpeg"); background-size: cover;
+      background-position: bottom right; opacity: 0.35; mask-image: linear-gradient(
+      135deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 30%, rgba(0,0,0,0.3) 55%,
+      rgba(0,0,0,0) 75%);
+      -webkit-mask-image: linear-gradient(135deg, rgba(0,0,0,1) 0%,rgba(0,0,0,1) 30%,
+      rgba(0,0,0,0.3) 55%, rgba(0,0,0,0) 75%);}
+
+    .welcome-card > * {position: relative; z-index: 2;}
+
+    .welcome-card {display: flex;justify-content: space-between; align-items: flex-start; gap: 20px;}
+
+    .welcome-left {max-width: 100%;}
+
+    .welcome-left h2 {margin: 0 0 8px; color: #003366; font-size: 20px;}
+
+    .welcome-message {color: #333; line-height: 1.5; font-size: 17px;}
+
+    @media (max-width: 768px) {.welcome-card {flex-direction: column; align-items: flex-start;
+      gap: 5px;}
+
+    .welcome-left {max-width: 100%;}
+
+    .welcome-left h2{margin-bottom: 0px;}
+
+    .welcome-message{ margin-bottom: 0px; margin-top: 0px;}}
+
+    .back-home {background: #003366; border: none; border-radius: 12px; width: 100%;
+        color: white; font-weight: 600; padding: 10px; cursor:pointer; }
+
+    .back-home:hover {background: #0055aa;}
+
+    :root {--page-footer-height: 40px;}
+
+    .side-menu-overlay {position: fixed; inset: 0; background: rgba(0,0,0,0.35);
+      opacity: 0; visibility: hidden; transition: opacity 0.3s ease;}
+
+    .side-menu {position: fixed; top: 0; left: 0; width: 280px;
+      height: calc(100% - var(--page-footer-height)); bottom: var(--page-footer-height); 
+      background: #ffffff; box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+      transform: translateX(-100%); transition: transform 0.35s ease;
+      z-index: 999; display: flex; flex-direction: column; overflow-y: auto;}
+
+    .side-menu.show {transform: translateX(0);}
+
+    .side-menu-overlay.show {opacity: 1; visibility: visible;}
+
+    .side-menu-header {display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 20px;}
+
+    .side-menu-title {font-size: 18px; font-weight: 700; color: #003366;}
+
+    .side-menu-close {background: none; border: none; font-size: 26px; cursor: pointer; color: #003366;}
+
+    .side-menu-nav {display: flex; flex-direction: column; padding: 4px 0;}
+
+    .side-menu-nav a {display: flex; align-items: center; gap: 12px; padding: 12px 20px;
+      text-decoration: none; color: #003366; font-weight: 500; transition: background 0.2s ease, padding-left 0.2s ease;}
+
+    .side-menu-nav a:hover {background-color: #f1f4f8; padding-left: 26px;}
+
+    .side-menu-nav i {width: 20px; text-align: center; font-size: 16px;}
+
+    .side-menu hr {border: none; border-top: 1px solid #e0e0e0; margin: 0;}
+  </style>
+</head>
+<body class="dashboard-page">
+  <!-- PIDEN Loader -->
+  <div id="pageLoader">
+    <div class="piden-loader">
+      <div class="piden-text">
+        <span>P</span><span>I</span><span>D</span><span>E</span><span>N</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <span class="nav-logo">PIDEN MARKET</span>
+  </nav>
+
+  <!-- Content Area Placeholder -->
+  <main class="main-content">
+
+    <div class="dashboard-card welcome-card">
+      <div class="welcome-left">
+        <h2 id="welcomeTitle">Hi, there?</h2>
+        <p class="welcome-message">
+          The PIDEN MARKET is currently under construction and will be live soon.
+          Keep checking for updates. Sorry for the inconvinience.
+        </p>
+        <div>
+            <button class="back-home" onclick="window.location.href='index.html'">← Back to Home</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+
+  <!-- Footer -->
+  <footer class="foot">
+    &copy; <span id="currentYear"></span> PIDEN V2.0. All rights reserved <br> Contact us:
+    <a href="tel:+254748408498">
+      <i class="fas fa-phone"></i> Call
+    </a> |
+    <a href="https://wa.me/254748408498" target="_blank">
+      <i class="fab fa-whatsapp"></i> WhatsApp: +254748408498
+    </a>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module">
+    import { SUPABASE_ANON_KEY } from "./p.js";  
+    const supabaseUrl = "https://mzvlybnvgpemdayoylfk.supabase.co";  
+    window.supabase = supabase.createClient(
+      supabaseUrl,
+      SUPABASE_ANON_KEY
+    );  
+    // ✅ SIGNAL THAT SUPABASE IS READY
+    window.dispatchEvent(new Event("supabase-ready"));
+  </script>
+  
+  <!-- Inline JS for dropdowns & logout -->
+  <script>
+    // Handle browser back/forward cache issues
+    window.addEventListener("pageshow", function (event) {
+            const loader = document.getElementById("pageLoader");
+
+            // Always hide loader if it exists
+            if (loader) {
+            loader.style.display = "none";
+            }
+
+            // If page was restored from bfcache, force reload once
+            if (event.persisted && !sessionStorage.getItem("reloaded")) {
+                sessionStorage.setItem("reloaded", "true");
+                window.location.reload();
+            }
+    });
+
+    document.getElementById("currentYear").textContent = new Date().getFullYear();
+
+    function openSideMenu() {
+      document.getElementById("sideMenu").classList.add("show");
+      document.getElementById("sideMenuOverlay").classList.add("show");
+    }
+
+    function closeSideMenu() {
+      document.getElementById("sideMenu").classList.remove("show");
+      document.getElementById("sideMenuOverlay").classList.remove("show");
+    }
+
+    function toggleUserDropdown() {
+      document.getElementById("userDropdown").classList.toggle("show");
+    }
+
+    function logout() {
+      sessionStorage.clear();
+      window.location.href = "login.html";
+    }
+
+      // Optional global control for Supabase calls
+      function showLoader() {
+        const loader = document.getElementById("pageLoader");
+        if (loader) loader.style.display = "flex";
+      }
+
+      function hideLoader() {
+        const loader = document.getElementById("pageLoader");
+        if (!loader) return;
+
+        loader.style.opacity = "0";
+        loader.style.transition = "opacity 0.3s ease";
+
+        setTimeout(() => {
+          loader.style.display = "none";
+          loader.style.opacity = "1";
+        }, 300);
+      }
+
+  </script>
+</body>
+</html>

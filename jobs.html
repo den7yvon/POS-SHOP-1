@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POS | JOBS</title>
+  <link rel="shortcut icon" type="image/x-icon" href="Favicon.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0d1b2a">
+  <style>
+    body {display: flex;  line-height: 1.4; min-height: 100vh;
+      flex-direction: column; margin: 0; background-color: #f1f4f8;}
+
+    * {font-family: 'Poppins', sans-serif;}
+
+    .title {color: #003366; font-size: 24px; margin-bottom: 20px;}
+
+    .main {background-color: white; border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      padding: 25px; width: 90%; max-width: 400px; text-align: center;}
+
+    .top-nav {width: 100%; height: 40px; background-color: #003366; color: white; display: flex;
+      justify-content: space-between; align-items: center; padding: 8px 15px; position: fixed;
+      top: 0; z-index: 100;}
+  
+    .nav-left, .nav-right {display: flex; align-items: center; position: relative;}
+
+    .nav-right{margin-right: 40px;}
+
+    .main-content {margin-top: 60px; padding: 10px; padding-bottom: 10px;}
+
+    .foot {width: 100%; background-color: white; color: #003366; text-align: center; padding: 2px 1px;
+      position: fixed; bottom: 0; left: 0; font-size: 15px;}
+    
+    /* ===== FULLSCREEN LOADER ===== */
+    #pageLoader {position: fixed; inset: 0; background: #ffffff; z-index: 9999; display: flex;
+      align-items: center; justify-content: center;
+    }
+
+    .piden-loader {text-align: center; font-family: "Segoe UI", system-ui, sans-serif;}
+
+    .piden-text {font-size: 36px; font-weight: 700; letter-spacing: 6px; color: #003366;}
+
+    .piden-text span {display: inline-block; animation: pulse 1.6s infinite ease-in-out; opacity: 0.3;}
+
+    .piden-text span:nth-child(1) { animation-delay: 0s; }
+    .piden-text span:nth-child(2) { animation-delay: 0.15s; }
+    .piden-text span:nth-child(3) { animation-delay: 0.3s; }
+    .piden-text span:nth-child(4) { animation-delay: 0.45s; }
+    .piden-text span:nth-child(5) { animation-delay: 0.6s; }
+
+    @keyframes pulse {0% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); }
+      100% { opacity: 0.3; transform: translateY(0); }}
+
+    .back-btn{background:white; border:1px solid rgba(255,255,255,.35); color: #003366; padding:8px 16px;
+        border-radius:10px; cursor:pointer; font-size:14px; font-weight:500; transition:.25s;}
+
+    .back-btn:hover{background:rgba(161, 198, 233, 0.945);}
+
+    .jobs-container{width:100%; max-width:1200px; margin:auto; display:flex; flex-direction:column; gap:30px;
+        padding-bottom:30px;}
+
+    .job-card{background:#fff;  border-radius:18px;  overflow:hidden;  box-shadow:0 10px 30px rgba(0,0,0,.08);
+        transition:.25s ease; border-top: 6px solid #003366;}
+
+    .job-card:hover{transform:translateY(-2px); box-shadow:0 14px 36px rgba(0,0,0,.12);}
+
+    .job-card-body{padding:30px;}
+
+    .card-title{text-align:center; color:#003366; font-size:26px;  font-weight:700; margin-bottom:20px;}
+
+    .card-subtitle{text-align:center; color:#666; margin-bottom:25px; line-height:1.7;}
+
+    .section-title{color:#003366; font-size:22px; font-weight:700; margin:35px 0 20px;}
+
+    .contract-heading{color:#003366; font-size:18px; font-weight:700; margin-top:10px; margin-bottom:5px;}
+    .contract-content{color:#444; line-height:1.5;}
+
+    .contract-divider{margin:40px 0; border:none; border-top:2px solid #e5e5e5;}
+
+    .radio-group{display:flex; flex-direction:column; gap:16px;}
+    .radio-option{display:flex; align-items:center; gap:12px; border:1px solid #dfe5eb; padding:15px 18px;
+        border-radius:14px; cursor:pointer; transition:.25s;}
+    .radio-option:hover{border-color:#003366;  background:#f8fbff;}
+    .radio-option input{accent-color:#003366; width:18px; height:18px;}
+    .radio-option span{font-weight:600; color:#003366;}
+    .form-label{display:block;  color:#003366;  font-weight:600; margin-top:20px; margin-bottom:8px;}
+    .text-input,.select-input,.text-area{width:100%; padding:13px 15px; border:1px solid #d6dce3; border-radius:12px;
+        outline:none; font-size:15px; transition:.25s; box-sizing:border-box; background:white;}
+    .text-input:focus,.select-input:focus,.text-area:focus{border-color:#003366;
+        box-shadow:0 0 0 4px rgba(0,51,102,.08);}
+    .text-area{resize:vertical; min-height:140px;}
+
+    .password-wrapper{position:relative;}
+
+    .password-wrapper input{padding-right:48px;}
+
+    .password-toggle{position:absolute; right:15px; top:50%; transform:translateY(-50%); cursor:pointer;
+        color:#777; font-size:18px;}
+
+    .checkbox-row{display:flex; align-items:flex-start; gap:12px; margin-top:30px; line-height:1.7;}
+
+    .checkbox-row input{margin-top:5px; accent-color:#003366;}
+
+    .checkbox-row label{cursor:pointer;}
+
+    .primary-btn{width:100%; height:50px; margin-top:30px; border:none; border-radius:12px; background:#003366;
+        color:white; font-size:15px; font-weight:600; cursor:pointer; transition:.25s;}
+
+    .primary-btn:hover{background:#004d99;}
+
+    .primary-btn:active{transform:scale(.98);}
+    .primary-btn:disabled{opacity:.7; cursor:not-allowed;}
+
+    .secondary-btn{width:100%;  height:48px; margin-top:20px; border:none; border-radius:12px; background:#bad3f1;
+        color:#003366; font-size:15px; font-weight:600; cursor:pointer; transition:.25s;}
+
+    .secondary-btn:hover{background:#d8e8fb;}
+
+    .hidden{display:none;}
+
+    .modal-overlay{position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; justify-content:center;   
+        align-items:center; z-index:9999; padding:20px;}
+    .modal-box{width:100%; max-width:280px; background:white; border-radius:18px; overflow:hidden;
+        animation:popup .25s ease; margin: 10px;}
+    .modal-header{background:#003366; color:white; text-align:center; padding:18px; font-size:20px;
+        font-weight:700;}
+    .modal-body{padding:10px; text-align:center;}
+    .modal-icon{width:50px; height:50px; border-radius:50%; margin:auto; background:#e8f7ee; color:#138f3e;
+        display:flex; align-items:center;  justify-content:center; font-size:20px; font-weight:bold;}
+    .modal-message{margin-top:10px; color:#555; line-height:1.5;}
+    .modal-footer{padding:0 10px 10px;}
+
+    @keyframes popup{from{transform:translateY(20px); opacity:0;}
+        to{transform:translateY(0); opacity:1;}}
+
+    .error-input{border-color:#dc3545 !important; box-shadow:0 0 0 3px rgba(220,53,69,.08);}
+
+    @media(max-width:900px){.job-card-body{padding:22px;}
+        .card-title{font-size:23px;}}
+
+    @media(max-width:650px){.job-card-body{padding:18px;}
+        .card-title{font-size:21px;}
+        .section-title{font-size:20px;}
+        .contract-heading{font-size:17px;}}
+
+    @media(max-width:450px){.text-input,.select-input,.text-area{font-size:14px;}}
+    </style>
+</head>
+<body class="dashboard-page">
+  <!-- PIDEN Loader -->
+  <div id="pageLoader">
+    <div class="piden-loader">
+      <div class="piden-text">
+        <span>P</span><span>I</span><span>D</span><span>E</span><span>N</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Navigation -->
+  <div class="top-nav">
+    <div class="nav-left">
+        <button id="backHomeBtn" class="back-btn">
+            ← Back to Home
+        </button>
+    </div>
+
+    <div class="nav-right">
+        <span style="font-weight:600;">Jobs</span>
+    </div>
+  </div>
+
+  <!-- Content Area Placeholder -->
+  <main class="main-content">
+    <div class="jobs-container">  
+        <div class="job-card">      
+            <div class="job-card-body">    
+                <div class="card-title">Job Opportunities</div>    
+                <div class="card-subtitle">
+                    Select the position you're interested in below to proceed.    
+                </div>    
+                <!-- Positions will be generated here -->    
+                <div id="jobPositions" class="radio-group"> </div>  
+            </div>    
+        </div> 
+    
+        <div id="applicationCard" class="job-card hidden">
+            <div class="job-card-body">    
+                <div class="card-title">JOB CONTRACT & APPLICATION FORM</div>     
+                <div class="section-title">JOB CONTRACT & WORKING MANUAL</div>     
+                <div id="contractContainer">  </div>   
+                <button id="downloadContractBtn" class="secondary-btn">    
+                    <i class="fa-solid fa-download"></i>    
+                    Download   
+                </button>   
+                <hr class="contract-divider">   
+                <!-- ======================================
+                        APPLICATION
+                ======================================= -->    
+                <div class="section-title">JOB APPLICATION</div>          
+                    <label class="form-label"> Full Names </label>    
+                    <input id="fullNames" class="text-input" placeholder="Enter your full names">
+                    <label class="form-label">Phone Number</label>    
+                    <input id="phoneNumber" class="text-input" placeholder="Enter your phone number">
+                    <label class="form-label">Confirm Phone Number</label>    
+                    <input id="confirmPhone" class="text-input" placeholder="Re-enter phone number">
+                    <label class="form-label"> Highest Education Rank</label>    
+                    <input id="education" class="text-input" placeholder="Example: Degree, Diploma, KCSE">
+                    <label class="form-label">KCSE Grade </label>    
+                    <input id="kcse" class="text-input" placeholder="Example: A, B+, C-">
+                    <label class="form-label">KCPE Marks</label>    
+                    <input id="kcpe" class="text-input" placeholder="Example: 389">
+                    <label class="form-label">Country of Residence</label>    
+                    <input id="country" class="text-input" placeholder="Enter country">
+                    <label class="form-label"> County of Residence </label>    
+                    <input id="county" class="text-input" placeholder="Enter county">
+                    <label class="form-label">Location / Street of Residence</label>    
+                    <input id="location" class="text-input" placeholder="Enter your location">
+                    <label class="form-label">Create Staff Login Password</label>    
+                    <div class="password-wrapper">
+                        <input id="password" type="password" class="text-input" placeholder="Create password">    
+                        <i class="fa-solid fa-eye password-toggle" data-target="password"></i>    
+                    </div>    
+                    <label class="form-label">Confirm Staff Login Password</label>    
+                    <div class="password-wrapper">
+                        <input id="confirmPassword" type="password" class="text-input" placeholder="Confirm password">    
+                        <i class="fa-solid fa-eye password-toggle" data-target="confirmPassword"></i>    
+                    </div>
+                    <label class="form-label">Security Question</label>    
+                    <div style="margin-bottom:10px;color:#555;"> What is your favourite colour?</div>    
+                    <input id="securityAnswer" class="text-input" placeholder="Enter answer">
+                    <label class="form-label">Confirm Security Question Answer</label>    
+                    <input id="confirmSecurityAnswer" class="text-input" placeholder="Confirm answer">   
+                    <div class="checkbox-row">    
+                        <input id="agreeContract" type="checkbox">
+                        <label for="agreeContract">    
+                            I have read and understood every section of the contract and working manual
+                            and agree to abide by it and join PIDEN.    
+                        </label>    
+                    </div>     
+
+                <button id="submitApplicationBtn" class="primary-btn">Submit Application</button>    
+            </div>    
+        </div>    
+    </div>
+  </main>
+
+    <!-- SUCCESS POPUP -->
+    <div id="successModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">Application Successful</div>
+            <div class="modal-body">
+                <div class="modal-icon">✓</div>
+                <div class="modal-message">
+                    <strong>Congratulations!</strong>
+                    <br>
+                    Your application has been submitted successfully.
+                    <br>
+                    Welcome to the PIDEN Team.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="finishBtn" class="primary-btn">Finish</button>
+            </div>
+        </div>
+    </div>
+ 
+  <!-- Footer -->
+  <footer class="foot">
+    &copy; <span id="currentYear"></span> PIDEN V2.0. All rights reserved
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module">
+    import { SUPABASE_ANON_KEY } from "./p.js";  
+    const supabaseUrl = "https://mzvlybnvgpemdayoylfk.supabase.co";  
+    window.supabase = supabase.createClient(
+      supabaseUrl,
+      SUPABASE_ANON_KEY
+    );  
+    // ✅ SIGNAL THAT SUPABASE IS READY
+    window.dispatchEvent(new Event("supabase-ready"));
+  </script>
+  
+  <!-- Inline JS for dropdowns & logout -->
+  <script>
+    // Handle browser back/forward cache issues
+    window.addEventListener("pageshow", function (event) {
+            const loader = document.getElementById("pageLoader");
+
+            // Always hide loader if it exists
+            if (loader) {
+            loader.style.display = "none";
+            }
+
+            // If page was restored from bfcache, force reload once
+            if (event.persisted && !sessionStorage.getItem("reloaded")) {
+                sessionStorage.setItem("reloaded", "true");
+                window.location.reload();
+            }
+    });
+
+    document.getElementById("currentYear").textContent = new Date().getFullYear();
+
+      // Optional global control for Supabase calls
+      function showLoader() {
+        const loader = document.getElementById("pageLoader");
+        if (loader) loader.style.display = "flex";
+      }
+
+      function hideLoader() {
+        const loader = document.getElementById("pageLoader");
+        if (!loader) return;
+
+        loader.style.opacity = "0";
+        loader.style.transition = "opacity 0.3s ease";
+
+        setTimeout(() => {
+          loader.style.display = "none";
+          loader.style.opacity = "1";
+        }, 300);
+      }
+
+    /*==========================================================
+                    JOB POSITIONS
+    ==========================================================*/
+    const JOB_POSITIONS = {
+        sales_marketing: {
+            id: "sales_marketing",
+            title: "Sales and Marketing",
+            databasePosition: "Sales and Marketing Team",
+            contractFile:"SM JOB CONTRACT.pdf",
+            contract: [
+                {heading: "Instructions:", content:
+        `Download the Job Contract and Working Manual below. Read, understand and agree with every section before submitting your
+        Application`
+                },
+            ]
+        }
+    };
+
+    let selectedPosition = null;
+
+    const jobPositions = document.getElementById("jobPositions");
+    const applicationCard = document.getElementById("applicationCard");
+    const contractContainer = document.getElementById("contractContainer");
+    const downloadContractBtn = document.getElementById("downloadContractBtn");
+    const submitApplicationBtn = document.getElementById("submitApplicationBtn");
+    const finishBtn = document.getElementById("finishBtn");
+    const successModal = document.getElementById("successModal");
+    const backHomeBtn = document.getElementById("backHomeBtn");
+
+    function renderJobPositions(){
+        jobPositions.innerHTML = "";
+        Object.values(JOB_POSITIONS).forEach(position=>{
+            jobPositions.innerHTML += `
+                <label class="radio-option">
+                    <input
+                        type="radio"
+                        name="jobPosition"
+                        value="${position.id}"
+                    >
+                    <span>
+                        ${position.title}
+                    </span>
+                </label>
+            `;
+        });
+    }
+
+    function renderContract(positionId){
+        const position = JOB_POSITIONS[positionId];
+        contractContainer.innerHTML = "";
+        position.contract.forEach(section=>{
+            contractContainer.innerHTML += `
+                <div class="contract-heading">
+                    ${section.heading}
+                </div>
+                <div class="contract-content">
+                    ${section.content}
+                </div>
+            `;
+        });
+    }
+
+    function openApplication(positionId){
+        selectedPosition = JOB_POSITIONS[positionId];
+        renderContract(positionId);
+        applicationCard.classList.remove("hidden");
+        applicationCard.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+        });
+    }
+
+    document.addEventListener("change",(event)=>{
+        if(event.target.name !== "jobPosition"){
+            return;
+        }
+        openApplication(event.target.value);
+    });
+
+    backHomeBtn.addEventListener("click",()=>{
+        window.location.href="index.html";
+    });
+
+    document.querySelectorAll(".password-toggle").forEach(icon=>{
+        icon.addEventListener("click",()=>{
+            const input = document.getElementById(
+                icon.dataset.target
+            );
+            if(input.type==="password"){
+                input.type="text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            }
+            else{
+                input.type="password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        });
+    });
+
+    function openSuccessModal(){
+        successModal.style.display="flex";
+    }
+
+    function closeSuccessModal(){
+        successModal.style.display="none";
+    }
+
+    function resetApplication(){
+        document.querySelector("form")?.reset();
+        applicationCard.classList.add("hidden");
+        selectedPosition = null;
+        closeSuccessModal();
+        window.scrollTo({
+            top:0,
+            behavior:"smooth"
+        });
+    }
+
+    finishBtn.addEventListener("click",()=>{
+        resetApplication();
+    });
+
+    document.addEventListener("DOMContentLoaded",()=>{
+        renderJobPositions();
+        applicationCard.classList.add("hidden");
+        closeSuccessModal();
+    });
+
+    downloadContractBtn.addEventListener("click",()=>{
+        const link=document.createElement("a");
+        link.href=selectedPosition.contractFile;
+        link.download="";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    });
+
+    const fullNamesInput = document.getElementById("fullNames");
+    const phoneNumberInput = document.getElementById("phoneNumber");
+    const confirmPhoneInput = document.getElementById("confirmPhone");
+    const educationInput = document.getElementById("education");
+    const kcseInput = document.getElementById("kcse");
+    const kcpeInput = document.getElementById("kcpe");
+    const countryInput = document.getElementById("country");
+    const countyInput = document.getElementById("county");
+    const locationInput = document.getElementById("location");
+    const passwordInput = document.getElementById("password");
+    const confirmPasswordInput = document.getElementById("confirmPassword");
+    const securityInput = document.getElementById("securityAnswer");
+    const confirmSecurityInput = document.getElementById("confirmSecurityAnswer");
+    const agreeCheckbox = document.getElementById("agreeContract");
+
+    function markError(input){
+        input.classList.add("error-input");
+    }
+
+    function clearError(input){
+        input.classList.remove("error-input");
+    }
+
+    function clean(value){
+        return value.trim().replace(/\s+/g," ");
+    }
+
+    function clearValidation(){
+        [
+            fullNamesInput,
+            phoneNumberInput,
+            confirmPhoneInput,
+            educationInput,
+            kcseInput,
+            kcpeInput,
+            countryInput,
+            countyInput,
+            locationInput,
+            passwordInput,
+            confirmPasswordInput,
+            securityInput,
+            confirmSecurityInput
+        ].forEach(clearError);
+    }
+
+    function validateApplication(){
+        clearValidation();
+        let valid = true;
+        if(!selectedPosition){
+            alert("Please select a job position.");
+            return false;
+        }
+        const requiredInputs = [
+            fullNamesInput,
+            phoneNumberInput,
+            confirmPhoneInput,
+            educationInput,
+            kcseInput,
+            kcpeInput,
+            countryInput,
+            countyInput,
+            locationInput,
+            passwordInput,
+            confirmPasswordInput,
+            securityInput,
+            confirmSecurityInput
+        ];
+        requiredInputs.forEach(input=>{
+            if(clean(input.value)===""){
+                markError(input);
+                valid = false;
+            }
+        });
+        if(phoneNumberInput.value.trim() !== confirmPhoneInput.value.trim()){
+            markError(phoneNumberInput);
+            markError(confirmPhoneInput);
+            alert("Phone numbers do not match.");
+            return false;
+        }
+        if(passwordInput.value !== confirmPasswordInput.value){
+            markError(passwordInput);
+            markError(confirmPasswordInput);
+            alert("Passwords do not match.");
+            return false;
+        }
+        if(passwordInput.value.length < 6){
+            markError(passwordInput);
+            alert("Password must contain at least 6 characters.");
+            return false;
+        }
+        if(
+            clean(securityInput.value).toLowerCase()
+            !==
+            clean(confirmSecurityInput.value).toLowerCase()
+        ){
+            markError(securityInput);
+            markError(confirmSecurityInput);
+            alert("Security answers do not match.");
+            return false;
+        }
+        if(!agreeCheckbox.checked){
+            alert("Please agree to the contract before submitting.");
+            return false;
+        }
+        if(!valid){
+            alert("Please complete all required fields.");
+        }
+        return valid;
+    }
+
+    async function phoneExists(phone){
+        const { data,error } = await supabase
+            .from("staff")
+            .select("id")
+            .eq("phone",phone)
+            .limit(1);
+        if(error){
+            throw error;
+        }
+        return data.length>0;
+    }
+
+    async function generateStaffID(){
+        const { data,error } = await supabase
+            .from("staff")
+            .select("staffid");
+        if(error){
+            throw error;
+        }
+        let highest = 0;
+        data.forEach(staff=>{
+            const number = parseInt(
+                staff.staffid.replace("STAFF","")
+            );
+            if(number > highest){
+                highest = number;
+            }
+        });
+        return `STAFF${highest+1}`;
+    }
+
+    function resetApplication(){
+        [
+            fullNamesInput,
+            phoneNumberInput,
+            confirmPhoneInput,
+            educationInput,
+            kcseInput,
+            kcpeInput,
+            countryInput,
+            countyInput,
+            locationInput,
+            passwordInput,
+            confirmPasswordInput,
+            securityInput,
+            confirmSecurityInput
+        ].forEach(input=>{
+            input.value="";
+            clearError(input);
+        });
+        agreeCheckbox.checked = false;
+        document
+            .querySelectorAll('input[name="jobPosition"]')
+            .forEach(r=>r.checked=false);
+        selectedPosition = null;
+        applicationCard.classList.add("hidden");
+        closeSuccessModal();
+        window.scrollTo({
+            top:0,
+            behavior:"smooth"
+        });
+    }
+
+    document.querySelectorAll('.text-input')
+    .forEach(input=>{
+        input.addEventListener("input",()=>{
+        clearError(input);
+        });
+    });
+
+    window.addEventListener("supabase-ready", () => {
+        initializeJobsPage();
+    });
+
+    function initializeJobsPage(){
+        submitApplicationBtn.addEventListener(
+            "click",
+            submitApplication
+        );
+    }
+
+    function setSubmitting(isSubmitting){
+        submitApplicationBtn.disabled = true;
+        submitApplicationBtn.disabled = isSubmitting;
+        submitApplicationBtn.innerHTML = isSubmitting
+            ? "Submitting Application..."
+            : "Submit Application";
+    }
+
+    async function submitApplication(){
+        try{
+            if(!validateApplication()){
+                return;
+            }
+            setSubmitting(true);
+            const phone = clean(
+                phoneNumberInput.value
+            );
+            const exists = await phoneExists(phone);
+            if(exists){
+                alert(
+                    "A staff member with that phone number already exists."
+                );
+                setSubmitting(false);
+                return;
+            }
+            const staffID = await generateStaffID();
+            const { error } = await window.supabase
+            .from("staff")
+            .insert({
+                staffid: staffID,
+                position: selectedPosition.databasePosition,
+                names: clean(
+                    fullNamesInput.value
+                ),
+                phone: phone,
+                education: clean(
+                    educationInput.value
+                ),
+                kcse: clean(
+                    kcseInput.value
+                ),
+                kcpe: clean(
+                    kcpeInput.value
+                ),
+                country: clean(
+                    countryInput.value
+                ),
+                county: clean(
+                    countyInput.value
+                ),
+                location: clean(
+                    locationInput.value
+                ),
+                password: passwordInput.value,
+                security: clean(
+                    securityInput.value
+                ),
+                team: null
+            });
+            if(error){
+                throw error;
+            }
+            openSuccessModal();
+        }
+        catch(error){
+            console.error(error);
+            alert(
+                "Unable to submit application.\n\n"
+                +
+                error.message
+            );
+        }
+        finally{
+            setSubmitting(false);
+        }
+    }
+
+    finishBtn.addEventListener("click",()=>{
+        resetApplication();
+    });
+  </script>
+</body>
+</html>

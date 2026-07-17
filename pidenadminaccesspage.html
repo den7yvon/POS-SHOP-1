@@ -1,0 +1,2692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POS | ADMIN</title>
+  <link rel="shortcut icon" type="image/x-icon" href="Favicon.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- jsPDF core -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- jsPDF AutoTable plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script> 
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0d1b2a">
+  <style>
+    body {display: flex;  line-height: 1.4; min-height: 100vh;
+      flex-direction: column; margin: 0; background-color: #f1f4f8;}
+
+    * {font-family: 'Poppins', sans-serif;}
+
+    .title {color: #003366; font-size: 24px; margin-bottom: 20px;}
+
+    .main {background-color: white; border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      padding: 25px; width: 90%; max-width: 400px; text-align: center;}
+
+    .top-nav {width: 100%; height: 40px; background-color: #003366; color: white; display: flex;
+      justify-content: space-between; align-items: center; padding: 8px 15px; position: fixed;
+      top: 0; z-index: 100;}
+  
+    .nav-left, .nav-right {display: flex; align-items: center; position: relative;}
+
+    .nav-right{margin-right: 40px;}
+
+    .main-content {margin-top: 60px; padding: 10px; padding-bottom: 10px;}
+
+    .foot {width: 100%; background-color: white; color: #003366; text-align: center; padding: 2px 1px;
+      position: fixed; bottom: 0; left: 0; font-size: 15px;}
+    
+    /* ===== FULLSCREEN LOADER ===== */
+    #pageLoader {position: fixed; inset: 0; background: #ffffff; z-index: 9999; display: flex;
+      align-items: center; justify-content: center;
+    }
+
+    .piden-loader {text-align: center; font-family: "Segoe UI", system-ui, sans-serif;}
+
+    .piden-text {font-size: 36px; font-weight: 700; letter-spacing: 6px; color: #003366;}
+
+    .piden-text span {display: inline-block; animation: pulse 1.6s infinite ease-in-out; opacity: 0.3;}
+
+    .piden-text span:nth-child(1) { animation-delay: 0s; }
+    .piden-text span:nth-child(2) { animation-delay: 0.15s; }
+    .piden-text span:nth-child(3) { animation-delay: 0.3s; }
+    .piden-text span:nth-child(4) { animation-delay: 0.45s; }
+    .piden-text span:nth-child(5) { animation-delay: 0.6s; }
+
+    @keyframes pulse {0% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); }
+      100% { opacity: 0.3; transform: translateY(0); }}
+
+    .back-btn{background:white; border:1px solid rgba(255,255,255,.35); color: #003366; padding:8px 16px;
+        border-radius:10px; cursor:pointer; font-size:14px; font-weight:500; transition:.25s;}
+
+    .back-btn:hover{background:rgba(161, 198, 233, 0.945);}
+
+    .admin-lock-screen{position:fixed; inset:0; background:#003366; z-index:8000; display:flex; justify-content:center;
+        align-items:center; overflow:hidden;}
+
+    .knock-left{position:absolute; top:0; left:0; width:90px; height:90px; cursor:pointer;}
+    .knock-right{position:absolute; top:0; right:0; width:90px; height:90px; cursor:pointer;}
+    .knock-bottom{position:absolute; left:0; bottom:0; width:100%; height:75px; cursor:pointer;}
+
+    .admin-workspace{display:none; width:100%; min-height:100vh; background:#f3f6fa;}
+    .admin-sections{display:flex; flex-direction:column; gap:18px; padding:0px; padding-top:0px; padding-bottom:30px;}
+    .admin-card{background:#fff; border-radius:14px; box-shadow:0 3px 12px rgba(0,0,0,.08); overflow:hidden;
+        border-top: 6px solid #003366;}
+    .admin-card-header{padding:16px 18px 8px;}
+    .admin-card-title{font-size:20px; font-weight:600; color:#003366;}
+    .admin-card-subtitle{margin-top:4px; font-size:13px; color:#666;}
+    .admin-card-body{padding:0 18px 18px;}
+    .admin-btn{background:#003366; color:#fff; border:none; border-radius:10px; padding:10px 18px; font-size:14px;
+        cursor:pointer; transition:.25s;}
+    .admin-btn:hover{background:#004a8f;}
+    .admin-btn:disabled{opacity:.7; cursor:not-allowed;}
+
+    .admin-overlay{position:fixed; inset:0; background:#300000; display:none; justify-content:center; align-items:center;
+        flex-direction:column; z-index:9000; color:#fff; text-align:center; padding:30px;}
+    .admin-overlay i{font-size:70px; margin-bottom:20px; color:#ff3d3d; animation:shake .6s infinite;}
+    .admin-overlay h2{margin:0; font-size:28px;}
+    .admin-overlay p{margin-top:12px; font-size:15px; opacity:.9;}
+
+    @keyframes shake{0%,100%{transform:translateX(0);} 20%{transform:translateX(-5px);} 40%{transform:translateX(5px);}
+        60%{transform:translateX(-5px);} 80%{transform:translateX(5px);}}
+
+    .admin-content{display:none; margin-top:18px; border-top:1px solid #e6e6e6; padding-top:18px;}
+    .admin-search{margin-bottom:15px;}
+    .admin-search input{width:100%; box-sizing:border-box; padding:11px 14px; border:1px solid #d8d8d8;
+        border-radius:10px; outline:none; font-size:14px;}
+    .admin-search input:focus{border-color:#003366;}
+
+    .table-wrapper{border:1px solid #e5e5e5; border-radius:10px; overflow:auto; max-height:350px; background:#fff;}
+    .admin-table{width:max-content; min-width:100%; border-collapse:collapse; font-size:13px;}
+    .admin-table thead{position:sticky; top:0; background:#003366; z-index:2;}
+    .admin-table th{color:#fff; padding:12px; white-space:nowrap; text-align:left;}
+    .admin-table td{padding:11px; border-bottom:1px solid #ececec; white-space:nowrap;}
+
+    .admin-empty{padding:35px; text-align:center; color:#888; font-size:14px;}
+    .admin-hidden{display:none; }
+    .client-row{transition:background .2s;}
+    .client-row:hover{background:#f6f9fd;}
+
+    .admin-footer{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-top:18px;}
+    .footer-box{background:#f7f9fc; border:1px solid #e5e5e5; border-radius:10px; padding:14px;}
+    .footer-box-title{font-size:13px;color:#666;}
+    .footer-box-value{margin-top:6px; font-size:22px; font-weight:600; color:#003366;}
+    
+    .edit-overlay{position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; justify-content:center;
+        align-items:center; z-index:9400;}
+    .edit-popup{width:280px; background:#fff; border-radius:12px; border-top:6px solid #003366;
+        box-shadow:0 18px 40px rgba(0,0,0,.25); padding:18px; margin: 10px;}
+    .edit-popup label{display:block; font-size:13px; font-weight:600; margin-bottom:4px; margin-top:10px;
+        color:#003366;}
+    .password-group{position:relative;}
+    .password-group input{width:100%; box-sizing:border-box;padding:10px 42px 10px 12px;border:1px solid #d7d7d7;
+        border-radius:8px; outline:none;}
+    .password-toggle{position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; color:#666;}
+    .complete-btn{margin-top:15px; width:100%;}
+
+    .pending-table-wrapper{border:1px solid #e5e5e5;border-radius:10px;overflow:auto;max-height:350px;background:#fff;margin-top:18px;}
+    .pending-table{width:max-content;min-width:100%;border-collapse:collapse;font-size:13px;}
+    .pending-table thead{position:sticky;top:0;background:#003366;z-index:2;}
+    .pending-table th{padding:12px;color:#fff;text-align:left;white-space:nowrap;}
+    .pending-table td{padding:11px;border-bottom:1px solid #ececec;white-space:nowrap;}
+    .pending-row:hover{background:#f6f9fd;}
+
+    .approve-btn{background:#0d7d37;}
+    .approve-btn:hover{background:#0b692f;}
+
+    .notfound-btn{background:#a30000;}
+    .notfound-btn:hover{background:#850000;}
+
+    .pending-empty{padding:35px;text-align:center;color:#888;font-size:14px;}
+
+    .payment-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;justify-content:center;align-items:center;z-index:9000;}
+    .payment-popup{width:300px;background:#fff;border-radius:12px;border-top:6px solid #003366;box-shadow:0 18px 40px rgba(0,0,0,.25);padding:18px;margin:10px;}
+    .payment-popup-title{font-size:19px;font-weight:600;color:#003366;margin-bottom:16px;text-align:center;}
+    .payment-row{margin-bottom:13px;}
+    .payment-label{font-size:12px;font-weight:600;color:#666;}
+    .payment-value{margin-top:3px;font-size:15px;color:#222;word-break:break-word;}
+    .payment-actions{display:flex;gap:10px;margin-top:22px;}
+    .payment-actions .admin-btn{flex:1;}
+    .cancel-btn{background:#888;}
+    .cancel-btn:hover{background:#6d6d6d;}
+    .confirm-approve-btn{background:#0d7d37;}
+    .confirm-approve-btn:hover{background:#0b692f;}
+
+    .pending-danger{border-top:6px solid #b30000;}
+    .pending-danger-title{color:#b30000;}
+    .pending-warning{margin:14px 0; padding:10px 12px; background:#fff5f5; border:1px solid #f0b4b4;
+        border-radius:8px; color:#8d0000; font-size:13px; line-height:1.5;}
+    .pending-btn-group{display:flex; gap:10px; margin-top:18px;}
+    .pending-btn-group .admin-btn{flex:1;}
+    .notfound-btn{background:#b30000;}
+    .notfound-btn:hover{background:#920000;}
+
+    .history-table-wrapper{border:1px solid #e5e5e5;border-radius:10px;overflow:auto;max-height:350px;background:#fff;margin-top:18px;}
+    .history-table{width:max-content;min-width:100%;border-collapse:collapse;font-size:13px;}
+    .history-table thead{position:sticky;top:0;background:#003366;z-index:2;}
+    .history-table th{padding:12px;color:#fff;text-align:left;white-space:nowrap;}
+    .history-table td{padding:11px;border-bottom:1px solid #ececec;white-space:nowrap;}
+    .history-row:hover{background:#f6f9fd;}
+    .history-empty{padding:35px;text-align:center;color:#888;font-size:14px;}
+
+    .staff-form{margin-top:18px;border-top:1px solid #e6e6e6;padding-top:18px;display:none;}
+    .staff-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+    .staff-field label{display:block;font-size:13px;font-weight:600;color:#003366;margin-bottom:5px;}
+    .staff-field input,.staff-field select{width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #d7d7d7;border-radius:8px;outline:none;font-size:14px;background:#fff;}
+    .staff-field input:focus,.staff-field select:focus{border-color:#003366;}
+    .staff-password{position:relative;}
+    .staff-password input{padding-right:42px;}
+    .staff-password i{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:#666;}
+    .staff-agreement{margin-top:18px;display:flex;align-items:flex-start;gap:10px;}
+    .staff-agreement input{margin-top:3px;}
+    .staff-agreement label{font-size:13px;color:#555;line-height:1.5;}
+    .staff-submit{margin-top:18px;}
+    .staff-submit .admin-btn{min-width:180px;}
+    .staff-success-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;justify-content:center;align-items:center;z-index:9500;}
+    .staff-success-card{width:290px;background:#fff;border-radius:12px;border-top:6px solid #0d7d37;padding:28px 18px;text-align:center;box-shadow:0 18px 40px rgba(0,0,0,.25);}
+    .staff-success-card i{font-size:58px;color:#0d7d37;}
+    .staff-success-card h3{margin:16px 0 0;color:#003366;font-size:19px;}
+    .staff-success-card p{margin-top:8px;color:#666;font-size:14px;}
+
+    .assign-popup{width:320px;}
+    .assign-details{margin:16px 0;}
+    .assign-item{margin-bottom:14px;}
+    .assign-label{font-size:12px;font-weight:600;color:#666;}
+    .assign-value{margin-top:3px;font-size:15px;color:#222;word-break:break-word;}
+    .assign-input{margin-top:18px;}
+    .assign-input label{display:block;font-size:13px;font-weight:600;color:#003366;margin-bottom:6px;}
+    .assign-input input{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #d7d7d7;border-radius:8px;outline:none;font-size:14px;}
+    .assign-input input:focus{border-color:#003366;}
+    .assign-actions{display:flex;gap:10px;margin-top:20px;}
+    .assign-actions .admin-btn{flex:1;}
+    .assign-btn{background:#0d7d37;}
+    .assign-btn:hover{background:#0b692f;}
+
+    .manage-team-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
+    .manage-team-actions input{flex:1;min-width:220px;padding:11px 14px;border:1px solid #d8d8d8;border-radius:10px;outline:none;font-size:14px;box-sizing:border-box;}
+    .manage-team-actions input:focus{border-color:#003366;}
+    .manage-btn-group{display:flex;gap:10px;flex-wrap:wrap;}
+    .team-header{margin:18px 0 12px;}
+    .team-header-title{font-size:18px;font-weight:600;color:#003366;}
+    .team-header-subtitle{margin-top:5px;font-size:14px;color:#666;}
+    .team-summary-title{margin-top:20px;font-size:18px;font-weight:600;color:#003366;}
+    .team-action-buttons{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:20px;}
+    .download-btn{background:#003366;}
+    .download-btn:hover{background:#004b90;}
+    .payteam-btn{background:#0d7d37;}
+    .payteam-btn:hover{background:#0a662d;}
+    .team-pay-popup{width:300px;background:#fff;border-radius:12px;border-top:6px solid #0d7d37;box-shadow:0 18px 40px rgba(0,0,0,.25);padding:18px;margin:10px;}
+    .team-pay-title{font-size:19px;font-weight:600;color:#0d7d37;text-align:center;margin-bottom:16px;}
+    .team-pay-warning{padding:12px;background:#f4fff7;border:1px solid #c7e8d0;border-radius:8px;font-size:13px;color:#0d7d37;line-height:1.5;}
+    .team-pay-actions{display:flex;gap:10px;margin-top:20px;}
+    .team-pay-actions .admin-btn{flex:1;}
+    </style>
+</head>
+<body class="dashboard-page">
+  <!-- PIDEN Loader -->
+  <div id="pageLoader">
+    <div class="piden-loader">
+      <div class="piden-text">
+        <span>P</span><span>I</span><span>D</span><span>E</span><span>N</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Navigation -->
+  <div class="top-nav">
+    <div class="nav-left">
+        <button id="backHomeBtn" class="back-btn">
+            ← Lock
+        </button>
+    </div>
+
+    <div class="nav-right">
+        <span style="font-weight:600;">Admin Panel</span>
+    </div>
+  </div>
+
+  <!-- Content Area Placeholder -->
+    <div id="adminLockScreen" class="admin-lock-screen">
+        <div id="knockRight" class="knock-right"></div>        
+        <div id="knockLeft" class="knock-left"></div>        
+        <div id="knockBottom" class="knock-bottom"></div>        
+    </div>
+        
+    <div id="securityOverlay" class="admin-overlay">        
+        <i class="fas fa-triangle-exclamation"></i>      
+        <h2>UNAUTHORIZED ACCESS ATTEMPT DETECTED</h2>        
+        <p>Communicating To System Administrator...</p>        
+    </div>
+        
+        <div id="adminWorkspace" class="admin-workspace">        
+            <main class="main-content">
+              <div class="admin-sections">                
+               <div class="admin-card" id="clientsCard">                
+                <div class="admin-card-header">                
+                    <div class="admin-card-title">CLIENTS</div>                
+                    <div class="admin-card-subtitle">Manage my clients.</div>                
+                </div>                
+                <div class="admin-card-body">                
+                    <button id="manageClientsBtn" class="admin-btn">Manage</button>                        
+                        <div id="clientsContent" class="admin-content">                        
+                        <div class="admin-search">
+                            <input id="clientSearchInput" type="search" placeholder="Search client..."
+                                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                                name="client-search" data-lpignore="true">                        
+                        </div>                        
+                        <div class="table-wrapper">                        
+                            <table class="admin-table">                        
+                                <thead>                        
+                                    <tr>                        
+                                        <th>S/No.</th>
+                                        <th>Business Name</th>
+                                        <th>Owner</th>
+                                        <th>Phone</th>
+                                        <th>Status</th>
+                                        <th>Country</th>
+                                        <th>County</th>
+                                        <th>Location</th>
+                                        <th>Description</th>
+                                        <th>Referred</th>
+                                        <th>Login Password</th>
+                                        <th>Admin Password</th>
+                                        <th>Joined On</th>
+                                        <th>Action</th>                                        
+                                    </tr>
+                                </thead>
+                                <tbody id="clientsTableBody"></tbody>                        
+                            </table>                        
+                        </div>                        
+                        <div class="admin-footer">                        
+                            <div class="footer-box">
+                                <div class="footer-box-title">Total Clients</div>
+                                <div class="footer-box-value" id="totalClients">0</div>
+                            </div>                            
+                            <div class="footer-box">
+                                <div class="footer-box-title">Active Clients</div>
+                                <div class="footer-box-value" id="activeClients">0</div>
+                            </div>                            
+                            <div class="footer-box">
+                                <div class="footer-box-title">Inactive Clients</div>
+                                <div class="footer-box-value" id="inactiveClients">0</div>
+                            </div>                            
+                            <div class="footer-box">
+                                <div class="footer-box-title">Referred Clients</div>
+                                <div class="footer-box-value" id="referredClients">0</div>
+                            </div>                            
+                            <div class="footer-box">
+                                <div class="footer-box-title">Non-Referred Clients</div>
+                                <div class="footer-box-value" id="nonReferredClients">0</div>
+                            </div>                        
+                        </div>                        
+                    </div>                
+                </div>                
+               </div>  
+
+               <div class="admin-card" id="pendingPaymentsCard">
+                    <div class="admin-card-header">
+                        <div class="admin-card-title">PENDING PAYMENTS</div>            
+                        <div class="admin-card-subtitle">Check the payments that have not yet been approved.</div>
+                    </div>            
+                    <div class="admin-card-body">            
+                        <button id="pendingPaymentsBtn" class="admin-btn">Check</button>            
+                        <div id="pendingPaymentsContent" class="admin-content">            
+                            <div class="pending-table-wrapper">            
+                                <table class="pending-table">            
+                                    <thead>            
+                                        <tr>            
+                                            <th>S/No.</th>
+                                            <th>Business ID</th>
+                                            <th>Amount</th>
+                                            <th>Phone</th>
+                                            <th>Reason</th>
+                                            <th>Payed On</th>
+                                            <th>Approve</th>
+                                            <th>Not Found</th>            
+                                        </tr>            
+                                    </thead>            
+                                    <tbody id="pendingPaymentsTableBody"></tbody>            
+                                </table>            
+                            </div>            
+                        </div>            
+                    </div>            
+                </div>
+
+                <div class="admin-card" id="paymentHistoryCard">
+                    <div class="admin-card-header">
+                        <div class="admin-card-title">PAYMENT HISTORY</div>
+                        <div class="admin-card-subtitle">
+                            View approved payments together with their depletion status.
+                        </div>
+                    </div>                
+                    <div class="admin-card-body">                
+                        <button id="paymentHistoryBtn" class="admin-btn">View</button>                
+                        <div id="paymentHistoryContent" class="admin-content">                
+                            <div class="history-table-wrapper">                
+                                <table class="history-table">                
+                                    <thead>                
+                                        <tr>                
+                                            <th>S/No.</th>
+                                            <th>Business ID</th>
+                                            <th>Amount</th>
+                                            <th>Phone</th>
+                                            <th>Reason</th>
+                                            <th>Payed On</th>
+                                            <th>Approved On</th>
+                                            <th>Depleted On</th>                
+                                        </tr>                
+                                    </thead>                
+                                    <tbody id="paymentHistoryTableBody"></tbody>                
+                                </table>                
+                            </div>                
+                            <div class="admin-footer">                
+                                <div class="footer-box">                
+                                    <div class="footer-box-title">Total Approved Payments</div>                
+                                    <div class="footer-box-value" id="totalApprovedPayments">0.00</div>                
+                                </div>                
+                            </div>                
+                        </div>                
+                    </div>                
+                </div>
+
+                <div class="admin-card" id="newStaffCard">
+                    <div class="admin-card-header">
+                        <div class="admin-card-title">NEW STAFF</div>
+                        <div class="admin-card-subtitle">
+                            Register a new PIDEN staff member.
+                        </div>
+                    </div>                
+                    <div class="admin-card-body">                
+                        <button id="newStaffBtn" class="admin-btn">Add</button>                
+                        <div id="newStaffContent" class="staff-form">                
+                            <div class="staff-grid">                
+                                <div class="staff-field">
+                                    <label>Full Names</label>
+                                    <input id="staffNames" type="text" placeholder="Enter full names">
+                                </div>                
+                                <div class="staff-field">
+                                    <label>Phone Number</label>
+                                    <input id="staffPhone" type="tel" placeholder="Enter phone number">
+                                </div>                
+                                <div class="staff-field">
+                                    <label>Confirm Phone Number</label>
+                                    <input id="confirmStaffPhone" type="tel" placeholder="Confirm phone number">
+                                </div>                
+                                <div class="staff-field">
+                                    <label>Highest Education Rank</label>
+                                    <input id="staffEducation" type="text" placeholder="Highest education">
+                                </div>                
+                                <div class="staff-field">
+                                    <label>KCSE Grade</label>
+                                    <input id="staffKCSE" type="text" placeholder="KCSE grade">
+                                </div>                
+                                <div class="staff-field">
+                                    <label>KCPE Marks</label>
+                                    <input id="staffKCPE" type="text" placeholder="KCPE marks">
+                                </div>                
+                                <div class="staff-field">
+                                    <label>Country of Residence</label>
+                                    <input id="staffCountry" type="text" placeholder="Country">
+                                </div>                
+                                <div class="staff-field">
+                                    <label>County of Residence</label>
+                                    <input id="staffCounty" type="text" placeholder="County">
+                                </div>                
+                                <div class="staff-field">
+                                    <label>Location / Street</label>
+                                    <input id="staffLocation" type="text" placeholder="Location / Street">
+                                </div>                
+                                <div class="staff-field">
+                                    <label>Create Staff Login Password</label>                
+                                    <div class="staff-password">
+                                        <input id="staffPassword" type="password" placeholder="Password">                
+                                        <i class="fas fa-eye staff-eye"
+                                           data-target="staffPassword"></i>
+                                    </div>
+                                </div>                
+                                <div class="staff-field">
+                                    <label>Confirm Staff Login Password</label>                
+                                    <div class="staff-password">
+                                        <input id="confirmStaffPassword"
+                                               type="password"
+                                               placeholder="Confirm password">                
+                                        <i class="fas fa-eye staff-eye"
+                                           data-target="confirmStaffPassword"></i>
+                                    </div>
+                                </div>                
+                                <div class="staff-field">
+                                    <label>Security Question</label>                
+                                    <input
+                                        type="text"
+                                        value="What is your favourite colour?"
+                                        readonly>
+                                </div>                
+                                <div class="staff-field">
+                                    <label>Security Question Answer</label>
+                                    <input id="staffSecurity"
+                                           type="text"
+                                           placeholder="Answer">
+                                </div>                
+                                <div class="staff-field">
+                                    <label>Confirm Security Answer</label>
+                                    <input id="confirmStaffSecurity"
+                                           type="text"
+                                           placeholder="Confirm answer">
+                                </div>                
+                                <div class="staff-field">
+                                    <label>Rank</label>                
+                                    <select id="staffPosition">                
+                                        <option value="">Select Rank</option> 
+                                        <option value="Sales and Marketing Team">
+                                            Sales and Marketing Team
+                                        </option>    
+                                        <option value="Sales and Marketing Team Leader">
+                                            Sales and Marketing Team Leader
+                                        </option> 
+                                        <option value="IT Team">IT Team</option> 
+                                        <option value="Customer Care Team">Customer Care Team</option> 
+                                        <option value="Receptionist">Receptionist</option> 
+                                        <option value="Manager">Manager</option> 
+                                        <option value="Secretary">Secretary</option> 
+                                        <option value="PA">PA</option>                   
+                                        <!-- Add your positions here -->                
+                                    </select>                
+                                </div>                
+                            </div>                
+                            <div class="staff-agreement">                
+                                <input  id="staffAgreement" type="checkbox">                
+                                <label for="staffAgreement">                
+                                    I have read and understood every section of
+                                    the job contract and agree to abide by it
+                                    and join PIDEN.                
+                                </label>                
+                            </div>                
+                            <div class="staff-submit">                
+                                <button id="submitStaffBtn" class="admin-btn">Submit</button>                
+                            </div>                
+                        </div>                
+                    </div>                
+                </div>
+
+                <div class="admin-card" id="assignTeamsCard">
+                    <div class="admin-card-header">                
+                        <div class="admin-card-title">
+                            ASSIGN TEAMS
+                        </div>                
+                        <div class="admin-card-subtitle">
+                            Assign newly registered staff members to their working teams.
+                        </div>                
+                    </div>                
+                    <div class="admin-card-body">                
+                        <button id="assignTeamsBtn" class="admin-btn">
+                            Assign
+                        </button>                
+                        <div id="assignTeamsContent" class="admin-content">                
+                            <div class="pending-table-wrapper">                
+                                <table class="pending-table">                
+                                    <thead>                
+                                        <tr>                
+                                            <th>S/No.</th>
+                                            <th>Staff ID</th>
+                                            <th>Names</th>
+                                            <th>Rank</th>
+                                            <th>Phone</th>
+                                            <th>County</th>
+                                            <th>Location</th>
+                                            <th>Joined On</th>
+                                            <th>Assign</th>                
+                                        </tr>                
+                                    </thead>                
+                                    <tbody id="assignTeamsTableBody"></tbody>                
+                                </table>                
+                            </div>                
+                        </div>                
+                    </div>                
+                </div>
+
+                <div class="admin-card" id="manageTeamsCard">
+                    <div class="admin-card-header">
+                        <div class="admin-card-title">MANAGE TEAMS</div>
+                        <div class="admin-card-subtitle">Manage team performance, commissions and client statistics.</div>
+                    </div>                    
+                    <div class="admin-card-body">                    
+                        <div class="manage-team-actions">
+                            <input
+                            id="teamSearchInput"
+                            type="text"
+                            placeholder="Enter Team..."
+                            autocomplete="off"
+                            spellcheck="false">
+                            <div class="manage-btn-group">
+                            <button id="manageTeamBtn" class="admin-btn">Manage</button>
+                            </div>
+                        </div>                    
+                        <div id="manageTeamContent" class="admin-content">                    
+                            <div class="team-header">
+                                <div id="teamHeading" class="team-header-title"></div>
+                                <div id="teamLeaderHeading" class="team-header-subtitle"></div>
+                            </div>
+                    
+                            <div class="pending-table-wrapper">
+                                <table class="pending-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Rank</th>
+                                            <th>Staff ID</th>
+                                            <th>Names</th>
+                                            <th>Active Clients</th>
+                                            <th>Inactive Clients</th>
+                                            <th>Paid Commission (KES)</th>
+                                            <th>Pending Commission (KES)</th>
+                                            <th>Inactive Commission (KES)</th>
+                                        </tr>
+                                    </thead>                                    
+                                    <tbody id="manageTeamTableBody"></tbody>                                    
+                                </table>
+                            </div>
+                            
+                            <div class="team-summary-title">
+                            TEAM SUMMARY
+                            </div>                    
+                            <div class="admin-footer">                    
+                                <div class="footer-box">
+                                    <div class="footer-box-title">Team Size</div>
+                                    <div id="summaryTeamSize" class="footer-box-value">0</div>
+                                </div>                    
+                                <div class="footer-box">
+                                    <div class="footer-box-title">Team Clients</div>
+                                    <div id="summaryTeamClients" class="footer-box-value">0</div>
+                                </div>                                
+                                <div class="footer-box">
+                                    <div class="footer-box-title">Active Clients</div>
+                                    <div id="summaryActiveClients" class="footer-box-value">0</div>
+                                </div>                                
+                                <div class="footer-box">
+                                    <div class="footer-box-title">Inactive Clients</div>
+                                    <div id="summaryInactiveClients" class="footer-box-value">0</div>
+                                </div>                                
+                                <div class="footer-box">
+                                    <div class="footer-box-title">Team Paid Commission</div>
+                                    <div id="summaryPaidCommission" class="footer-box-value">KES.0</div>
+                                </div>                                
+                                <div class="footer-box">
+                                    <div class="footer-box-title">Team Pending Commission</div>
+                                    <div id="summaryPendingCommission" class="footer-box-value">KES.0</div>
+                                </div>                                
+                                <div class="footer-box">
+                                    <div class="footer-box-title">Team Inactive Commission</div>
+                                    <div id="summaryInactiveCommission" class="footer-box-value">KES.0</div>
+                                </div>                                
+                                <div class="footer-box">
+                                    <div class="footer-box-title">Team Leader Paid Commission</div>
+                                    <div id="summaryLeaderPaid" class="footer-box-value">KES.0</div>
+                                </div>                                
+                                <div class="footer-box">
+                                    <div class="footer-box-title">Team Leader Pending Commission</div>
+                                    <div id="summaryLeaderPending" class="footer-box-value">KES.0</div>
+                                </div>                                
+                                <div class="footer-box">
+                                    <div class="footer-box-title">Team Leader Inactive Commission</div>
+                                    <div id="summaryLeaderInactive" class="footer-box-value">KES.0</div>
+                                </div>                                
+                            </div>
+                                
+                            <div class="team-action-buttons">
+                                <button id="downloadTeamReportBtn" class="admin-btn download-btn">
+                                    Download Team Report
+                                </button>                                
+                                <button id="payTeamBtn" class="admin-btn payteam-btn">
+                                    Pay Team
+                                </button>
+                            </div>                    
+                        </div>                    
+                    </div>
+                </div>
+               </div>                
+            </main>        
+        </div>
+        
+        <div id="editOverlay" class="edit-overlay">
+            <div id="editPopup" class="edit-popup">        
+                <div id="editForm">        
+                    <label>Old Admin Password</label>        
+                    <div class="password-group">
+                        <input id="oldAdminPassword" type="password" readonly>
+                        <i class="fas fa-eye password-toggle"
+                           data-target="oldAdminPassword"></i>
+                    </div>        
+                    <label>New Admin Password</label>        
+                    <div class="password-group">
+                        <input id="newAdminPassword" type="password">
+                        <i class="fas fa-eye password-toggle"
+                           data-target="newAdminPassword"></i>
+                    </div>        
+                    <label>Confirm New Admin Password</label>        
+                    <div class="password-group">
+                        <input id="confirmAdminPassword" type="password">
+                        <i class="fas fa-eye password-toggle"
+                           data-target="confirmAdminPassword"></i>
+                    </div>        
+                    <button
+                        id="commitAdminPasswordBtn"
+                        class="admin-btn complete-btn">
+                        Complete
+                    </button>        
+                </div>        
+                <div id="editSuccess"
+                     style="display:none;text-align:center;padding:30px 10px;">        
+                    <i class="fas fa-circle-check"
+                       style="font-size:55px;color:#0d7d37;"></i>        
+                    <div style="margin-top:16px;
+                                font-size:18px;
+                                font-weight:600;
+                                color:#003366;">        
+                        Admin Password Updated Successfully        
+                    </div>        
+                </div>        
+            </div>        
+        </div>
+
+        <div id="paymentOverlay" class="payment-overlay">
+            <div id="approvePayment" class="payment-popup">        
+                <div  id="paymentPopupTitle"  class="payment-popup-title">Confirm Approval</div>        
+                <div class="payment-row">        
+                    <div class="payment-label">Amount</div>        
+                    <div id="confirmAmount" class="payment-value"></div>        
+                </div>        
+                <div class="payment-row">        
+                    <div class="payment-label">Phone</div>        
+                    <div id="confirmPhone" class="payment-value"></div>        
+                </div>       
+                <div class="payment-row">        
+                    <div class="payment-label">Reason</div>        
+                    <div id="confirmReason" class="payment-value"></div>        
+                </div>  
+                <div class="payment-row">        
+                    <div class="payment-label"> Payed On </div>        
+                    <div  id="confirmCreatedAt" class="payment-value"> </div>        
+                </div>
+        
+                <div class="payment-actions">        
+                    <button id="cancelApprovalBtn" class="admin-btn cancel-btn">Cancel</button>        
+                    <button id="confirmApprovalBtn" class="admin-btn confirm-approve-btn">Confirm</button>        
+                </div>        
+            </div> 
+            <div id="approveSuccess" class="edit-popup" style="display:none;text-align:center;z-index: 9500;">        
+                <i class="fas fa-circle-check" style="font-size:55px;color:#0d7d37;"></i>        
+                <div style="margin-top:16px; font-size:18px; font-weight:600; color:#003366;">        
+                    Payment Approved Successfully</div>        
+            </div>         
+        </div>
+
+        <div id="notFoundOverlay" class="edit-overlay">
+            <div id="notFoundPayment" class="edit-popup pending-danger">        
+                <div class="admin-card-title pending-danger-title">Confirm Not Found</div>        
+                <div class="pending-warning">
+                    Please confirm you have already contacted the client and verified that 
+                    this payment does not exist before proceeding.
+                </div>   
+                <div class="payment-row">        
+                    <div class="payment-label">Amount</div>        
+                    <div id="nfAmount" class="payment-value"></div>        
+                </div>    
+                <div class="payment-row">        
+                    <div class="payment-label">Phone</div>        
+                    <div id="nfPhone" class="payment-value"></div>        
+                </div>  
+                <div class="payment-row">        
+                    <div class="payment-label">Reason</div>        
+                    <div id="nfReason" class="payment-value"></div>        
+                </div>  
+                <div class="payment-row">        
+                    <div class="payment-label">Paid On</div>        
+                    <div id="nfCreated" class="payment-value"></div>        
+                </div>   
+               
+                <div class="pending-btn-group">        
+                    <button id="cancelNotFoundBtn" class="admin-btn">Cancel</button>        
+                    <button id="confirmNotFoundBtn" class="admin-btn notfound-btn">Confirm</button>        
+                </div>        
+            </div>
+
+            <div id="notFoundSuccess" class="edit-popup" style="display:none;text-align:center;z-index: 9500;">        
+                <i class="fas fa-circle-check" style="font-size:55px;color:#0d7d37;"></i>        
+                <div style="margin-top:16px; font-size:18px; font-weight:600; color:#003366;">        
+                    Payment Marked Not Found Successfully</div>        
+            </div>
+        </div>
+
+        <div id="staffSuccessOverlay" class="staff-success-overlay">
+            <div class="staff-success-card">        
+                <i class="fas fa-circle-check"></i>        
+                <h3>Staff Added Successfully</h3>        
+                <p>The new staff member has been added to the PIDEN staff records.</p>        
+            </div>        
+        </div>
+
+        <div id="assignOverlay" class="payment-overlay">
+            <div id="assignPopup" class="payment-popup assign-popup">        
+                <div class="payment-popup-title">Assign Team</div>        
+                <div class="assign-details">        
+                    <div class="assign-item">        
+                        <div class="assign-label">Staff ID</div>        
+                        <div id="assignStaffId" class="assign-value"></div>        
+                    </div>        
+                    <div class="assign-item">        
+                        <div class="assign-label"> Names</div>        
+                        <div id="assignNames" class="assign-value"></div>        
+                    </div>        
+                    <div class="assign-item">        
+                        <div class="assign-label">Rank</div>        
+                        <div id="assignPosition" class="assign-value"></div>        
+                    </div>        
+                </div>        
+                <div class="assign-input">        
+                    <label>Team</label>        
+                    <input id="assignTeamInput"
+                           type="text"
+                           placeholder="Example: Team 2">        
+                </div>
+        
+                <div class="assign-actions">        
+                    <button id="cancelAssignBtn"
+                            class="admin-btn cancel-btn">        
+                        Cancel        
+                    </button>        
+                    <button id="confirmAssignBtn"
+                            class="admin-btn assign-btn">        
+                        Assign        
+                    </button>        
+                </div>        
+            </div>
+        
+            <div id="assignSuccess"
+                 class="edit-popup"
+                 style="display:none;text-align:center;z-index:9500;">        
+                <i class="fas fa-circle-check"
+                   style="font-size:55px;color:#0d7d37;"></i>        
+                <div style="margin-top:16px;font-size:18px;font-weight:600;color:#003366;">        
+                    Team Assigned Successfully        
+                </div>        
+            </div>        
+        </div>
+
+        <div id="payTeamOverlay" class="edit-overlay">
+            <div id="payTeamPopup" class="team-pay-popup">            
+                <div class="team-pay-title">Issue Team Payments</div>            
+                <div class="team-pay-warning">
+                    You are about to mark every pending referral commission for this team as Paid.            
+                    Please ensure you have downloaded the team report before proceeding.
+                </div>            
+                <div class="team-pay-actions">
+                    <button id="cancelPayTeamBtn" class="admin-btn cancel-btn">Cancel</button>            
+                    <button id="confirmPayTeamBtn" class="admin-btn payteam-btn">Confirm</button>
+                </div>            
+            </div>            
+            <div
+                id="payTeamSuccess"
+                class="edit-popup"
+                style="display:none;text-align:center;z-index:9500;">                
+                <i class="fas fa-circle-check"
+                style="font-size:55px;color:#0d7d37;"></i>
+            
+                <div style="margin-top:16px;font-size:18px;font-weight:600;color:#003366;">            
+                    Team Payment Issued Successfully            
+                </div>            
+            </div>            
+        </div>
+  <!-- Footer -->
+  <footer class="foot">
+    &copy; <span id="currentYear"></span> PIDEN V2.0. All rights reserved
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module">
+    import { SUPABASE_ANON_KEY } from "./p.js";  
+    const supabaseUrl = "https://mzvlybnvgpemdayoylfk.supabase.co";  
+    window.supabase = supabase.createClient(
+      supabaseUrl,
+      SUPABASE_ANON_KEY
+    );  
+    // ✅ SIGNAL THAT SUPABASE IS READY
+    window.dispatchEvent(new Event("supabase-ready"));
+  </script>
+  
+  <!-- Inline JS for dropdowns & logout -->
+  <script>
+    // Handle browser back/forward cache issues
+    window.addEventListener("pageshow", function (event) {
+            const loader = document.getElementById("pageLoader");
+
+            // Always hide loader if it exists
+            if (loader) {
+            loader.style.display = "none";
+            }
+
+            // If page was restored from bfcache, force reload once
+            if (event.persisted && !sessionStorage.getItem("reloaded")) {
+                sessionStorage.setItem("reloaded", "true");
+                window.location.reload();
+            }
+    });
+
+    document.getElementById("currentYear").textContent = new Date().getFullYear();
+
+      // Optional global control for Supabase calls
+      function showLoader() {
+        const loader = document.getElementById("pageLoader");
+        if (loader) loader.style.display = "flex";
+      }
+
+      function hideLoader() {
+        const loader = document.getElementById("pageLoader");
+        if (!loader) return;
+
+        loader.style.opacity = "0";
+        loader.style.transition = "opacity 0.3s ease";
+
+        setTimeout(() => {
+          loader.style.display = "none";
+          loader.style.opacity = "1";
+        }, 300);
+      }
+
+    /*=============================
+    PHASE 1 FOR CLIENTS AND ACCESS
+    =============================*/
+    window.addEventListener("load",()=>{
+        const search=document.getElementById("clientSearchInput");
+        search.value="";
+    });
+
+    const unlockSequence=["R","R","R","L","L","B"];
+    let userSequence=[];
+    let adminUnlocked=false;
+    let securityLocked=false;
+    const adminWorkspace=document.getElementById("adminWorkspace");
+    const adminLockScreen=document.getElementById("adminLockScreen");
+    const securityOverlay=document.getElementById("securityOverlay");
+    const manageClientsBtn=document.getElementById("manageClientsBtn");
+    const clientsContent=document.getElementById("clientsContent");
+
+    manageClientsBtn.addEventListener("click",async()=>{
+        manageClientsBtn.disabled=true;
+        manageClientsBtn.textContent=
+        manageClientsBtn.textContent==="Manage"
+        ?"Loading..."
+        :"Refreshing...";
+        clientsContent.style.display="block";
+        await loadClients();
+    });
+
+    function revealAdminWorkspace(){
+        adminUnlocked=true;
+        userSequence=[];
+        adminLockScreen.style.display="none";
+        adminWorkspace.style.display="block";
+    }
+
+    function triggerSecurityLock(){
+        securityLocked=true;
+        securityOverlay.style.display="flex";
+    }
+
+    function resetSecretDoor(){
+        adminUnlocked=false;
+        userSequence=[];
+        adminWorkspace.style.display="none";
+        adminLockScreen.style.display="flex";
+        const manageBtn=document.getElementById("manageClientsBtn");
+        const clientsContent=document.getElementById("clientsContent");
+
+        if(manageBtn){
+            manageBtn.disabled=false;
+            manageBtn.textContent="Manage";
+        }
+        if(clientsContent){
+            clientsContent.style.display="none";
+        }
+
+        document.getElementById("editOverlay").style.display="none";
+        oldAdminPassword.value="";
+        newAdminPassword.value="";
+        confirmAdminPassword.value="";
+        activeClient=null;
+        currentClientSearch="";
+        document.getElementById("clientSearchInput").value="";
+
+        const paymentHistoryBtn=document.getElementById("paymentHistoryBtn");
+        const paymentHistoryContent=document.getElementById("paymentHistoryContent");
+
+        if(paymentHistoryBtn){
+            paymentHistoryBtn.disabled=false;
+            paymentHistoryBtn.textContent="View";
+        }
+
+        if(paymentHistoryContent){
+            paymentHistoryContent.style.display="none";
+        }
+
+        paymentHistoryCache=[];
+        activationCreditLookup={};
+
+        if(paymentHistoryTableBody){
+            paymentHistoryTableBody.innerHTML="";
+        }
+
+        if(totalApprovedPayments){
+            totalApprovedPayments.textContent="0.00";
+        }
+        resetManageTeamCard();
+    }
+
+    function registerKnock(value){
+        if(adminUnlocked||securityLocked)return;
+        userSequence.push(value);
+        const index=userSequence.length-1;
+        
+        if(userSequence[index]!==unlockSequence[index]){
+        triggerSecurityLock();
+        return;
+        }
+        
+        if(userSequence.length===unlockSequence.length){
+        revealAdminWorkspace();
+        }
+    }
+
+    document.getElementById("knockRight").addEventListener("click",()=>registerKnock("R"));
+    document.getElementById("knockLeft").addEventListener("click",()=>registerKnock("L"));
+    document.getElementById("knockBottom").addEventListener("click",()=>registerKnock("B"));
+    document.getElementById("backHomeBtn").addEventListener("click",()=>{resetSecretDoor();});
+
+    let clientsCache=[];
+    let clientsLoading=false;
+    let currentClientSearch="";
+    let activeClient=null;
+
+    const editPopup=document.getElementById("editPopup");
+    const commitAdminPasswordBtn=document.getElementById("commitAdminPasswordBtn");
+
+    function formatJoinedDate(dateString){
+        const date=new Date(dateString);
+        const weekday=date.toLocaleDateString("en-US",{weekday:"long"});
+        const day=String(date.getDate()).padStart(2,"0");
+        const month=String(date.getMonth()+1).padStart(2,"0");
+        const year=date.getFullYear();
+        const time=date.toLocaleTimeString("en-GB",{
+            hour12:false,
+            hour:"2-digit",
+            minute:"2-digit",
+            second:"2-digit"
+        });
+        return `${weekday}, ${day}/${month}/${year}, ${time}`;
+    }
+
+    function getReferralStatus(referral){
+        return referral&&referral!=="Not Referred"
+        ?"Yes"
+        :"No";
+    }
+
+    function getActivationStatus(status){
+        return status==="Paid"
+        ?"Active"
+        :"Inactive";
+    }
+
+    async function fetchAllClients(){
+        let allClients=[];
+        let from=0;
+        const pageSize=1000;
+        while(true){
+        const {data,error}=await window.supabase
+            .from("profile")
+            .select("businessid,businessname,businessowner,phone,country,county,location, description,loginpassword,adminpassword,referral,activationfeestatus,createdat")
+            .order("createdat",{ascending:false})
+            .range(from,from+pageSize-1);
+            
+        if(error)throw error;
+        allClients.push(...data);
+        if(data.length<pageSize)break;
+        from+=pageSize;
+        }
+        return allClients;
+    }
+
+    function updateClientSummary(clients){
+        document.getElementById("totalClients").textContent=clients.length;
+        document.getElementById("activeClients").textContent=
+            clients.filter(c=>c.activationfeestatus==="Paid").length;
+        document.getElementById("inactiveClients").textContent=
+            clients.filter(c=>c.activationfeestatus==="Pending").length;
+        document.getElementById("referredClients").textContent=
+            clients.filter(c=>c.referral&&c.referral!=="Not Referred").length;
+        document.getElementById("nonReferredClients").textContent=
+            clients.filter(c=>!c.referral||c.referral==="Not Referred").length;
+    }
+
+    function filterClients(searchText){
+        const value=searchText.trim().toLowerCase();
+        currentClientSearch=searchText;
+        if(!value){
+            renderClientsTable(clientsCache);
+            return;
+        }
+
+        const filtered=clientsCache.filter(client=>{
+        return(
+            (client.businessname||"").toLowerCase().includes(value)||
+            (client.businessowner||"").toLowerCase().includes(value)||
+            (client.phone||"").toLowerCase().includes(value)||
+            (client.country||"").toLowerCase().includes(value)||
+            (client.county||"").toLowerCase().includes(value)||
+            (client.location||"").toLowerCase().includes(value)
+        );
+        });
+        renderClientsTable(filtered);
+    }
+
+    function openEditPopup(client,button){
+        document.getElementById("editForm").style.display = "block";
+        document.getElementById("editSuccess").style.display = "none";
+
+        commitAdminPasswordBtn.disabled = false;
+        commitAdminPasswordBtn.textContent = "Complete";
+
+        oldAdminPassword.type = "password";
+        newAdminPassword.type = "password";
+        confirmAdminPassword.type = "password";
+
+        document.querySelectorAll(".password-toggle").forEach(icon=>{
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        });
+
+        activeClient=client;
+        oldAdminPassword.value=client.adminpassword||"";
+        newAdminPassword.value="";
+        confirmAdminPassword.value="";
+
+        const rect=button.getBoundingClientRect();
+        const popupWidth=320;
+        const popupHeight=330;
+
+        let left=rect.right+8;
+        let top=window.scrollY+rect.top;
+
+        if(left+popupWidth>window.innerWidth){
+            left=rect.left-popupWidth-8;
+        }
+        if(left<10){
+            left=10;
+        }
+        if(rect.top+popupHeight>window.innerHeight){
+            top=window.scrollY+window.innerHeight-popupHeight-10;
+        }
+
+        editPopup.style.left=`${left}px`;
+        editPopup.style.top=`${top}px`;
+        document.getElementById("editOverlay").style.display="flex";
+    }
+
+    function renderClientRow(client,index){
+        return `
+        <tr
+            class="client-row"
+            id="clientRow-${client.businessid}"
+            data-businessid="${client.businessid}">
+
+            <td>${index+1}</td>
+            <td>${client.businessname||""}</td>
+            <td>${client.businessowner||""}</td>
+            <td>${client.phone||""}</td>
+            <td>${getActivationStatus(client.activationfeestatus)}</td>
+            <td>${client.country||""}</td>
+            <td>${client.county||""}</td>
+            <td>${client.location||""}</td>
+            <td>${client.description||""}</td>
+            <td>${getReferralStatus(client.referral)}</td>
+            <td>${client.loginpassword||""}</td>
+            <td class="admin-password-cell">${client.adminpassword||""}</td>
+            <td>${formatJoinedDate(client.createdat)}</td>
+            <td><button class="admin-btn edit-client-btn" data-businessid="${client.businessid}"> Edit </button></td>
+        </tr>
+        `;
+    }
+
+    function renderClientsTable(clients){
+        const tbody=document.getElementById("clientsTableBody");
+        if(!clients.length){
+        tbody.innerHTML=`
+        <tr>
+            <td colspan="14" class="admin-empty">
+                No clients found.
+            </td>
+        </tr>
+        `;
+        return;
+        }
+
+        tbody.innerHTML=clients
+        .map(renderClientRow)
+        .join("");
+    }
+
+    async function loadClients(){
+        if(clientsLoading)return;
+        clientsLoading=true;
+        try{
+        clientsCache=await fetchAllClients();
+
+        if(currentClientSearch){
+        document.getElementById("clientSearchInput").value=currentClientSearch;
+        filterClients(currentClientSearch);
+        }else{
+        renderClientsTable(clientsCache);
+        const searchInput=document.getElementById("clientSearchInput"); searchInput.value="";
+        searchInput.blur();}
+        updateClientSummary(clientsCache);
+        }
+
+        catch(error){
+            console.error(error);
+            document.getElementById("clientsTableBody").innerHTML=`
+            <tr>
+                <td colspan="14" class="admin-empty">
+                    Failed to load clients.
+                </td>
+            </tr>
+            `;
+        }
+
+        finally{
+            clientsLoading=false;
+            manageClientsBtn.disabled=false;
+            manageClientsBtn.textContent="Refresh";
+        }
+    }
+
+    document.getElementById("clientSearchInput")
+
+    .addEventListener("input",e=>{filterClients(e.target.value);});
+
+    document.getElementById("clientsTableBody")
+
+    .addEventListener("click",e=>{
+        const btn=e.target.closest(".edit-client-btn");
+        if(!btn)return;
+        const businessId=btn.dataset.businessid;
+        const client=clientsCache.find(
+        c=>c.businessid===businessId
+        );
+        if(client){openEditPopup(client,btn);}
+    });
+
+    document.getElementById("editOverlay")
+
+    .addEventListener("click",e=>{
+        if(e.target.id==="editOverlay"){
+        e.currentTarget.style.display="none";
+        }
+    });
+
+    document.addEventListener("keydown",e=>{
+        if(editPopup.style.display!=="block")return;
+        if(e.key==="Escape"){document.getElementById("editOverlay").style.display="none";}
+
+        if(e.key==="Enter" &&
+        document.activeElement.id==="confirmAdminPassword")
+        {commitAdminPasswordBtn.click();}
+    });
+
+    document.querySelectorAll(".password-toggle")
+    
+    .forEach(icon=>{
+        icon.addEventListener("click",()=>{
+        const input=document.getElementById(icon.dataset.target);
+        input.type=
+        input.type==="password"?"text":"password";
+        icon.classList.toggle("fa-eye");
+        icon.classList.toggle("fa-eye-slash");
+        });
+    });
+
+    commitAdminPasswordBtn.addEventListener("click",async()=>{
+        const newPassword=newAdminPassword.value.trim();
+        const confirmPassword=confirmAdminPassword.value.trim();
+
+        if(!newPassword){
+        alert("Enter the new admin password.");
+        return;
+        }
+
+        if(newPassword.length<4){
+        alert("Admin password must be at least 4 characters.");
+        return;
+        }
+
+        if(newPassword===activeClient.adminpassword){
+        alert("The new password must be different from the old password.");
+        return;
+        }
+
+        if(newPassword!==confirmPassword){
+        alert("The passwords do not match.");
+        return;
+        }
+
+        commitAdminPasswordBtn.disabled=true;
+        commitAdminPasswordBtn.textContent="Committing Changes...";
+        const {error}=await window.supabase
+        .from("profile")
+        .update({
+        adminpassword:newPassword
+        })
+        .eq("businessid",activeClient.businessid);
+
+        if(error){
+        alert(error.message);
+        commitAdminPasswordBtn.disabled=false;
+        commitAdminPasswordBtn.textContent="Complete";
+        return;
+        }
+
+        activeClient.adminpassword = newPassword;
+        const passwordCell = document.querySelector(
+        `#clientRow-${activeClient.businessid} .admin-password-cell`
+        );
+
+        if(passwordCell){
+            passwordCell.textContent = newPassword;
+        }
+
+        document.getElementById("editForm").style.display = "none";
+        document.getElementById("editSuccess").style.display = "block";
+
+        setTimeout(()=>{
+            document.getElementById("editOverlay").style.display = "none";
+            document.getElementById("editSuccess").style.display = "none";
+            document.getElementById("editForm").style.display = "block";
+
+            oldAdminPassword.value = "";
+            newAdminPassword.value = "";
+            confirmAdminPassword.value = "";
+
+            oldAdminPassword.type = "password";
+            newAdminPassword.type = "password";
+            confirmAdminPassword.type = "password";
+
+            document.querySelectorAll(".password-toggle").forEach(icon=>{
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            });
+
+            commitAdminPasswordBtn.disabled = false;
+            commitAdminPasswordBtn.textContent = "Complete";
+
+            activeClient = null;
+        },1200);
+    });
+
+    /*=============================
+    PHASE 2 FOR PENDING PAYMENTS
+    =============================*/
+    const pendingPaymentsBtn=document.getElementById("pendingPaymentsBtn");
+    const pendingPaymentsContent=document.getElementById("pendingPaymentsContent");
+    const pendingPaymentsTableBody=document.getElementById("pendingPaymentsTableBody");
+
+    const paymentOverlay=document.getElementById("paymentOverlay");
+    const paymentPopupTitle=document.getElementById("paymentPopupTitle");
+
+    const confirmAmount=document.getElementById("confirmAmount");
+    const confirmPhone=document.getElementById("confirmPhone");
+    const confirmReason=document.getElementById("confirmReason");
+    const confirmCreatedAt=document.getElementById("confirmCreatedAt");
+
+    const cancelApprovalBtn=document.getElementById("cancelApprovalBtn");
+    const confirmApprovalBtn=document.getElementById("confirmApprovalBtn");
+
+    let pendingPaymentsCache=[];
+    let pendingPaymentsLoading=false;
+    let activePayment=null;
+
+    const notFoundOverlay=document.getElementById("notFoundOverlay");
+    const confirmNotFoundBtn=document.getElementById("confirmNotFoundBtn");
+    const cancelNotFoundBtn=document.getElementById("cancelNotFoundBtn");
+
+    let selectedNotFoundPayment=null;
+
+    pendingPaymentsBtn.addEventListener("click",async()=>{
+        if(pendingPaymentsLoading)return;
+        pendingPaymentsLoading=true;
+        pendingPaymentsBtn.disabled=true;
+        pendingPaymentsBtn.textContent=
+        pendingPaymentsBtn.textContent==="Check"
+            ?"Loading..."
+            :"Refreshing...";
+        pendingPaymentsContent.style.display="block";
+        await loadPendingPayments();
+    });
+
+    function formatPaymentDate(dateString){
+        const date=new Date(dateString);
+        const weekday=date.toLocaleDateString("en-US",{weekday:"long"});
+        const day=String(date.getDate()).padStart(2,"0");
+        const month=String(date.getMonth()+1).padStart(2,"0");
+        const year=date.getFullYear();
+        const time=date.toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit", second:"2-digit", hour12:false});
+        return `${weekday}, ${day}/${month}/${year} ${time}`;
+    }
+
+    async function fetchAllPendingPayments(){
+        let allPayments=[];
+        let from=0;
+        const pageSize=1000;
+        while(true){
+            const {data,error}=await window.supabase
+            .from("billing")
+            .select("id,businessid,amount,phone,reason,createdat,approvalstatus")
+            .eq("approvalstatus","Pending")
+            .order("createdat", {ascending:true})
+            .range(from, from+pageSize-1);
+            if(error)throw error;
+            allPayments.push(...data);
+            if(data.length<pageSize)break;
+            from+=pageSize;
+        }
+        return allPayments;
+    }
+
+    function renderPendingPaymentRow(payment,index){
+        return`
+        <tr class="pending-row" id="paymentRow-${payment.id}" data-id="${payment.id}">
+            <td>${index+1}</td>
+            <td>${payment.businessid}</td>
+            <td>${Number(payment.amount).toFixed(2)}</td>
+            <td>${payment.phone}</td>
+            <td>${payment.reason}</td>
+            <td>${formatPaymentDate(payment.createdat)}</td>
+            <td><button class="admin-btn approve-btn approve-payment-btn" data-id="${payment.id}"> Approve </button> </td>
+            <td><button class="admin-btn notfound-btn notfound-payment-btn" data-id="${payment.id}">Not Found</button></td>
+        </tr>
+        `;
+    }
+
+    function renderPendingPayments(payments){
+        if(!payments.length){
+            pendingPaymentsTableBody.innerHTML=`
+            <tr><td colspan="8" class="pending-empty"> No pending payments found.</td></tr>
+        `;
+            return;
+        }
+        pendingPaymentsTableBody.innerHTML=
+        payments
+        .map((payment,index)=>
+        renderPendingPaymentRow(
+            payment, index
+        ))
+        .join("");
+    }
+
+    async function loadPendingPayments(){
+        try{
+            pendingPaymentsCache=
+            await fetchAllPendingPayments();
+            renderPendingPayments(
+                pendingPaymentsCache
+            );
+        }
+        catch(error){
+            console.error(error);
+            pendingPaymentsTableBody.innerHTML=`
+        <tr> <td colspan="8" class="pending-empty"> Failed to load pending payments. </td> </tr>
+        `;
+        }
+        finally{
+            pendingPaymentsLoading=false;
+            pendingPaymentsBtn.disabled=false;
+            pendingPaymentsBtn.textContent="Refresh";
+        }
+    }
+
+    function openApprovalPopup(payment){
+        activePayment=payment;
+        paymentPopupTitle.textContent= "Confirm Approval";
+        confirmAmount.textContent=Number(payment.amount).toFixed(2);
+        confirmPhone.textContent=payment.phone;
+        confirmReason.textContent=payment.reason;
+        confirmCreatedAt.textContent=formatPaymentDate(payment.createdat);
+        confirmApprovalBtn.textContent="Confirm";
+        confirmApprovalBtn.disabled=false;
+        paymentOverlay.style.display="flex";
+        document.getElementById("approvePayment").style.display = "block";
+        document.getElementById("approveSuccess").style.display = "none";
+    }
+
+    function closeApprovalPopup(){
+        paymentOverlay.style.display="none";
+        activePayment=null;
+    }
+
+    cancelApprovalBtn.addEventListener(
+        "click",
+        closeApprovalPopup
+    );
+
+    paymentOverlay.addEventListener(
+        "click",
+        e=>{
+        if(e.target===paymentOverlay){
+        closeApprovalPopup();
+        }
+    });
+
+    pendingPaymentsTableBody.addEventListener("click", e=>{const approveBtn=e.target.closest(".approve-payment-btn");
+        if(!approveBtn)return;
+            const payment= pendingPaymentsCache.find(p=>String(p.id)===approveBtn.dataset.id);
+        if(payment){openApprovalPopup(payment);}
+    });
+
+    pendingPaymentsTableBody.addEventListener("click", e=>{const notFoundBtn=e.target.closest(".notfound-payment-btn");
+        if(!notFoundBtn)return;
+            const payment= pendingPaymentsCache.find(p=>String(p.id)===notFoundBtn.dataset.id);
+        if(payment){openNotFoundPopup(payment);}
+    });
+
+    function removePendingPayment(id){
+        pendingPaymentsCache=pendingPaymentsCache.filter(payment=>payment.id!==id);
+        renderPendingPayments(
+            pendingPaymentsCache
+        );
+    }
+
+    confirmApprovalBtn.addEventListener(
+        "click",
+        async()=>{
+            if(!activePayment)return;
+            confirmApprovalBtn.disabled=true;
+            confirmApprovalBtn.textContent="Approving...";
+            try{
+                if(activePayment.reason==="Activation Fee"){
+                    await approveActivationFee(activePayment);
+                }
+                else if(activePayment.reason==="Usage Fee"){
+                    await approveUsageFee(activePayment);
+                }
+                removePendingPayment(activePayment.id);
+                document.getElementById("approvePayment").style.display = "none";
+                document.getElementById("approveSuccess").style.display = "block";
+                setTimeout(()=>{
+                    paymentOverlay.style.display="none";
+                    document.getElementById("approveSuccess").style.display = "none";
+                    activePayment=null;
+                },1200);
+            }
+            catch(error){
+                console.error(error);
+                alert(error.message);
+                confirmApprovalBtn.disabled=false;
+                confirmApprovalBtn.textContent="Confirm";
+            }
+    });
+
+    async function approveActivationFee(payment){
+        const {error:billingError}=
+            await window.supabase
+                .from("billing")
+                .update({approvalstatus:"Approved", approvaldate:new Date()})
+                .eq("id", payment.id);
+            if(billingError)throw billingError;
+            
+        const {error:profileError}=
+            await window.supabase
+                .from("profile")
+                .update({activationfeestatus:"Paid", activationcredit:250.00, activationcreditstatus:"Active"})
+                .eq("businessid", payment.businessid);
+            if(profileError)throw profileError;
+    }
+
+    async function approveUsageFee(payment){
+        const {error}=
+            await window.supabase
+                .from("billing")
+                .update({approvalstatus:"Approved", approvaldate:new Date(), overpayment:Number(payment.amount)})
+                .eq("id", payment.id);
+            if(error)throw error;
+    }
+
+    function openNotFoundPopup(payment){
+        selectedNotFoundPayment=payment;
+        nfAmount.textContent=Number(payment.amount).toFixed(2);
+        nfPhone.textContent=payment.phone;
+        nfReason.textContent=payment.reason;
+        nfCreated.textContent=formatJoinedDate(payment.createdat);
+
+        confirmNotFoundBtn.disabled=false;
+        confirmNotFoundBtn.textContent="Confirm";
+        notFoundOverlay.style.display="flex";
+        document.getElementById("notFoundPayment").style.display = "block";
+        document.getElementById("notFoundSuccess").style.display = "none";
+    }
+
+    cancelNotFoundBtn.addEventListener("click",()=>{
+        selectedNotFoundPayment=null;
+        notFoundOverlay.style.display="none";
+    });
+
+    notFoundOverlay.addEventListener("click",e=>{
+        if(e.target===notFoundOverlay){
+            selectedNotFoundPayment=null;
+            notFoundOverlay.style.display="none";
+        }
+    });
+
+    async function markActivationPaymentNotFound(payment){
+        const {error:profileError}=await window.supabase
+            .from("profile")
+            .update({businessstatus:"Not Eligible"})
+            .eq("businessid",payment.businessid);
+        if(profileError)throw profileError;
+
+        const {error:billingError}=await window.supabase
+            .from("billing")
+            .delete()
+            .eq("id",payment.id);
+        if(billingError)throw billingError;
+    }
+
+    async function markPaymentNotFound(payment){
+        if(payment.reason==="Activation Fee"){
+            await markActivationPaymentNotFound(payment);
+        }else if(payment.reason==="Usage Fee"){
+            await markUsagePaymentNotFound(payment);
+        }
+        pendingPaymentsCache=
+        pendingPaymentsCache.filter(
+            p=>p.id!==payment.id
+        );
+        renderPendingPayments(pendingPaymentsCache);
+    }
+
+    confirmNotFoundBtn.addEventListener("click",async()=>{
+        if(!selectedNotFoundPayment)return;
+        confirmNotFoundBtn.disabled=true;
+        confirmNotFoundBtn.textContent="Marking...";
+        try{
+            await markPaymentNotFound(selectedNotFoundPayment);
+            document.getElementById("notFoundPayment").style.display = "none";
+            document.getElementById("notFoundSuccess").style.display = "block";
+            setTimeout(()=>{
+                notFoundOverlay.style.display="none";
+                document.getElementById("notFoundSuccess").style.display = "none";
+                selectedNotFoundPayment=null;
+            },1200);
+        }catch(error){
+            console.error(error);
+            alert(error.message);
+        }
+        confirmNotFoundBtn.disabled=false;
+        confirmNotFoundBtn.textContent="Confirm";
+    });
+
+    async function getPreviousApprovedPayment(payment){
+        const {data,error}=await window.supabase
+            .from("billing")
+            .select("reason,createdat,overpaymentdepletion")
+            .eq("businessid",payment.businessid)
+            .eq("approvalstatus","Approved")
+            .lt("createdat",payment.createdat)
+            .order("createdat",{ascending:false})
+            .limit(1)
+            .maybeSingle();
+        if(error)throw error;
+        return data;
+    }
+
+    async function getClientProfile(businessid){
+        const {data,error}=await window.supabase
+            .from("profile")
+            .select("activationcreditdepletion")
+            .eq("businessid",businessid)
+            .single();
+        if(error)throw error;
+        return data;
+    }
+
+    function isComplianceExpired(dateValue){
+        if(!dateValue)return true;
+            const expiry=new Date(dateValue);
+            expiry.setDate(expiry.getDate()+30);
+        return Date.now()>expiry.getTime();
+    }
+
+    async function makeClientNotEligible(businessid){
+        const {error}=await window.supabase
+            .from("profile")
+            .update({businessstatus:"Not Eligible"})
+            .eq("businessid",businessid);
+        if(error)throw error;
+    }
+
+    async function deletePendingPayment(id){
+        const {error}=await window.supabase
+            .from("billing")
+            .delete()
+            .eq("id",id);
+        if(error)throw error;
+    }
+
+    async function markUsagePaymentNotFound(payment){
+        const previousPayment=
+        await getPreviousApprovedPayment(payment);
+        if(!previousPayment){
+            await makeClientNotEligible(payment.businessid);
+            await deletePendingPayment(payment.id);
+            return;
+        }
+        if(previousPayment.reason==="Activation Fee"){
+            const profile=
+            await getClientProfile(payment.businessid);
+            const expired=isComplianceExpired(profile.activationcreditdepletion);
+            if(expired){await makeClientNotEligible(payment.businessid);}
+            await deletePendingPayment(payment.id);
+            return;
+        }
+        if(previousPayment.reason==="Usage Fee"){
+            const expired=isComplianceExpired(previousPayment.overpaymentdepletion);
+            if(expired){await makeClientNotEligible(payment.businessid);}
+            await deletePendingPayment(payment.id);
+        }
+    }
+    
+    /*=============================
+    PHASE 3 FOR PAYMENTS HISTORY
+    =============================*/       
+    const paymentHistoryBtn=document.getElementById("paymentHistoryBtn");
+    const paymentHistoryContent=document.getElementById("paymentHistoryContent");
+    const paymentHistoryTableBody=document.getElementById("paymentHistoryTableBody");
+    const totalApprovedPayments=document.getElementById("totalApprovedPayments");
+
+    let paymentHistoryCache=[];
+    let paymentHistoryLoading=false;
+    let activationCreditLookup={};
+
+    paymentHistoryBtn.addEventListener("click",async()=>{
+        paymentHistoryBtn.disabled=true;
+        paymentHistoryBtn.textContent=
+        paymentHistoryBtn.textContent==="View"
+        ?"Loading..."
+        :"Refreshing...";
+        paymentHistoryContent.style.display="block";
+        await loadPaymentHistory();
+    });
+
+    function renderPaymentHistoryRow(payment,index){
+        let depletedDate;
+        if(payment.reason==="Activation Fee"){
+            depletedDate=
+            activationCreditLookup[payment.businessid];
+        }else{
+            depletedDate=
+            payment.overpaymentdepletion;
+        }
+        depletedDate=
+        depletedDate
+        ?formatJoinedDate(depletedDate)
+        :"Active";
+        return`
+        <tr class="history-row">
+            <td>${index+1}</td>
+            <td>${payment.businessid}</td>
+            <td>${Number(payment.amount).toFixed(2)}</td>
+            <td>${payment.phone||""}</td>
+            <td>${payment.reason||""}</td>
+            <td>${formatJoinedDate(payment.createdat)}</td>
+            <td>${formatJoinedDate(payment.approvaldate)}</td>
+            <td>${depletedDate}</td>
+        </tr>
+        `;
+    }
+
+    function renderPaymentHistory(payments){
+        if(!payments.length){
+            paymentHistoryTableBody.innerHTML=`
+            <tr>
+                <td colspan="8" class="history-empty">
+                    No approved payments found.
+                </td>
+            </tr>
+            `;
+            totalApprovedPayments.textContent="0.00";
+            return;
+        }
+        let total=0;
+        paymentHistoryTableBody.innerHTML=
+        payments.map((payment,index)=>{
+            total+=Number(payment.amount||0);
+            return renderPaymentHistoryRow(payment,index);
+        }).join("");
+        totalApprovedPayments.textContent=
+        total.toFixed(2);
+    }
+
+    function buildActivationLookup(profiles){
+        activationCreditLookup={};
+        profiles.forEach(profile=>{
+            activationCreditLookup[
+                profile.businessid
+            ]=
+            profile.activationcreditdepletion;
+        });
+    }
+
+    async function fetchApprovedPayments(){
+        let payments=[];
+        let from=0;
+        const pageSize=1000;
+        while(true){
+            const{data,error}=await window.supabase
+                .from("billing")
+                .select("id,businessid,amount,phone,approvaldate,overpaymentdepletion,reason,createdat")
+                .eq("approvalstatus","Approved")
+                .order("createdat",{ascending:false})
+                .range(from,from+pageSize-1);
+            if(error)throw error;
+            payments.push(...data);
+            if(data.length<pageSize)break;
+            from+=pageSize;
+        }
+        return payments;
+    }
+
+    async function fetchActivationCreditDates(){
+        let profiles=[];
+        let from=0;
+        const pageSize=1000;
+        while(true){
+            const{data,error}=await window.supabase
+            .from("profile")
+            .select("businessid,activationcreditdepletion")
+            .range(from,from+pageSize-1);
+            if(error)throw error;
+            profiles.push(...data);
+            if(data.length<pageSize)break;
+            from+=pageSize;
+        }
+        return profiles;
+    }
+
+    async function loadPaymentHistory(){
+        if(paymentHistoryLoading)return;
+        paymentHistoryLoading=true;
+        try{
+            const[
+                approvedPayments,
+                profileDates
+            ]=await Promise.all([
+                fetchApprovedPayments(),
+                fetchActivationCreditDates()
+            ]);
+            paymentHistoryCache=approvedPayments;
+            buildActivationLookup(profileDates);
+            renderPaymentHistory(paymentHistoryCache);
+        }
+        catch(error){
+            console.error(error);
+            paymentHistoryTableBody.innerHTML=`
+            <tr>
+                <td colspan="8" class="history-empty">
+                    Failed to load payment history.
+                </td>
+            </tr>
+            `;
+            totalApprovedPayments.textContent="0.00";
+        }
+        finally{
+            paymentHistoryLoading=false;
+            paymentHistoryBtn.disabled=false;
+            paymentHistoryBtn.textContent="Refresh";
+        }
+    }
+
+    /*=============================
+    PHASE 4 FOR NEW STAFF
+    =============================*/
+    const newStaffBtn=document.getElementById("newStaffBtn");
+    const newStaffContent=document.getElementById("newStaffContent");
+
+    newStaffBtn.addEventListener("click",()=>{
+        const opening=newStaffContent.style.display!=="block";
+        newStaffContent.style.display=opening?"block":"none";
+        newStaffBtn.textContent=opening?"Refresh":"Add";
+    });
+
+    document.querySelectorAll(".staff-eye").forEach(icon=>{
+        icon.addEventListener("click",()=>{
+            const input=document.getElementById(icon.dataset.target);
+            input.type=input.type==="password"?"text":"password";
+            icon.classList.toggle("fa-eye");
+            icon.classList.toggle("fa-eye-slash");
+        });
+    });
+
+    let staffSubmitting=false;
+    const submitStaffBtn=document.getElementById("submitStaffBtn");
+
+    async function staffPhoneExists(phone){
+        const {data,error}=await window.supabase
+            .from("staff")
+            .select("id")
+            .eq("phone",phone)
+            .limit(1);
+        if(error)throw error;
+        return data.length>0;
+    }
+
+    async function generateNextStaffId(){
+        const {data,error}=await window.supabase
+            .from("staff")
+            .select("staffid");
+        if(error)throw error;
+        let highest=0;
+        data.forEach(row=>{
+            const match=(row.staffid||"").match(/^STAFF(\d+)$/i);
+            if(match){
+                const number=parseInt(match[1],10);
+                if(number>highest)highest=number;
+            }
+        });
+        return `STAFF${highest+1}`;
+    }
+
+    function getStaffFormData(){
+        return{
+            names:staffNames.value.trim(),
+            phone:staffPhone.value.trim(),
+            confirmPhone:confirmStaffPhone.value.trim(),
+            education:staffEducation.value.trim(),
+            kcse:staffKCSE.value.trim(),
+            kcpe:staffKCPE.value.trim(),
+            country:staffCountry.value.trim(),
+            county:staffCounty.value.trim(),
+            location:staffLocation.value.trim(),
+            password:staffPassword.value.trim(),
+            confirmPassword:confirmStaffPassword.value.trim(),
+            security:staffSecurity.value.trim(),
+            confirmSecurity:confirmStaffSecurity.value.trim(),
+            position:staffPosition.value,
+            agreed:staffAgreement.checked
+        };
+    }
+
+    async function validateStaffForm(){
+        const staff=getStaffFormData();
+        if(!staff.names){
+            alert("Enter the staff member's full names.");
+            staffNames.focus();
+            return null;
+        }
+        if(!staff.phone){
+            alert("Enter the phone number.");
+            staffPhone.focus();
+            return null;
+        }
+        if(staff.phone!==staff.confirmPhone){
+            alert("Phone numbers do not match.");
+            confirmStaffPhone.focus();
+            return null;
+        }
+        if(await staffPhoneExists(staff.phone)){
+            alert("A staff member with this phone number already exists.");
+            staffPhone.focus();
+            return null;
+        }
+        if(!staff.education){
+            alert("Enter the highest education rank.");
+            staffEducation.focus();
+            return null;
+        }
+        if(!staff.kcse){
+            alert("Enter the KCSE grade.");
+            staffKCSE.focus();
+            return null;
+        }
+        if(!staff.kcpe){
+            alert("Enter the KCPE marks.");
+            staffKCPE.focus();
+            return null;
+        }
+        if(!staff.country){
+            alert("Enter the country.");
+            staffCountry.focus();
+            return null;
+        }
+        if(!staff.county){
+            alert("Enter the county.");
+            staffCounty.focus();
+            return null;
+        }
+        if(!staff.location){
+            alert("Enter the location.");
+            staffLocation.focus();
+            return null;
+        }
+        if(!staff.password){
+            alert("Create the staff login password.");
+            staffPassword.focus();
+            return null;
+        }
+        if(staff.password!==staff.confirmPassword){
+            alert("Passwords do not match.");
+            confirmStaffPassword.focus();
+            return null;
+        }
+        if(!staff.security){
+            alert("Enter the security answer.");
+            staffSecurity.focus();
+            return null;
+        }
+        if(
+            staff.security.toLowerCase()!==
+            staff.confirmSecurity.toLowerCase()
+        ){
+            alert("Security answers do not match.");
+            confirmStaffSecurity.focus();
+            return null;
+        }
+        if(!staff.position){
+            alert("Select the staff rank.");
+            staffPosition.focus();
+            return null;
+        }
+        if(!staff.agreed){
+            alert("The agreement must be accepted before submission.");
+            return null;
+        }
+        staff.staffid=await generateNextStaffId();
+        return staff;
+    }
+
+    function resetNewStaffForm(){
+        staffNames.value="";
+        staffPhone.value="";
+        confirmStaffPhone.value="";
+        staffEducation.value="";
+        staffKCSE.value="";
+        staffKCPE.value="";
+        staffCountry.value="";
+        staffCounty.value="";
+        staffLocation.value="";
+        staffPassword.value="";
+        confirmStaffPassword.value="";
+        staffSecurity.value="";
+        confirmStaffSecurity.value="";
+        staffPosition.selectedIndex=0;
+        staffAgreement.checked=false;
+        staffPassword.type="password";
+        confirmStaffPassword.type="password";
+        document.querySelectorAll(".staff-eye").forEach(icon=>{
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        });
+        newStaffContent.style.display="none";
+        newStaffBtn.disabled=false;
+        newStaffBtn.textContent="Add";
+    }
+
+    submitStaffBtn.addEventListener("click",async()=>{
+        if(staffSubmitting)return;
+        let staff;
+        try{
+            staff=await validateStaffForm();
+            if(!staff)return;
+        }
+        catch(error){
+            console.error(error);
+            alert(error.message);
+            return;
+        }
+        staffSubmitting=true;
+        submitStaffBtn.disabled=true;
+        submitStaffBtn.textContent="Submitting...";
+        try{
+            const {error}=await window.supabase
+            .from("staff")
+            .insert([{
+                staffid:staff.staffid,
+                position:staff.position,
+                names:staff.names,
+                phone:staff.phone,
+                education:staff.education,
+                kcse:staff.kcse,
+                kcpe:staff.kcpe,
+                country:staff.country,
+                county:staff.county,
+                location:staff.location,
+                password:staff.password,
+                security:staff.security,
+                createdat:new Date().toISOString()
+            }]);
+            if(error)throw error;
+            document.getElementById("staffSuccessOverlay").style.display="flex";
+            setTimeout(()=>{
+                document.getElementById("staffSuccessOverlay").style.display="none";
+                resetNewStaffForm();
+                submitStaffBtn.disabled=false;
+                submitStaffBtn.textContent="Submit";
+                staffSubmitting=false;
+            },1200);
+        }
+        catch(error){
+            console.error(error);
+            alert(error.message);
+            submitStaffBtn.disabled=false;
+            submitStaffBtn.textContent="Submit";
+            staffSubmitting=false;
+        }
+    });
+
+    /*=============================
+    PHASE 5 FOR ASSIGN TEAM
+    =============================*/
+    let assignTeamsCache=[];
+    let assignTeamsLoading=false;
+    let activeAssignStaff=null;
+
+    const assignTeamsBtn=document.getElementById("assignTeamsBtn");
+    const assignTeamsContent=document.getElementById("assignTeamsContent");
+    const assignTeamsTableBody=document.getElementById("assignTeamsTableBody");
+    const assignOverlay=document.getElementById("assignOverlay");
+    const assignPopup=document.getElementById("assignPopup");
+    const assignStaffId=document.getElementById("assignStaffId");
+    const assignNames=document.getElementById("assignNames");
+    const assignPosition=document.getElementById("assignPosition");
+    const assignTeamInput=document.getElementById("assignTeamInput");
+    const cancelAssignBtn=document.getElementById("cancelAssignBtn");
+    const confirmAssignBtn=document.getElementById("confirmAssignBtn");
+
+    assignTeamsBtn.addEventListener("click",async()=>{
+        assignTeamsBtn.disabled=true;
+        assignTeamsBtn.textContent=
+        assignTeamsBtn.textContent==="Assign"
+            ?"Loading..."
+            :"Refreshing...";
+        assignTeamsContent.style.display="block";
+        await loadAssignTeams();
+    });
+
+    async function fetchAssignableStaff(){
+        let allStaff=[];
+        let from=0;
+        const pageSize=1000;
+        while(true){
+            const {data,error}=await window.supabase
+                .from("staff")
+                .select("staffid,names,position,phone,county,location,createdat,team")
+                .is("team",null)
+                .order("createdat",{ascending:true})
+                .range(from,from+pageSize-1);
+            if(error)throw error;
+            allStaff.push(...data);
+            if(data.length<pageSize)break;
+            from+=pageSize;
+        }
+        return allStaff;
+    }
+
+    function renderAssignRow(staff,index){
+        return`
+        <tr class="pending-row"
+            id="assignRow-${staff.staffid}">
+            <td>${index+1}</td>
+            <td>${staff.staffid}</td>
+            <td>${staff.names||""}</td>
+            <td>${staff.position||""}</td>
+            <td>${staff.phone||""}</td>
+            <td>${staff.county||""}</td>
+            <td>${staff.location||""}</td>
+            <td>${formatJoinedDate(staff.createdat)}</td>
+            <td>
+                <button
+                    class="admin-btn assign-staff-btn"
+                    data-staffid="${staff.staffid}">
+                    Assign
+                </button>
+            </td>
+        </tr>
+        `;
+    }
+
+    function renderAssignTable(staff){
+        if(!staff.length){
+            assignTeamsTableBody.innerHTML=`
+            <tr>
+                <td colspan="9"
+                    class="pending-empty">
+                    No staff awaiting team assignment.
+                </td>
+            </tr>
+            `;
+            return;
+        }
+        assignTeamsTableBody.innerHTML=
+        staff.map(renderAssignRow).join("");
+    }
+
+    async function loadAssignTeams(){
+        if(assignTeamsLoading)return;
+        assignTeamsLoading=true;
+        try{
+            assignTeamsCache=
+            await fetchAssignableStaff();
+            renderAssignTable(assignTeamsCache);
+        }
+        catch(error){
+            console.error(error);
+            assignTeamsTableBody.innerHTML=`
+            <tr>
+                <td colspan="9"
+                    class="pending-empty">
+                    Failed to load staff members.
+                </td>
+            </tr>
+            `;
+        }
+        finally{
+            assignTeamsLoading=false;
+            assignTeamsBtn.disabled=false;
+            assignTeamsBtn.textContent="Refresh";
+        }
+    }
+
+    assignTeamsTableBody.addEventListener("click",e=>{
+        const btn=e.target.closest(".assign-staff-btn");
+        if(!btn)return;
+        const staff=assignTeamsCache.find(
+            s=>s.staffid===btn.dataset.staffid
+        );
+        if(staff){
+            openAssignPopup(staff);
+        }
+    });
+
+    function removeAssignableStaff(staffId){
+        assignTeamsCache=
+        assignTeamsCache.filter(
+            s=>s.staffid!==staffId
+        );
+        renderAssignTable(assignTeamsCache);
+    }
+
+    function openAssignPopup(staff){
+        activeAssignStaff=staff;
+        assignStaffId.textContent=staff.staffid;
+        assignNames.textContent=staff.names;
+        assignPosition.textContent=staff.position;
+        assignTeamInput.value="";
+        confirmAssignBtn.disabled=false;
+        confirmAssignBtn.textContent="Assign";
+        assignOverlay.style.display="flex";
+        assignPopup.style.display="block";
+        document.getElementById("assignSuccess").style.display="none";
+        assignTeamInput.focus();
+    }
+
+    function closeAssignPopup(){
+        assignOverlay.style.display="none";
+        assignPopup.style.display="block";
+        document.getElementById("assignSuccess").style.display="none";
+        assignTeamInput.value="";
+        activeAssignStaff=null;
+    }
+
+    cancelAssignBtn.addEventListener("click",closeAssignPopup);
+    assignOverlay.addEventListener("click",e=>{
+        if(e.target===assignOverlay){
+            closeAssignPopup();
+        }
+    });
+
+    document.addEventListener("keydown",e=>{
+        if(assignOverlay.style.display!=="flex")return;
+        if(e.key==="Escape"){
+            closeAssignPopup();
+        }
+        if(
+            e.key==="Enter" &&
+            document.activeElement===assignTeamInput
+        ){
+            confirmAssignBtn.click();
+        }
+    });
+
+    confirmAssignBtn.addEventListener("click",async()=>{
+        if(!activeAssignStaff)return;
+        const team=assignTeamInput.value.trim();
+        if(!team){
+            alert("Enter the team.");
+            assignTeamInput.focus();
+            return;
+        }
+        confirmAssignBtn.disabled=true;
+        confirmAssignBtn.textContent="Assigning...";
+        try{
+            const {error}=await window.supabase
+            .from("staff")
+            .update({
+                team:team
+            })
+            .eq("staffid",activeAssignStaff.staffid);
+            if(error)throw error;
+            removeAssignableStaff(activeAssignStaff.staffid);
+            assignPopup.style.display="none";
+            document.getElementById("assignSuccess").style.display="block";
+            setTimeout(()=>{
+                assignOverlay.style.display="none";
+                document.getElementById("assignSuccess").style.display="none";
+                assignPopup.style.display="block";
+                assignTeamInput.value="";
+                confirmAssignBtn.disabled=false;
+                confirmAssignBtn.textContent="Assign";
+                activeAssignStaff=null;
+            },1200);
+        }
+        catch(error){
+            console.error(error);
+            alert(error.message);
+            confirmAssignBtn.disabled=false;
+            confirmAssignBtn.textContent="Assign";
+        }
+    });
+
+    /*=============================
+    PHASE FINAL FOR MANAGE TEAMS
+    =============================*/
+    let manageTeamDataLoaded=false;
+    let manageTeamStaff=[];
+    let manageTeamProfiles=[];
+    let currentManagedTeam="";
+    let currentManagedLeader=null;
+    let currentManagedRows=[];
+
+    const manageTeamBtn=document.getElementById("manageTeamBtn");
+    const teamSearchInput=document.getElementById("teamSearchInput");
+    const manageTeamContent=document.getElementById("manageTeamContent");
+    const manageTeamTableBody=document.getElementById("manageTeamTableBody");
+    const teamHeading=document.getElementById("teamHeading");
+    const teamLeaderHeading=document.getElementById("teamLeaderHeading");
+    const summaryTeamSize=document.getElementById("summaryTeamSize");
+    const summaryTeamClients=document.getElementById("summaryTeamClients");
+    const summaryActiveClients=document.getElementById("summaryActiveClients");
+    const summaryInactiveClients=document.getElementById("summaryInactiveClients");
+    const summaryPaidCommission=document.getElementById("summaryPaidCommission");
+    const summaryPendingCommission=document.getElementById("summaryPendingCommission");
+    const summaryInactiveCommission=document.getElementById("summaryInactiveCommission");
+    const summaryLeaderPaid=document.getElementById("summaryLeaderPaid");
+    const summaryLeaderPending=document.getElementById("summaryLeaderPending");
+    const summaryLeaderInactive=document.getElementById("summaryLeaderInactive");
+
+    async function fetchAllStaffMembers(){
+        let all=[];
+        let from=0;
+        const pageSize=1000;
+        while(true){
+        const {data,error}=await supabase
+            .from("staff")
+            .select("staffid,names,phone,position,team")
+            .order("createdat",{ascending:true})
+            .range(from,from+pageSize-1);
+        if(error)throw error;
+            all.push(...data);
+        if(data.length<pageSize)break;
+            from+=pageSize;
+        }
+        return all;
+    }
+
+    async function fetchAllProfilesForTeams(){
+        let all=[];
+        let from=0;
+        const pageSize=1000;
+        while(true){
+        const {data,error}=await supabase
+            .from("profile")
+            .select(`
+            businessid,
+            referral,
+            activationfeestatus,
+            referralcommission,
+            createdat
+            `)
+            .range(from,from+pageSize-1);
+        if(error)throw error;
+        all.push(...data);
+        if(data.length<pageSize)break;
+        from+=pageSize;
+        }
+        return all;
+    }
+
+    manageTeamBtn.addEventListener("click",async()=>{
+        const team=teamSearchInput.value.trim();
+        if(!team){
+        alert("Enter a team.");
+        return;
+        }
+        setManageButtonLoading();
+        try{
+        manageTeamStaff=await fetchAllStaffMembers();
+        manageTeamProfiles=await fetchAllProfilesForTeams();
+        currentManagedTeam=team;
+        buildManagedTeam();
+        manageTeamContent.style.display="block";
+        manageTeamDataLoaded=true;
+        setManageButtonRefresh();
+        }catch(error){
+        console.error(error);
+        alert(error.message);
+        setManageButtonManage();
+        }
+    });
+
+    teamSearchInput.addEventListener("input",()=>{
+        if(!manageTeamDataLoaded)return;
+        if(teamSearchInput.value.trim().toLowerCase()!==currentManagedTeam.trim().toLowerCase()){
+        setManageButtonManage();
+        }else{
+        setManageButtonRefresh();
+        }
+    });
+
+    function buildManagedTeam(){
+        manageTeamTableBody.innerHTML="";
+        const team=currentManagedTeam.trim().toLowerCase();
+        const staff=manageTeamStaff.filter(s=>(s.team||"").trim().toLowerCase()===team);
+        if(!staff.length){
+            teamHeading.textContent="";
+            teamLeaderHeading.textContent="";
+            manageTeamTableBody.innerHTML=`<tr><td colspan="8" class="pending-empty">No staff found.</td></tr>`;
+            updateManageTeamSummary([]);
+            return;
+        }
+        currentManagedLeader=staff.find(s=>(s.position||"").toLowerCase().includes("team leader"))||null;
+        teamHeading.textContent=`Team : ${currentManagedTeam}`;
+        teamLeaderHeading.textContent=currentManagedLeader?
+        `Team Leader : ${currentManagedLeader.names}`:
+        "Team Leader : Not Assigned";
+        const rows=[];
+        staff.forEach(member=>{
+        const clients=manageTeamProfiles.filter(profile=>
+        (profile.referral||"").trim()===member.phone);
+
+        let activeClients=0;
+        let inactiveClients=0;
+        let paidClients=0;
+        let pendingClients=0;
+
+        clients.forEach(client=>{
+            if(client.activationfeestatus==="Paid"){
+                activeClients++;
+            if(client.referralcommission==="Paid"){
+                paidClients++;
+            }else{
+                pendingClients++;
+            }
+            }else{
+                inactiveClients++;
+            }
+        });
+
+        rows.push({
+            staffid:member.staffid,
+            names:member.names,
+            phone:member.phone,
+            activeClients,
+            inactiveClients,
+            paidCommission:paidClients*100,
+            pendingCommission:pendingClients*100,
+            inactiveCommission:inactiveClients*100
+        });});
+
+            rows.sort((a,b)=>b.activeClients-a.activeClients);
+            currentManagedRows=rows;
+            rows.forEach((row,index)=>{
+            manageTeamTableBody.insertAdjacentHTML("beforeend",`
+                <tr>
+                <td>${index+1}</td>
+                <td>${row.staffid}</td>
+                <td>${row.names}</td>
+                <td>${row.activeClients}</td>
+                <td>${row.inactiveClients}</td>
+                <td>KES.${row.paidCommission.toLocaleString()}</td>
+                <td>KES.${row.pendingCommission.toLocaleString()}</td>
+                <td>KES.${row.inactiveCommission.toLocaleString()}</td>
+                </tr>
+            `);
+            });
+        updateManageTeamSummary(rows);
+    }
+
+    function updateManageTeamSummary(rows){
+        let teamClients=0;
+        let activeClients=0;
+        let inactiveClients=0;
+        let paidCommission=0;
+        let pendingCommission=0;
+        let inactiveCommission=0;
+
+        rows.forEach(row=>{
+            teamClients+=row.activeClients+row.inactiveClients;
+            activeClients+=row.activeClients;
+            inactiveClients+=row.inactiveClients;
+            paidCommission+=row.paidCommission;
+            pendingCommission+=row.pendingCommission;
+            inactiveCommission+=row.inactiveCommission;
+        });
+
+        summaryTeamSize.textContent=rows.length;
+        summaryTeamClients.textContent=teamClients;
+        summaryActiveClients.textContent=activeClients;
+        summaryInactiveClients.textContent=inactiveClients;
+        summaryPaidCommission.textContent=`KES.${paidCommission.toLocaleString()}`;
+        summaryPendingCommission.textContent=`KES.${pendingCommission.toLocaleString()}`;
+        summaryInactiveCommission.textContent=`KES.${inactiveCommission.toLocaleString()}`;
+        summaryLeaderPaid.textContent=`KES.${(paidCommission*0.2).toLocaleString()}`;
+        summaryLeaderPending.textContent=`KES.${(pendingCommission*0.2).toLocaleString()}`;
+        summaryLeaderInactive.textContent=`KES.${(inactiveCommission*0.2).toLocaleString()}`;
+    }
+
+    const downloadTeamReportBtn=document.getElementById("downloadTeamReportBtn");
+    const payTeamBtn=document.getElementById("payTeamBtn");
+    const payTeamOverlay=document.getElementById("payTeamOverlay");
+    const payTeamPopup=document.getElementById("payTeamPopup");
+    const payTeamSuccess=document.getElementById("payTeamSuccess");
+    const cancelPayTeamBtn=document.getElementById("cancelPayTeamBtn");
+    const confirmPayTeamBtn=document.getElementById("confirmPayTeamBtn");
+
+    payTeamBtn.addEventListener("click",()=>{
+        if(!currentManagedRows.length){
+            alert("No team loaded.");
+        return;
+        }
+        payTeamPopup.style.display="block";
+        payTeamSuccess.style.display="none";
+        payTeamOverlay.style.display="flex";
+    });
+
+    cancelPayTeamBtn.addEventListener("click",()=>{
+        payTeamOverlay.style.display="none";
+    });
+
+    payTeamOverlay.addEventListener("click",e=>{
+        if(e.target===payTeamOverlay){
+            payTeamOverlay.style.display="none";
+        }
+    });
+
+    downloadTeamReportBtn.addEventListener("click",()=>{
+        if(!currentManagedRows.length){
+            alert("No team loaded.");
+        return;
+        }
+        downloadTeamReportBtn.disabled=true;
+        downloadTeamReportBtn.textContent="Preparing...";
+        try{
+            generateTeamReport();
+        }finally{
+            downloadTeamReportBtn.disabled=false;
+            downloadTeamReportBtn.textContent="Download Team Report";
+        }
+    });
+
+    function generateTeamReport(){
+        if(!currentManagedRows.length){
+        alert("No team loaded.");
+        return;
+        }
+        const {jsPDF}=window.jspdf;
+        const doc=new jsPDF();
+        const now=formatPaymentDate(new Date());
+
+        doc.setFontSize(18);
+        doc.text("PIDEN",14,18);
+
+        doc.setFontSize(11);
+        doc.text(`Team : ${currentManagedTeam}`,14,28);
+
+        doc.text(`Team Leader : ${currentManagedLeader?currentManagedLeader.names:"Not Assigned"}`,14,35);
+
+        doc.text(`Report Date : ${now}`,14,42);
+
+        doc.text("Report By : Admin",14,49);
+
+        doc.line(14,55,196,55);
+
+        doc.autoTable({
+
+        startY:60,
+
+        head:[[
+        "Rank",
+        "Staff ID",
+        "Names",
+        "Active",
+        "Inactive",
+        "Paid",
+        "Pending",
+        "Inactive"
+        ]],
+
+        body:currentManagedRows.map((row,index)=>[
+        index+1,
+        row.staffid,
+        row.names,
+        row.activeClients,
+        row.inactiveClients,
+        row.paidCommission,
+        row.pendingCommission,
+        row.inactiveCommission
+        ])
+
+        });
+
+        let y=doc.lastAutoTable.finalY+12;
+
+        doc.setFontSize(14);
+        doc.text("TEAM SUMMARY",14,y);
+
+        y+=10;
+
+        doc.setFontSize(11);
+
+        doc.text(`Team Size : ${summaryTeamSize.textContent}`,14,y);y+=7;
+        doc.text(`Team Clients : ${summaryTeamClients.textContent}`,14,y);y+=7;
+        doc.text(`Active Clients : ${summaryActiveClients.textContent}`,14,y);y+=7;
+        doc.text(`Inactive Clients : ${summaryInactiveClients.textContent}`,14,y);y+=7;
+        doc.text(`Team Paid Commission : ${summaryPaidCommission.textContent}`,14,y);y+=7;
+        doc.text(`Team Pending Commission : ${summaryPendingCommission.textContent}`,14,y);y+=7;
+        doc.text(`Team Inactive Commission : ${summaryInactiveCommission.textContent}`,14,y);y+=7;
+        doc.text(`Team Leader Paid Commission : ${summaryLeaderPaid.textContent}`,14,y);y+=7;
+        doc.text(`Team Leader Pending Commission : ${summaryLeaderPending.textContent}`,14,y);y+=7;
+        doc.text(`Team Leader Inactive Commission : ${summaryLeaderInactive.textContent}`,14,y);
+
+        doc.save(`${currentManagedTeam}_Report.pdf`);
+    };
+
+    confirmPayTeamBtn.addEventListener("click",async()=>{
+        confirmPayTeamBtn.disabled=true;
+        confirmPayTeamBtn.textContent="Issuing Payment...";
+        try{
+        const phones=new Set(
+        manageTeamStaff
+        .filter(s=>(s.team||"").trim().toLowerCase()===currentManagedTeam.trim().toLowerCase())
+        .map(s=>s.phone));
+
+        const clients=manageTeamProfiles.filter(profile=>
+        phones.has(profile.referral)&&
+        profile.activationfeestatus==="Paid"&&
+        profile.referralcommission==="Pending"
+        );
+
+        for(const client of clients){
+        await supabase
+            .from("profile")
+            .update({
+            referralcommission:"Paid"
+            })
+            .eq("businessid",client.businessid);
+        }
+
+        payTeamPopup.style.display="none";
+        payTeamSuccess.style.display="block";
+        setTimeout(async()=>{
+            payTeamOverlay.style.display="none";
+            payTeamSuccess.style.display="none";
+            manageTeamProfiles=await fetchAllProfilesForTeams();
+            buildManagedTeam();
+            setManageButtonRefresh();
+        },1200);
+        }catch(error){
+        console.error(error);
+        alert(error.message);
+        }
+        confirmPayTeamBtn.disabled=false;
+        confirmPayTeamBtn.textContent="Confirm";
+    });
+
+    function resetManageTeamCard(){
+        manageTeamDataLoaded=false;
+        currentManagedTeam="";
+        currentManagedLeader=null;
+        currentManagedRows=[];
+        manageTeamStaff=[];
+        manageTeamProfiles=[];
+        teamSearchInput.value="";
+        teamHeading.textContent="";
+        teamLeaderHeading.textContent="";
+        manageTeamTableBody.innerHTML="";
+        manageTeamContent.style.display="none";
+        manageTeamBtn.disabled=false;
+        manageTeamBtn.textContent="Manage";
+        updateManageTeamSummary([]);
+    }
+
+    function setManageButtonLoading(){
+        manageTeamBtn.disabled=true;
+        manageTeamBtn.textContent="Loading...";
+    }
+
+    function setManageButtonRefresh(){
+        manageTeamBtn.disabled=false;
+        manageTeamBtn.textContent="Refresh";
+    }
+
+    function setManageButtonManage(){
+        manageTeamBtn.disabled=false;
+        manageTeamBtn.textContent="Manage";
+    }
+    </script>
+</body>
+</html>
