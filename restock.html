@@ -301,11 +301,21 @@
       </p>      
       <div class="field-group">
         <label for="startDate">Start Date</label>
-        <input type="text" id="startDate" placeholder=""/>
+        <input type="text" id="startDate" placeholder=""
+                autocomplete="off"
+      autocorrect="off"
+      autocapitalize="off"
+      spellcheck="false"
+      name="item-search"/>
       </div>      
       <div class="field-group">
         <label for="endDate">End Date</label>
-        <input type="text" id="endDate" placeholder=""/>
+        <input type="text" id="endDate" placeholder=""
+                autocomplete="off"
+      autocorrect="off"
+      autocapitalize="off"
+      spellcheck="false"
+      name="item-search"/>
       </div>      
       <div id="adminVerifySection" class="hidden">
         <div class="field-group">
@@ -314,7 +324,9 @@
           This page involves viewing Stock Amounts. Kindly verify the Admin Password before proceeding.
           </p>      
           <div class="password-wrap">
-            <input type="password" id="stockAdminPassword" placeholder="Enter Admin Password">
+            <input type="password" id="stockAdminPassword" placeholder="Enter Admin Password"
+              autocomplete="new-password"
+            name="profit-admin-password">
             <span class="eye" onclick="togglePassword('stockAdminPassword',this)">👁️</span>
           </div>      
           <div id="stockPasswordError" class="error-text">
