@@ -428,7 +428,8 @@
         <div class="profile-popup-body">
           <p class="profile-popup-text">Verify Admin Password before viewing Stock Amounts and Profits.</p>
           <div class="password-wrap">
-            <input type="password" id="profitPasswordInput" placeholder="Enter Admin Password">
+            <input type="password" id="profitPasswordInput" placeholder="Enter Admin Password"  autocomplete="new-password"
+            name="profit-admin-password">
             <span class="eye" onclick="togglePassword('profitPasswordInput',this)">👁️</span>
           </div>
           <div id="profitPasswordError" class="error-text">Incorrect Admin Password.</div>
