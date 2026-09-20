@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PIDEN | HOME | Point of Sale System | POS Software for Businesses in Kenya | Piden Market | PIDEN</title>
+        <meta name="description" content="PIDEN Point of Sale System helps businesses in Kenya manage sales, 
+            inventory, expenses, reports, billing and analytics with ease. Piden Market is where you can 
+            shop anything you want online.">
+        <meta name="keywords" content="PIDEN, PIDEN POS, Point of Sale Kenya, POS System Kenya, Inventory Management Kenya, 
+            Sales System Kenya, PIDEN Company Limited, PIDEN Website, PIDEN Company Website, PIDEN Point of Sale System, 
+            Business Management Systems, Business Management Softwares, Point of Sale Systems, 
+            Point of Sale Systems in Kenya, PIDEN Market, Buy Online, Shop Online, Legit Online Market">
+        <meta name="author" content="PIDEN">
+        <meta name="robots" content="index, follow">
+        <meta property="og:title" content="PIDEN Point of Sale System">
+        <meta property="og:description" content="Modern POS System for businesses in Kenya.">
+        <meta property="og:image" content="https://piden.co.ke/Favicon.jpg">
+        <meta property="og:url" content="https://piden.co.ke/">
+        <meta property="og:type" content="website">
+        <link rel="icon" type="image/jpeg" href="/Favicon.jpg">
+        <link rel="shortcut icon" href="/Favicon.jpg">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        <link rel="manifest" href="/manifest.json">
+        <meta name="theme-color" content="#003366">
+
+        <style>
+            :root{--blue:#003366;--blue2:#075b9d;--cyan:#3fb7df;--sky:#94d2eb;--bg:#f4f8fc;--white:#fff;
+                --text:#172b3d;--muted:#66788a;--border:rgba(0,51,102,.1);--shadow:0 8px 25px rgba(0,51,102,.07);
+                --shadow2:0 18px 45px rgba(0,51,102,.11);--shadow3:0 30px 80px rgba(0,51,102,.15);--radius:24px}
+            *{box-sizing:border-box}
+            html{scroll-behavior:smooth}
+            body{margin:0;min-height:100vh;font-family:"Poppins",sans-serif;line-height:1.5;color:var(--text);
+                background:radial-gradient(circle at 10% 10%,rgba(148,210,235,.18),
+                transparent 28%),radial-gradient(circle at 90% 25%,rgba(0,51,102,.07),
+                transparent 30%),var(--bg);overflow-x:hidden}
+            button,a{font-family:inherit}
+
+            /* LOADER */
+            #pageLoader{position:fixed;inset:0;background:#fff;z-index:9999;display:flex;align-items:center;
+                justify-content:center;transition:opacity .35s ease}
+            .piden-loader{text-align:center}
+            .piden-loader-logo{width:82px;height:82px;margin:0 auto 17px;border-radius:24px;display:flex;
+                align-items:center;justify-content:center;background:linear-gradient(145deg,#003366,#075b9d);
+                box-shadow:0 15px 40px rgba(0,51,102,.22);overflow:hidden;padding:8px;
+                animation:loaderFloat 1.7s ease-in-out infinite}
+            .piden-loader-logo img{width:100%;height:100%;object-fit:contain;border-radius:16px}
+            .piden-text{font-size:14px;font-weight:700;letter-spacing:6px;color:#003366}
+            .piden-text span{display:inline-block;animation:pulse 1.6s infinite ease-in-out;opacity:.3}
+            .piden-text span:nth-child(1){animation-delay:0s}.piden-text span:nth-child(2){animation-delay:.15s}
+                .piden-text span:nth-child(3){animation-delay:.3s}.piden-text span:nth-child(4){animation-delay:.45s}
+                .piden-text span:nth-child(5){animation-delay:.6s}
+            @keyframes pulse{0%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}100%
+                {opacity:.3;transform:translateY(0)}}
+            @keyframes loaderFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+
+            /* TOP NAV */
+            .top-nav{position:fixed;top:0;left:0;width:100%;height:68px;padding:0 28px;display:flex;align-items:center;
+                background:rgba(0,51,102,.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+                border-bottom:1px solid rgba(255,255,255,.08);color:#fff;z-index:1000;box-shadow:0 8px 30px 
+                rgba(0,0,0,.08)}
+            .menu-btn{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:12px;
+                font-size:20px;color:#fff;cursor:pointer;transition:background .2s ease,transform .2s ease}
+            .menu-btn:hover{background:rgba(255,255,255,.1);transform:scale(1.04)}
+            .nav-links{margin-left:auto;display:flex;align-items:center;gap:28px}
+            .nav-links a{position:relative;color:rgba(255,255,255,.82);text-decoration:none;font-size:13px;font-weight:600;
+                transition:color .2s ease,transform .2s ease}
+            .nav-links a:hover{color:#fff;transform:translateY(-1px)}
+            .nav-links a.active{color:#fff}
+            .nav-links a.active:after{content:"";position:absolute;left:0;bottom:-8px;width:100%;height:2px;
+                border-radius:20px;background:#fff}
+            .brand{margin-left:32px;font-size:21px;font-weight:800;letter-spacing:3px;color:#fff}
+
+            /* SIDE MENU */
+            .side-menu-overlay{position:fixed;inset:0;background:rgba(2,17,31,.5);opacity:0;visibility:hidden;
+                backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);transition:opacity .3s ease,visibility .3s ease;
+                z-index:2000}
+            .side-menu-overlay.show{opacity:1;visibility:visible}
+            .side-menu{position:fixed;top:0;left:0;width:290px;height:100vh;background:rgba(255,255,255,.98);
+                box-shadow:15px 0 50px rgba(0,0,0,.15);transform:translateX(-100%);transition:transform .35s cubic-bezier
+                (.4,0,.2,1);z-index:2001;display:flex;flex-direction:column;overflow-y:auto}
+            .side-menu.show{transform:translateX(0)}
+            .side-menu-header{display:flex;align-items:center;justify-content:space-between;padding:22px 22px 18px}
+            .side-menu-title{font-size:20px;font-weight:800;letter-spacing:2px;color:var(--blue)}
+            .side-menu-close{width:38px;height:38px;border:0;border-radius:11px;background:#f1f5f9;font-size:25px;
+                line-height:1;cursor:pointer;color:var(--blue);transition:background .2s ease,transform .2s ease}
+            .side-menu-close:hover{background:#e7eef5;transform:rotate(90deg)}
+            .side-menu hr{width:calc(100% - 40px);border:none;border-top:1px solid #e5eaf0;margin:0 auto 8px}
+            .side-menu-nav{display:flex;flex-direction:column;padding:4px 10px}
+            .side-menu-nav a{display:flex;align-items:center;gap:13px;padding:13px 14px;margin:2px 0;border-radius:12px;
+                text-decoration:none;color:#23415d;font-size:14px;font-weight:600;transition:background .2s ease,
+                color .2s ease,transform .2s ease}
+            .side-menu-nav a:hover{background:#eef6fb;color:var(--blue);transform:translateX(3px)}
+            .side-menu-nav i{width:22px;text-align:center;font-size:16px;color:var(--blue)}
+
+            /* MAIN */
+            main{width:100%;padding-top:68px}
+            .page-container{width:min(1200px,calc(100% - 40px));margin:0 auto}
+
+            /* HERO */
+            .hero{position:relative;min-height:530px;margin-top:28px;padding:60px; border-radius:34px;overflow:hidden;
+                display:grid;grid-template-columns:1.15fr .85fr;align-items:center;background:linear-gradient(135deg,
+                #002d5b 0%,#003f76 48%,#075b9d 100%);box-shadow:var(--shadow3);color:#fff}
+            .hero:before{content:"";position:absolute;width:420px;height:420px;right:-120px;top:-140px;border-radius:50%;
+                background:rgba(148,210,235,.18)}
+            .hero:after{content:"";position:absolute;width:260px;height:260px;right:220px;bottom:-150px;border-radius:50%;
+                background:rgba(63,183,223,.16)}
+            .hero-content{position:relative;z-index:2;max-width:670px}
+            .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 13px;margin-bottom:20px;
+                border:1px solid rgba(255,255,255,.18);border-radius:30px;background:rgba(255,255,255,.09);
+                backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font-size:12px;font-weight:600;
+                letter-spacing:.4px}
+            .hero-badge i{color:var(--sky)}
+            .hero-title{margin:0;font-size:clamp(42px,5vw,68px);line-height:1.02;font-weight:800;letter-spacing:-2px}
+            .hero-title span{display:block;margin-top:6px;color:var(--sky);font-family:"Playfair Display",Georgia,serif;
+                font-style:italic;font-weight:700;letter-spacing:-1px}
+            .hero-description{max-width:600px;margin:24px 0 30px;color:rgba(255,255,255,.78);font-size:16px;
+                line-height:1.75}
+            .hero-actions{display:flex;flex-wrap:wrap;gap:12px}
+            .hero-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px;padding:0 20px;
+                border-radius:13px;border:none;text-decoration:none;font-size:13px;font-weight:700;cursor:pointer;
+                transition:transform .2s ease,box-shadow .2s ease,background .2s ease}
+            .hero-btn.primary{background:#fff;color:var(--blue);box-shadow:0 12px 25px rgba(0,0,0,.15)}
+            .hero-btn.secondary{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);color:#fff}
+            .hero-btn:hover{transform:translateY(-3px)}
+            .hero-btn.primary:hover{box-shadow:0 16px 30px rgba(0,0,0,.22)}
+
+            /* LOGO ORBIT */
+            .hero-visual{position:relative;min-height:360px;display:flex;align-items:center;justify-content:center;z-index:2}
+            .visual-ring{width:300px;height:300px;border-radius:50%;border:1px solid rgba(255,255,255,.18);display:flex;
+                align-items:center;justify-content:center;position:relative;animation:slowSpin 18s linear infinite}
+            .visual-ring:before{content:"";position:absolute;width:230px;height:230px;border-radius:50%;
+                border:1px solid rgba(148,210,235,.25)}
+            .visual-center{position:absolute;width:155px;height:155px;border-radius:38px;display:flex;align-items:center;
+                justify-content:center;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+                backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 25px 55px rgba(0,0,0,.16);
+                animation:centerFloat 4s ease-in-out infinite;overflow:hidden;padding:18px}
+            .visual-center img{width:100%;height:100%;object-fit:contain;border-radius:25px}
+            .orbit-icon{position:absolute;width:48px;height:48px;display:flex;align-items:center;justify-content:center;
+                border-radius:15px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15);color:#fff;
+                backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 12px 30px rgba(0,0,0,.12)}
+            .orbit-one{top:10px;left:55px}.orbit-two{right:20px;top:95px}.orbit-three{bottom:20px;right:75px}
+            .orbit-four{bottom:55px;left:25px}
+            @keyframes slowSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+            @keyframes centerFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+            /* HEADINGS */
+            .section-heading{margin:58px 0 22px}
+            .section-heading span{display:block;margin-bottom:6px;color:var(--blue2);font-size:11px;font-weight:800;
+                letter-spacing:2px;text-transform:uppercase}
+            .section-heading h2{margin:0;color:var(--blue);font-size:clamp(25px,3vw,34px);line-height:1.2;
+                letter-spacing:-.7px}
+            .section-heading p{max-width:650px;margin:9px 0 0;color:var(--muted);font-size:14px}
+
+            /* ACCESS CARDS */
+            .access-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+            .card{position:relative;min-height:245px;padding:25px;border-radius:var(--radius);background:linear-gradient
+                (145deg,rgba(255,255,255,.98),rgba(238,247,252,.95));border:1px solid var(--border);
+                box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;transition:transform .25s ease,
+                box-shadow .25s ease,border-color .25s ease}
+            .card:before{content:"";position:absolute;width:120px;height:120px;right:-55px;top:-55px;border-radius:50%;
+                background:rgba(148,210,235,.22);transition:transform .3s ease}
+            .card:hover{transform:translateY(-7px);box-shadow:var(--shadow2);border-color:rgba(0,51,102,.17)}
+            .card:hover:before{transform:scale(1.3)}
+            .card.featured{background:linear-gradient(145deg,#003366,#075b9d);color:#fff;border:none;
+                box-shadow:0 20px 45px rgba(0,51,102,.22)}
+            .card.featured:before{background:rgba(148,210,235,.13)}
+            .card-icon{position:relative;z-index:1;width:52px;height:52px;display:flex;align-items:center;
+                justify-content:center;margin-bottom:20px;border-radius:16px;background:#e9f4fa;color:var(--blue);
+                font-size:21px}
+            .card.featured .card-icon{background:rgba(255,255,255,.13);color:#fff}
+            .card-header{position:relative;z-index:1;display:block}
+            .card-header h3{margin:0;font-size:18px;line-height:1.3;color:var(--blue);font-weight:700}
+            .card.featured .card-header h3{color:#fff}
+            .card p{position:relative;z-index:1;margin:9px 0 25px;color:var(--muted);font-size:13px;line-height:1.65}
+            .card.featured p{color:rgba(255,255,255,.72)}
+            .card button{position:relative;z-index:1;margin-top:auto;align-self:flex-start;display:inline-flex;
+                align-items:center;gap:8px;padding:9px 14px;border:0;border-radius:10px;background:#edf4f8;
+                color:var(--blue);font-size:12px;font-weight:700;cursor:pointer;transition:background .2s ease,
+                transform .2s ease}
+            .card button:hover{background:#dcecf5;transform:translateX(3px)}
+            .card.featured button{background:#fff;color:var(--blue)}
+            .card.featured button:hover{background:#eaf5fb}
+
+            /* TRUST */
+            .trust-strip{margin-top:26px;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;
+                gap:20px;border-radius:18px;background:rgba(255,255,255,.78);border:1px solid var(--border);
+                box-shadow:var(--shadow)}
+            .trust-item{display:flex;align-items:center;gap:10px;color:#52677b;font-size:12px;font-weight:600}
+            .trust-item i{color:var(--blue2);font-size:16px}
+
+            /* INFO */
+            .info-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:0 0 70px}
+            .info-card{padding:25px;border-radius:var(--radius);background:rgba(255,255,255,.92);
+                border:1px solid var(--border);box-shadow:var(--shadow)}
+            .info-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+            .info-header-icon{width:43px;height:43px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+                border-radius:13px;background:#eaf4fa;color:var(--blue);font-size:17px}
+            .info-header h3{margin:0;color:var(--blue);font-size:18px;font-weight:700}
+            .info-card p{margin:9px 0;color:var(--muted);font-size:13px;line-height:1.7}
+            .info-card strong{display:block;margin-top:14px;color:var(--blue);font-size:13px}
+            .info-card a{color:var(--blue2);text-decoration:none;font-weight:600;transition:color .2s ease}
+            .info-card a:hover{color:var(--blue)}
+            .contact-link{display:inline-flex;align-items:center;gap:8px;margin:4px 0}
+
+            /* FOOTER */
+            footer{width:100%;padding:20px;text-align:center;background:#00294f;color:rgba(255,255,255,.65);
+                font-size:12px;border-top:1px solid rgba(255,255,255,.05)}
+            footer strong{color:#fff;font-weight:700}
+
+            /* RESPONSIVE */
+            @media(max-width:1050px){
+            .nav-links{gap:17px}.nav-links a{font-size:12px}
+            .hero{grid-template-columns:1fr;padding:55px 45px}
+            .hero-content{max-width:700px}
+            .hero-visual{display:flex;margin-top:10px;min-height:330px}
+            .access-cards{grid-template-columns:repeat(2,1fr)}
+            .info-cards{grid-template-columns:repeat(2,1fr)}
+            .info-card:last-child{grid-column:span 2}
+            }
+            @media(max-width:800px){
+            .top-nav{height:62px;padding:0 15px}
+            main{padding-top:62px}
+            .nav-links{display:none}
+            .brand{margin-left:auto;font-size:19px}
+            .page-container{width:min(100% - 24px,700px)}
+            .hero{margin-top:14px;min-height:auto;padding:42px 28px;border-radius:26px}
+            .hero-title{font-size:clamp(38px,10vw,54px)}
+            .hero-description{font-size:14px}
+            .hero-visual{min-height:310px;margin-top:12px}
+            .visual-ring{width:270px;height:270px}
+            .visual-ring:before{width:205px;height:205px}
+            .visual-center{width:135px;height:135px}
+            .section-heading{margin-top:42px}
+            .trust-strip{flex-direction:column;align-items:flex-start;gap:12px}
+            }
+            @media(max-width:620px){
+            .access-cards{grid-template-columns:1fr}
+            .info-cards{grid-template-columns:1fr}
+            .info-card:last-child{grid-column:auto}
+            .card{min-height:225px}
+            .hero-actions{flex-direction:column;align-items:stretch}
+            .hero-btn{width:100%}
+            .hero-visual{display:flex;min-height:285px;margin-top:20px}
+            .visual-ring{width:245px;height:245px}
+            .visual-ring:before{width:185px;height:185px}
+            .visual-center{width:122px;height:122px;border-radius:30px;padding:14px}
+            .orbit-icon{width:42px;height:42px;border-radius:13px;font-size:14px}
+            .orbit-one{top:6px;left:40px}.orbit-two{right:15px;top:78px}.orbit-three{bottom:12px;right:55px}
+            .orbit-four{bottom:45px;left:15px}
+            }
+            @media(max-width:450px){
+            .side-menu{width:min(290px,88vw)}
+            .hero{padding:34px 22px}
+            .hero-title{font-size:36px}
+            .hero-description{margin-top:18px}
+            .section-heading h2{font-size:25px}
+            .card{padding:22px}
+            .info-card{padding:22px}
+            .hero-visual{min-height:255px}
+            .visual-ring{width:215px;height:215px}
+            .visual-ring:before{width:165px;height:165px}
+            .visual-center{width:108px;height:108px;padding:12px}
+            .orbit-icon{width:38px;height:38px;font-size:12px}
+            .orbit-one{top:2px;left:31px}.orbit-two{right:7px;top:68px}.orbit-three{bottom:6px;right:42px}
+            .orbit-four{bottom:37px;left:6px}
+            }
+        </style>
+
+    </head>
+
+    <body>
+
+        <!-- LOADER -->
+        <div id="pageLoader">
+            <div class="piden-loader">
+                <div class="piden-loader-logo"><img src="/Favicon.jpg" alt="PIDEN"></div>
+                <div class="piden-text"><span>P</span><span>I</span><span>D</span><span>E</span><span>N</span></div>
+            </div>
+        </div>
+
+        <!-- TOP NAV -->
+        <div class="top-nav">
+            <i class="fas fa-bars menu-btn" onclick="openSideMenu()" aria-label="Open menu"></i>
+            <div class="nav-links">
+                <a href="index.html" class="active">Home</a>
+                <a href="login.html">POS</a>
+                <a href="market.html">Market</a>
+                <a href="jobs.html">Jobs</a>
+                <a href="team.html">Verify Team PIDEN</a>
+                <a href="fraud.html">Report Fraud</a>
+                <a href="feedback.html">Feedback</a>
+            </div>
+            <div class="brand">PIDEN</div>
+        </div>
+
+        <!-- SIDE MENU -->
+        <div class="side-menu-overlay" id="sideMenuOverlay" onclick="closeSideMenu()"></div>
+
+        <aside class="side-menu" id="sideMenu">
+            <div class="side-menu-header">
+                <span class="side-menu-title">PIDEN</span>
+                <button class="side-menu-close" onclick="closeSideMenu()" aria-label="Close menu">×</button>
+            </div>
+            <hr>
+            <nav class="side-menu-nav">
+                <a href="index.html"><i class="fas fa-home"></i>Home</a>
+                <a href="login.html"><i class="fas fa-cash-register"></i>Point of Sale</a>
+                <a href="market.html"><i class="fas fa-store"></i>PIDEN Market</a>
+                <a href="jobs.html"><i class="fas fa-briefcase"></i>Job Opportunity</a>
+                <a href="team.html"><i class="fa-solid fa-user-group"></i>Verify Team PIDEN</a>
+                <a href="fraud.html"><i class="fa-solid fa-triangle-exclamation"></i>Report Fraud</a>
+                <a href="feedback.html"><i class="fas fa-star"></i>Give Feedback</a>
+                <a href="staff.html"><i class="fas fa-user-shield"></i>Staff Login</a>
+                <a id="installAppBtn" onclick="installApp()" style="display:none;cursor:pointer"><i class="fas fa-download"></i>Install App</a>
+            </nav>
+        </aside>
+
+        <!-- MAIN -->
+        <main>
+            <div class="page-container">
+
+            <!-- HERO -->
+            <section class="hero">
+                <div class="hero-content">
+                    <div class="hero-badge"><i class="fas fa-sparkles"></i>Digital solutions built for modern business</div>
+                    <h1 class="hero-title">Welcome to<span>PIDEN.</span></h1>
+                    <p class="hero-description">One digital ecosystem for business, commerce, opportunities and support. 
+                        Discover what PIDEN can do for you and take your next step with us.</p>
+                    <div class="hero-actions">
+                        <button class="hero-btn primary" onclick="go('login.html')"><i class="fas fa-cash-register"></i>Explore PIDEN POS</button>
+                        <button class="hero-btn secondary" onclick="go('market.html')"><i class="fas fa-store"></i>Visit PIDEN Market</button>
+                    </div>
+                </div>
+
+                <!-- PIDEN LOGO ORBIT -->
+
+                <div class="hero-visual">
+                    <div class="visual-ring">
+                        <div class="orbit-icon orbit-one"><i class="fas fa-cash-register"></i></div>
+                        <div class="orbit-icon orbit-two"><i class="fas fa-chart-line"></i></div>
+                        <div class="orbit-icon orbit-three"><i class="fas fa-store"></i></div>
+                        <div class="orbit-icon orbit-four"><i class="fas fa-users"></i></div>
+                    </div>
+                    <div class="visual-center"><img src="/Favic.jpg" alt="PIDEN Logo"></div>
+                </div>
+            </section>
+
+            <!-- SERVICES -->
+            <div class="section-heading">
+                <span>Explore PIDEN</span>
+                <h2>Everything you need, under one roof.</h2>
+                <p>Access our digital services, discover opportunities and connect with the PIDEN ecosystem.</p>
+            </div>
+
+            <section class="access-cards">
+
+                <div class="card featured">
+                    <div class="card-icon"><i class="fas fa-cash-register"></i></div>
+                    <div class="card-header"><h3>PIDEN Point of Sale</h3></div>
+                    <p>Manage sales, inventory, reports and your business operations through a modern POS system.</p>
+                    <button onclick="go('login.html')">Get Started <i class="fas fa-arrow-right"></i></button>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-store"></i></div>
+                    <div class="card-header"><h3>PIDEN Market</h3></div>
+                    <p>Explore and purchase a variety of quality products and services.</p>
+                    <button onclick="go('market.html')">Explore <i class="fas fa-arrow-right"></i></button>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-briefcase"></i></div>
+                    <div class="card-header"><h3>Job Opportunity</h3></div>
+                    <p>Discover opportunities to join the PIDEN team and grow with us.</p>
+                    <button onclick="go('jobs.html')">View Opportunities <i class="fas fa-arrow-right"></i></button>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon"><i class="fa-solid fa-user-group"></i></div>
+                    <div class="card-header"><h3>Verify Team PIDEN</h3></div>
+                    <p>Confirm whether you are communicating with a genuine PIDEN team member.</p>
+                    <button onclick="go('team.html')">Verify <i class="fas fa-arrow-right"></i></button>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div class="card-header"><h3>Report Fraud</h3></div>
+                    <p>Report suspected fraud involving PIDEN for review and appropriate action.</p>
+                    <button onclick="go('fraud.html')">Report <i class="fas fa-arrow-right"></i></button>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-star"></i></div>
+                    <div class="card-header"><h3>Give Feedback</h3></div>
+                    <p>Share compliments, complaints, suggestions and ratings with the PIDEN team.</p>
+                    <button onclick="go('feedback.html')">Give Feedback <i class="fas fa-arrow-right"></i></button>
+                </div>
+
+            </section>
+
+            <!-- TRUST STRIP -->
+            <section class="trust-strip">
+                <div class="trust-item"><i class="fas fa-shield-halved"></i>Secure digital services</div>
+                <div class="trust-item"><i class="fas fa-mobile-screen-button"></i>Built for modern devices</div>
+                <div class="trust-item"><i class="fas fa-headset"></i>Customer support available</div>
+                <div class="trust-item"><i class="fas fa-layer-group"></i>One connected ecosystem</div>
+            </section>
+
+            <!-- INFORMATION -->
+            <div class="section-heading">
+                <span>PIDEN Information</span>
+                <h2>Built around people, business and trust.</h2>
+            </div>
+
+            <section class="info-cards">
+
+                <div class="info-card">
+                    <div class="info-header">
+                    <div class="info-header-icon"><i class="fas fa-info-circle"></i></div>
+                    <h3>About Us</h3>
+                    </div>
+                    <p>PIDEN is an all-in-one organization committed to delivering quality products and services under one 
+                        digital roof.</p>
+                    <p>We provide a modern Point of Sale system, a digital market where you can shop anything and 
+                        job opportunities within the PIDEN ecosystem.</p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-header">
+                    <div class="info-header-icon"><i class="fas fa-headset"></i></div>
+                    <h3>Contact Us</h3>
+                    </div>
+                    <p>Need assistance? Reach our 24/7 customer care desk through:</p>
+                    <p>
+                    <a class="contact-link" href="tel:+254748408498"><i class="fas fa-phone"></i>+254748408498</a><br>
+                    <a class="contact-link" href="https://wa.me/254748408498"><i class="fab fa-whatsapp"></i>WhatsApp Support</a>
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-header">
+                    <div class="info-header-icon"><i class="fas fa-shield-halved"></i></div>
+                    <h3>Service Policies</h3>
+                    </div>
+                    <strong>Privacy Policy</strong>
+                    <p>Your data is protected according to applicable legal and security standards.</p>
+                    <strong>Terms of Service</strong>
+                    <p>By using PIDEN, you agree to our terms and conditions.</p>
+                </div>
+
+            </section>
+            </div>
+        </main>
+
+        <!-- FOOTER -->
+        <footer>&copy; <span id="currentYear"></span> <strong>PIDEN V2.0</strong>. All rights reserved</footer>
+
+        <script>
+            window.addEventListener("pageshow",
+                function(event){const loader=document.getElementById("pageLoader");
+                if(loader)loader.style.display="none";
+                if(event.persisted&&!sessionStorage.getItem("reloaded"))
+                {sessionStorage.setItem("reloaded","true");window.location.reload()}}
+            );
+
+            document.getElementById("currentYear").textContent=new Date().getFullYear();
+
+            window.addEventListener("load",()=>{sessionStorage.clear();
+                const loader=document.getElementById("pageLoader");
+                if(loader)loader.style.display="none"}
+            );
+
+            function showLoader(){
+                const loader=document.getElementById("pageLoader");
+                if(loader){loader.style.display="flex";
+                    loader.style.opacity="1"}
+            }
+
+            function hideLoader(){
+                const loader=document.getElementById("pageLoader");
+                if(!loader)return;loader.style.opacity="0";
+                    loader.style.transition="opacity .3s ease";
+                setTimeout(()=>{loader.style.display="none";
+                    loader.style.opacity="1"},300)
+            }
+
+            function openSideMenu(){
+                document.getElementById("sideMenu").classList.add("show");
+                document.getElementById("sideMenuOverlay").classList.add("show")
+            }
+
+            function closeSideMenu(){
+                document.getElementById("sideMenu").classList.remove("show");
+                document.getElementById("sideMenuOverlay").classList.remove("show")
+            }
+
+            function go(url){
+                showLoader();window.location.href=url
+            }
+
+            if("serviceWorker" in navigator){window.addEventListener("load",
+                ()=>{navigator.serviceWorker.register("/sw.js").then(()=>console.log("Service Worker registered"))
+            .catch(err=>console.error("SW registration failed",err))})}
+
+
+            let deferredPrompt=null;
+
+            window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;
+                if(!window.matchMedia("(display-mode: standalone)").matches)showInstallButton()});
+
+            function showInstallButton(){
+                const btn=document.getElementById("installAppBtn");
+                if(btn)btn.style.display="flex"
+            }
+
+            function installApp(){
+                if(!deferredPrompt)return;deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(()=>{deferredPrompt=null;hideInstallButton()})
+            }
+
+            function hideInstallButton(){
+                const btn=document.getElementById("installAppBtn");
+                if(btn)btn.style.display="none"
+            }
+
+            window.addEventListener("load",()=>{
+                if(window.matchMedia("(display-mode: standalone)").matches)hideInstallButton()}
+            );
+
+            document.addEventListener("keydown",event=>{if(event.key==="Escape")closeSideMenu()});
+        </script>
+
+    </body>
+</html>
