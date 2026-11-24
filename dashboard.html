@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POS | Dashboard</title>
+  <link rel="shortcut icon" type="image/x-icon" href="Favicon.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0d1b2a">
+  <style>
+    body {display: flex;  line-height: 1.4; min-height: 100vh;
+      flex-direction: column; margin: 0; background-color: #f1f4f8;}
+    * {font-family: 'Poppins', sans-serif;}
+    .title {color: #003366; font-size: 24px; margin-bottom: 20px;}
+    .main {background-color: white; border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      padding: 25px; width: 90%; max-width: 400px; text-align: center;}
+
+    .top-nav{width:100%;height:40px;background:linear-gradient(100deg,#002b55,#003d70 55%,#0d4d80);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:0 15px;position:fixed;top:0;z-index:100;box-sizing:border-box;box-shadow:0 4px 18px rgba(0,30,60,.2);border-bottom:1px solid rgba(255,255,255,.12)}
+    .nav-left,.nav-center,.nav-right{display:flex;align-items:center;position:relative}
+    .nav-left{min-width:0}
+    .nav-center{position:absolute;left:50%;transform:translateX(-50%);pointer-events:none}
+    .nav-right{margin-left:auto}
+    .menu-icon{width:31px;height:31px;display:flex;align-items:center;justify-content:center;margin-right:9px;border:1px solid rgba(255,255,255,.12);border-radius:9px;background:rgba(255,255,255,.08);color:#fff;font-size:17px;cursor:pointer;transition:.22s ease;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+    .menu-icon:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.25);transform:translateY(-1px);box-shadow:0 5px 12px rgba(0,0,0,.16)}
+    .menu-icon:active{transform:scale(.94)}
+    .active-page{font-size:13px;font-weight:700;letter-spacing:.25px;white-space:nowrap;opacity:.96}
+    .nav-logo{font-size:19px;font-weight:900;letter-spacing:2px;margin:0;text-shadow:0 2px 7px rgba(0,0,0,.2)}
+    .user-icon{width:34px;height:34px;display:flex;align-items:center;justify-content:center;margin-right:15px;cursor:pointer;border-radius:50%;transition:.22s ease}
+    .user-icon:hover{background:rgba(255,255,255,.12)}
+    .circle{width:28px;height:28px;background:linear-gradient(145deg,#fff,#e9f1f6);border:1px solid rgba(255,255,255,.7);border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 9px rgba(0,0,0,.18);transition:.22s ease}
+    .circle i{font-size:13px;color:#003366;line-height:1}
+    .user-icon:hover .circle{transform:scale(1.05);box-shadow:0 5px 13px rgba(0,0,0,.25)}
+    .head{width:8px;height:8px;background:#003366;border-radius:50%;position:absolute;top:6px}
+    .shoulders{width:16px;height:7px;background:#003366;border-radius:50% 50% 45% 45%;position:absolute;bottom:5px}
+    .user-dropdown{position:absolute;top:45px;right:0;background:rgba(255,255,255,.98);color:#003366;padding:0;border:1px solid #e2eaf0;border-radius:15px;box-shadow:0 18px 45px rgba(0,30,60,.22);z-index:1000;width:190px;text-align:left;margin-right:0;transform-origin:top right;transform:translateY(-6px) scale(.94);opacity:0;transition:transform .22s ease,opacity .18s ease;display:block;pointer-events:none;overflow:hidden;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+    .user-dropdown.show{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}
+    .user-dropdown:before{content:"";display:block;height:3px;background:linear-gradient(90deg,#003366,#1976b8)}
+    .user-dropdown p{margin:0;padding:15px 15px 13px;border-bottom:1px solid #edf1f4;color:#526477;font-size:11px;font-weight:600;white-space:normal;overflow:visible;word-break:normal;overflow-wrap:anywhere}
+    .user-dropdown p strong{display:block;color:#173650;font-size:13px;font-weight:850;white-space:normal;overflow:visible;text-overflow:clip;word-break:normal;overflow-wrap:anywhere;line-height:1.45}
+    .user-dropdown button{display:flex;align-items:center;justify-content:center;gap:8px;background:#fff;color:#003366;border:0;padding:11px 14px;margin:6px;width:calc(100% - 12px);border-radius:9px;cursor:pointer;font-size:11px;font-weight:800;letter-spacing:.2px;transition:.2s ease}
+    .user-dropdown button:before{content:"\f2f5";font:var(--fa-font-solid);font-size:11px}
+    .user-dropdown button:hover{background:#eef5f9;color:#0055aa;transform:translateY(-1px)}
+    .user-dropdown button:active{transform:scale(.98)}
+    .main-content {margin-top: 30px; padding: 20px; margin-right: 40px; padding-bottom: 10px;}
+
+    .foot {width: 100%; background-color: white; color: #003366; text-align: center; padding: 2px 1px;
+      position: fixed; bottom: 0; left: 0; font-size: 13px; z-index: 100;}
+    
+    /* ===== FULLSCREEN LOADER ===== */
+    #pageLoader {position: fixed; inset: 0; background: #ffffff; z-index: 9999; display: flex;
+      align-items: center; justify-content: center;
+    }
+    .piden-loader {text-align: center; font-family: "Segoe UI", system-ui, sans-serif;}
+    .piden-text {font-size: 36px; font-weight: 700; letter-spacing: 6px; color: #003366;}
+    .piden-text span {display: inline-block; animation: pulse 1.6s infinite ease-in-out; opacity: 0.3;}
+    .piden-text span:nth-child(1) { animation-delay: 0s; }
+    .piden-text span:nth-child(2) { animation-delay: 0.15s; }
+    .piden-text span:nth-child(3) { animation-delay: 0.3s; }
+    .piden-text span:nth-child(4) { animation-delay: 0.45s; }
+    .piden-text span:nth-child(5) { animation-delay: 0.6s; }
+    @keyframes pulse {0% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); }
+      100% { opacity: 0.3; transform: translateY(0); }}
+ 
+      .dashboard-card {width: 100%; border-radius: 16px; padding: 20px; margin-bottom: 0px;
+      position: relative; overflow: hidden; background-color: #ffffff;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);}
+    .welcome-card::after {content: ""; position: absolute; inset: 0;
+      background-image: url("welcomebackground.jpeg"); background-size: cover;
+      background-position: bottom right; opacity: 0.35; mask-image: linear-gradient(
+      135deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 30%, rgba(0,0,0,0.3) 55%,
+      rgba(0,0,0,0) 75%);
+      -webkit-mask-image: linear-gradient(135deg, rgba(0,0,0,1) 0%,rgba(0,0,0,1) 30%,
+      rgba(0,0,0,0.3) 55%, rgba(0,0,0,0) 75%);}
+    .welcome-card > * {position: relative; z-index: 2;}
+    .welcome-card {display: flex;justify-content: space-between; align-items: flex-start; gap: 20px;}
+    .welcome-left {max-width: 65%;}
+    .welcome-left h2 {margin: 0 0 8px; color: #003366; font-size: 17px;}
+    .welcome-message {color: #333; line-height: 1.5; font-size: 12px;}
+    .welcome-right {text-align: center; min-width: 160px;}
+    .account-icon {display: flex; justify-content: center; margin-bottom: 10px;}
+    .status, .stage {margin: 4px 0; font-size: 14px; color: #003366;}
+    @media (max-width: 768px) {.welcome-card {flex-direction: column; align-items: flex-start;
+      gap: 5px;}
+    .welcome-left {max-width: 100%;}
+    .welcome-right {width: 100%; text-align: left; margin-top: 0px;}
+    .account-icon {justify-content: flex-start; margin-top: 0px;}
+    .welcome-left h2{margin-bottom: 0px;}
+    .welcome-message{ margin-bottom: 0px; margin-top: 0px;}}
+
+
+    .main-cards {margin-top:12px; padding-left:25px; padding-right:25px;}
+    .nav-cards-grid {display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:23px; margin-top:0; margin-bottom:70px;}
+    .nav-card {position:relative; isolation:isolate; height:205px; box-sizing:border-box;
+      border-radius:20px; padding:21px; background:#fff; border:1px solid rgba(0,51,102,0.07);
+      box-shadow:0 5px 20px rgba(0,35,75,0.065); overflow:hidden;
+      display:flex; flex-direction:column; justify-content:space-between;
+      transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;}
+    .nav-card::before {content:""; position:absolute; inset:0; z-index:0;
+      background-image:var(--bg); background-size:cover; background-position:center top;
+      opacity:0.52; transform:scale(1);
+      mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.85) 35%,
+      rgba(0,0,0,0.4) 65%,rgba(0,0,0,0.12) 100%);
+      -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.85) 35%,
+      rgba(0,0,0,0.4) 65%,rgba(0,0,0,0.12) 100%);
+      transition:transform .55s ease,opacity .3s ease;}
+    .nav-card::after {content:""; position:absolute; inset:0; z-index:0;
+      background:linear-gradient(to bottom,rgba(255,255,255,0.02) 0%,
+      rgba(255,255,255,0.12) 32%,rgba(255,255,255,0.78) 70%,
+      rgba(255,255,255,0.97) 100%); pointer-events:none;}
+    .nav-card > * {position:relative; z-index:2;}
+    .nav-card h3 {margin:0; color:#003366; font-size:18px; font-weight:700;
+      letter-spacing:-0.35px; line-height:1.4; text-shadow:0 1px 8px rgba(255,255,255,0.45);}
+    .nav-card p {margin:6px 0 0; font-size:12.5px; line-height:1.65;
+      color:#46566a; max-width:88%; font-weight:400;}
+    .nav-card button {align-self:flex-end; display:flex; align-items:center; gap:8px;
+      background:linear-gradient(135deg,#003366,#07549a); color:#fff; border:1px solid rgba(255,255,255,0.16);
+      padding:9px 16px; border-radius:30px; font-size:12px; cursor:pointer;
+      font-weight:600; letter-spacing:0.2px; box-shadow:0 4px 12px rgba(0,51,102,0.19);
+      transition:background .3s ease,transform .25s ease,box-shadow .3s ease;}
+    .nav-card button:hover {background:linear-gradient(135deg,#0055aa,#0874c9);
+      transform:translateX(3px); box-shadow:0 6px 16px rgba(0,51,102,0.23);}
+    .nav-card:hover {transform:translateY(-5px); border-color:rgba(0,85,170,0.16);
+      box-shadow:0 13px 30px rgba(0,35,75,0.12);}
+    .nav-card:hover::before {transform:scale(1.055); opacity:0.61;}
+    @media(max-width:1024px) {
+      .nav-cards-grid {grid-template-columns:repeat(2,minmax(0,1fr)); gap:19px;}
+    }
+    @media(max-width:600px) {
+      .main-cards {padding-left:15px; padding-right:15px;}
+      .nav-cards-grid {grid-template-columns:1fr; gap:15px; margin-bottom:55px;}
+      .nav-card {height:190px; padding:19px; border-radius:18px;}
+      .nav-card h3 {font-size:17px;}
+      .nav-card p {font-size:12px; max-width:95%;}
+      .nav-card button {padding:8px 15px; font-size:12px;}
+    }
+    @media(prefers-reduced-motion:reduce) {
+      .nav-card,.nav-card::before,.nav-card button {transition:none;}
+    }
+
+    :root {--page-footer-height: 40px;}
+    .side-menu-overlay {position: fixed; inset: 0; background: rgba(0,0,0,0.35);
+      opacity: 0; visibility: hidden; transition: opacity 0.3s ease;}
+    .side-menu {position: fixed; top: 0; left: 0; width: 280px;
+      height: calc(100% - var(--page-footer-height)); bottom: var(--page-footer-height); 
+      background: #ffffff; box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+      transform: translateX(-100%); transition: transform 0.35s ease;
+      z-index: 999; display: flex; flex-direction: column; overflow-y: auto;}
+    .side-menu.show {transform: translateX(0);}
+    .side-menu-overlay.show {opacity: 1; visibility: visible;}
+    .side-menu-header {display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 20px;}
+    .side-menu-title {font-size: 18px; font-weight: 700; color: #003366;}
+    .side-menu-close {background: none; border: none; font-size: 26px; cursor: pointer; color: #003366;}
+    .side-menu-nav {display: flex; flex-direction: column; padding: 4px 0;}
+    .side-menu-nav a {display: flex; align-items: center; gap: 12px; padding: 12px 20px;
+      text-decoration: none; color: #003366; font-weight: 500; transition: background 0.2s ease, padding-left 0.2s ease;}
+    .side-menu-nav a:hover {background-color: #f1f4f8; padding-left: 26px;}
+    .side-menu-nav i {width: 20px; text-align: center; font-size: 16px;}
+    .side-menu hr {border: none; border-top: 1px solid #e0e0e0; margin: 0;}
+  </style>
+</head>
+<body class="dashboard-page">
+  <!-- PIDEN Loader -->
+  <div id="pageLoader">
+    <div class="piden-loader">
+      <div class="piden-text">
+        <span>P</span><span>I</span><span>D</span><span>E</span><span>N</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <div class="nav-left">
+      <div class="menu-icon" onclick="openSideMenu()" aria-label="Open menu" title="Menu">☰</div>
+      <span class="active-page" id="activePageName">Dashboard</span>
+  
+      <div class="side-menu-overlay" id="sideMenuOverlay" onclick="closeSideMenu()"></div>
+  
+      <aside class="side-menu" id="sideMenu">
+        <div class="side-menu-header">
+          <span class="side-menu-title">PIDEN POS</span>
+          <button class="side-menu-close" onclick="closeSideMenu()" aria-label="Close menu">×</button>
+        </div>
+  
+        <hr>
+  
+        <nav class="side-menu-nav">
+          <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+          <a href="sell.html"><i class="fas fa-cash-register"></i> Make A Sale</a>
+          <a href="stock.html"><i class="fas fa-boxes"></i> Manage Stock</a>
+          <a href="sales.html"><i class="fas fa-chart-line"></i> Daily Sales Records</a>
+          <a href="restock.html"><i class="fas fa-book-open"></i> Restock Aid</a>
+          <a href="expenses.html"><i class="fas fa-receipt"></i> Business Expenses</a>
+          <a href="orders.html"><i class="fas fa-clipboard-list"></i> Orders Management</a>
+          <a href="analysis.html"><i class="fas fa-chart-pie"></i> Analysis Section</a>
+          <a href="profile.html"><i class="fas fa-user-circle"></i> Business Profile</a>
+          <a href="billing.html"><i class="fas fa-credit-card"></i> Billing Section</a>
+        </nav>
+      </aside>
+    </div>
+  
+    <div class="nav-center">
+      <span class="nav-logo">POS</span>
+    </div>
+  
+    <div class="nav-right">
+      <div class="user-icon" onclick="toggleUserDropdown()" aria-label="User menu" title="User menu">
+        <div class="circle">
+          <i class="fa-solid fa-user"></i>
+        </div>
+      </div>
+  
+      <div class="user-dropdown" id="userDropdown">
+        <p><strong id="businessName">Loading...</strong></p>
+        <button type="button" onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </nav>
+  <!-- Content Area Placeholder -->
+  <main class="main-content">
+
+    <div class="dashboard-card welcome-card">
+      <div class="welcome-left">
+        <h2 id="welcomeTitle">Hi, Welcome Back!</h2>
+        <p class="welcome-message">
+          Manage your sales, track stock, and monitor business performance — all from one place.
+        </p>
+      </div>
+    
+      <div class="welcome-right">
+        <div class="account-icon">
+          <div class="circle">
+            <div class="head"></div>
+            <div class="shoulders"></div>
+          </div>
+        </div>
+    
+        <p class="status">Account Status: <strong>Eligible</strong></p>
+        <p class="stage">Account Stage: <strong>Active</strong></p>
+      </div>
+    </div>
+  </main>
+
+  <cards class="main-cards">
+    <div class="nav-cards-grid">
+
+      <div class="nav-card" style="--bg:url('sale.jpeg')">
+        <h3>Make A Sale</h3>
+        <p>Start selling products and services instantly through the POS system.</p>
+        <button onclick="location.href='sell.html'">Sell →</button>
+      </div>
+    
+      <div class="nav-card" style="--bg:url('stock.jpeg')">
+        <h3>Manage Stock</h3>
+        <p>Manage your products and services, update prices, and control inventory.</p>
+        <button onclick="location.href='stock.html'">Manage →</button>
+      </div>
+    
+      <div class="nav-card" style="--bg:url('sales.jpeg')">
+        <h3>Daily Sales Records</h3>
+        <p>View all completed sales, receipts, and daily performance summaries.</p>
+        <button onclick="location.href='sales.html'">View →</button>
+      </div>
+        
+      <div class="nav-card" style="--bg:url('restock.jpeg')">
+        <h3>Restock Aid</h3>
+        <p>Get a record of products sold within the restock period with price calculations.</p>
+        <button onclick="location.href='restock.html'">Check →</button>
+      </div>
+
+      <div class="nav-card" style="--bg:url('expenses.jpeg')">
+        <h3>Business Expenses</h3>
+        <p>Record and track all business expenses for accurate reporting.</p>
+        <button onclick="location.href='expenses.html'">Track →</button>
+      </div>
+    
+      <div class="nav-card" style="--bg:url('orders.jpeg')">
+        <h3>Orders Management</h3>
+        <p>Monitor customer orders, pending items, and order fulfillment.</p>
+        <button onclick="location.href='orders.html'">Manage →</button>
+      </div>
+    
+      <div class="nav-card" style="--bg:url('analysis.jpeg')">
+        <h3>Analysis Section</h3>
+        <p>Analyze business performance, trends, and value insights.</p>
+        <button onclick="location.href='analysis.html'">Analyze →</button>
+      </div>
+    
+      <div class="nav-card" style="--bg:url('profile.jpeg')">
+        <h3>Business Profile</h3>
+        <p>View and update business details, owner information, and settings.</p>
+        <button onclick="location.href='profile.html'">Open →</button>
+      </div>
+    
+      <div class="nav-card" style="--bg:url('billing.jpeg')">
+        <h3>Billing Section</h3>
+        <p>Manage subscriptions, make service payments, and get billing history.</p>
+        <button onclick="location.href='billing.html'">Billing →</button>
+      </div>
+  
+    </div>
+  </cards>
+
+  <!-- Footer -->
+  <footer class="foot">
+    &copy; <span id="currentYear"></span> PIDEN. All rights reserved <br> Contact us:
+    <a href="tel:+254748408498">
+      <i class="fas fa-phone"></i> Call
+    </a> |
+    <a href="https://wa.me/254748408498" target="_blank">
+      <i class="fab fa-whatsapp"></i> WhatsApp: +254748408498
+    </a>
+  </footer>
+
+  <script src="session-watchdog.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module">
+    import { SUPABASE_ANON_KEY } from "./p.js";  
+    const supabaseUrl = "https://mzvlybnvgpemdayoylfk.supabase.co";  
+    window.supabase = supabase.createClient(
+      supabaseUrl,
+      SUPABASE_ANON_KEY
+    );  
+    // ✅ SIGNAL THAT SUPABASE IS READY
+    window.dispatchEvent(new Event("supabase-ready"));
+  </script>
+  
+  <!-- Inline JS for dropdowns & logout -->
+  <script>
+    // Handle browser back/forward cache issues
+    window.addEventListener("pageshow", function (event) {
+            const loader = document.getElementById("pageLoader");
+
+            // Always hide loader if it exists
+            if (loader) {
+            loader.style.display = "none";
+            }
+
+            // If page was restored from bfcache, force reload once
+            if (event.persisted && !sessionStorage.getItem("reloaded")) {
+                sessionStorage.setItem("reloaded", "true");
+                window.location.reload();
+            }
+    });
+
+    document.getElementById("currentYear").textContent = new Date().getFullYear();
+
+    function openSideMenu() {
+      document.getElementById("sideMenu").classList.add("show");
+      document.getElementById("sideMenuOverlay").classList.add("show");
+    }
+
+    function closeSideMenu() {
+      document.getElementById("sideMenu").classList.remove("show");
+      document.getElementById("sideMenuOverlay").classList.remove("show");
+    }
+
+    function toggleUserDropdown() {
+      document.getElementById("userDropdown").classList.toggle("show");
+    }
+
+    function logout() {
+      sessionStorage.clear();
+      window.location.href = "login.html";
+    }
+
+    window.onload = () => {
+      // Disable back button after logout
+      if (!sessionStorage.getItem("loggedIn")) {
+        window.location.replace("login.html");
+      }
+    }
+
+    window.onclick = function(event) {
+      if (!event.target.closest('.user-icon') && !event.target.closest('.user-dropdown')) {
+        document.getElementById("userDropdown").classList.remove("show");
+      }
+    }
+
+      // Optional global control for Supabase calls
+      function showLoader() {
+        const loader = document.getElementById("pageLoader");
+        if (loader) loader.style.display = "flex";
+      }
+
+      function hideLoader() {
+        const loader = document.getElementById("pageLoader");
+        if (!loader) return;
+
+        loader.style.opacity = "0";
+        loader.style.transition = "opacity 0.3s ease";
+
+        setTimeout(() => {
+          loader.style.display = "none";
+          loader.style.opacity = "1";
+        }, 300);
+      }
+
+      let businessId = null;
+      
+      document.addEventListener("DOMContentLoaded", async () => {
+        showLoader();
+
+        const allowed = await runEligibilityEngine();
+        if (!allowed) return; // redirected already
+
+        // ✅ SAFE TO RENDER DASHBOARD NOW
+        const business = JSON.parse(sessionStorage.getItem("businessProfile"));
+
+        const ownerName = business.businessowner || "Owner";
+        const businessName = business.businessname || "Biz";
+
+        document.getElementById("welcomeTitle").textContent =
+          `Hi ${ownerName}, Welcome Back!`;
+
+        document.getElementById("businessName").textContent = businessName;
+
+        hideLoader();
+      });
+
+      async function runEligibilityEngine() {
+        businessId = sessionStorage.getItem("businessid");
+        if (!businessId) {
+          logout();
+          return false;
+        }
+
+        let profile = await fetchProfile(businessId);
+        if (!profile) {
+          logout();
+          return false;
+        }
+
+        // 🔹 PHASE 1 — ENTRY GATE
+        const phase1 = await phase1Eligibility(profile);
+        if (!phase1) return false;
+
+        // 🚫 ACTIVATION NOT APPROVED — STOP HERE
+        if (profile.activationfeestatus !== "Paid") {          
+          return true;
+        }
+
+        // 🔹 PHASE 2 — ONLY IF CREDIT IS ACTIVE
+        if (profile.activationcreditstatus === "Active") {
+          const phase2Result = await phase2ActivationCredit(profile);
+          if (phase2Result === false) return false;
+
+          // Credit just depleted → refresh before Phase 3
+          if (phase2Result?.creditDepleted) {
+            profile = await fetchProfile(businessId);
+          } else {
+            // Credit still active → STOP
+            return true;
+          }
+        }
+
+        // 🔹 PHASE 3 — ONLY IF CREDIT IS DEPLETED
+        if (profile.activationcreditstatus === "Depleted") {
+          const phase3 = await phase3UsageFees(profile);
+          if (!phase3) return false;
+        }
+
+        return true;
+      }
+
+      async function fetchProfile(businessId) {
+        const { data, error } = await supabase
+          .from("profile")
+          .select("*")
+          .eq("businessid", businessId)
+          .single();
+
+        if (error) return null;
+        return data;
+      }
+
+    async function phase1Eligibility(profile) {
+      if (profile.businessstatus === "Not Eligible") {
+        window.location.replace("billing.html");
+        return false;
+      }
+
+        // 1️⃣ Paid
+        if (profile.activationfeestatus === "Paid") {
+          return true;
+        }
+
+        // 2️⃣ Billing check
+        const { data: activationPayments, error } = await supabase
+          .from("billing")
+          .select("id, reason, businessid")
+          .eq("businessid", businessId);
+
+        const hasActivationPayment = activationPayments?.some(
+          p => p.reason?.trim().toLowerCase() === "activation fee"
+        );
+
+        if (hasActivationPayment) {
+          return true;
+        }
+
+        // 4️⃣ Truly late
+        await supabase
+          .from("profile")
+          .update({ businessstatus: "Not Eligible" })
+          .eq("businessid", businessId);
+
+        window.location.replace("billing.html");
+        return false;
+      }
+
+      async function markNotEligibleAndRedirect() {
+        await supabase
+          .from("profile")
+          .update({ businessstatus: "Not Eligible" })
+          .eq("businessid", businessId);
+
+        window.location.replace("billing.html");
+      }
+      
+      async function phase2ActivationCredit(profile) {
+        if (profile.activationcreditstatus !== "Active") {
+          return true; // move to Phase 3
+        }
+
+        const credit = Number(profile.activationcredit);
+        if (credit <= 0) {
+          return true;
+        }
+
+        const { data: sales } = await supabase
+          .from("sales")
+          .select("id, created_at")
+          .eq("businessid", businessId)
+          .is("usagefee", null)
+          .order("created_at", { ascending: true });
+
+        if (!sales || sales.length === 0) return true;
+
+        const costPerSale = 0.5;
+        const maxCoverableSales = Math.floor(credit / costPerSale);
+        const payableSales = sales.slice(0, maxCoverableSales);
+
+        // UPDATE SALES
+        if (payableSales.length > 0) {
+          await supabase
+            .from("sales")
+            .update({ usagefee: "Paid" })
+            .in("id", payableSales.map(s => s.id));
+        }
+
+        const newCredit = credit - payableSales.length * costPerSale;
+
+        if (newCredit <= 0) {
+          await supabase
+            .from("profile")
+            .update({
+              activationcredit: 0,
+              activationcreditstatus: "Depleted",
+              activationcreditdepletion: new Date()
+            })
+            .eq("businessid", businessId);
+
+          // 🟢 CREDIT JUST DEPLETED — Phase 3 must re-fetch profile
+          return { creditDepleted: true };
+        } else {
+          await supabase
+            .from("profile")
+            .update({ activationcredit: newCredit })
+            .eq("businessid", businessId);
+        }
+
+        return true;
+      }
+
+      async function phase3UsageFees(profile) {
+        if (!profile.activationcreditdepletion) {
+          console.warn("⛔ Phase 3 blocked — credit was never depleted");
+          return true;
+        }
+
+        const { data: payments } = await supabase
+          .from("billing")
+          .select("*")
+          .eq("businessid", businessId)
+          .order("createdat", { ascending: false })
+          .limit(1);
+
+        if (!payments || payments.length === 0) {
+          return true;
+        }
+
+        const lastPayment = payments[0];
+
+        if (lastPayment.reason !== "Usage Fee") {
+          return await enforceFirstUsageFee(profile);
+        }
+
+        return await handleOverpayment(lastPayment);
+      }
+
+      async function enforceFirstUsageFee(profile) {
+        if (!profile.activationcreditdepletion) {
+          return true;
+        }
+
+        const depletion = new Date(profile.activationcreditdepletion);
+        const deadline = new Date(depletion);
+        deadline.setDate(deadline.getDate() + 30);
+
+        if (deadline < new Date()) {
+          await markNotEligibleAndRedirect();
+          return false;
+        }
+
+        return true;
+      }
+
+      async function handleOverpayment(payment) {
+        const overpayment = Number(payment.overpayment);
+
+        if (overpayment === 0) {
+          return await handleZeroOverpayment(payment);
+        }
+
+        return await consumeOverpayment(payment);
+      }
+
+      async function handleZeroOverpayment(payment) {
+        const baseDate = payment.overpaymentdepletion
+          ? new Date(payment.overpaymentdepletion)
+          : new Date(payment.createdat);
+
+        const deadline = new Date(baseDate);
+        deadline.setDate(deadline.getDate() + 30);
+
+        if (deadline < new Date()) {
+          await markNotEligibleAndRedirect();
+          return false;
+        }
+
+        return true;
+      }
+
+      async function consumeOverpayment(payment) {
+        const overpayment = Number(payment.overpayment);
+        const cost = 0.5;
+
+        if (overpayment <= 0) return true;
+
+        const { data: sales } = await supabase
+          .from("sales")
+          .select("id, created_at")
+          .eq("businessid", businessId)
+          .is("usagefee", null)
+          .order("created_at", { ascending: true });
+
+        if (!sales || sales.length === 0) return true;
+
+        const maxCover = Math.floor(overpayment / cost);
+
+        if (maxCover <= 0) {
+          // Cannot cover even 1 sale
+          return true;
+        }
+
+        const payable = sales.slice(0, maxCover);
+
+        await supabase
+          .from("sales")
+          .update({ usagefee: "Paid" })
+          .in("id", payable.map(s => s.id));
+
+        const remaining = overpayment - payable.length * cost;
+
+        const billingUpdate = {
+          overpayment: remaining.toFixed(2)
+        };
+
+        if (remaining <= 0) {
+          billingUpdate.overpayment = "0.00";
+          billingUpdate.overpaymentdepletion = new Date();
+        }
+
+        await supabase
+          .from("billing")
+          .update(billingUpdate)
+          .eq("id", payment.id);
+
+        return true;
+      }
+  </script>
+</body>
+</html>

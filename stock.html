@@ -1,0 +1,2588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POS | Stock</title>
+  <link rel="shortcut icon" type="image/x-icon" href="Favicon.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0d1b2a">
+  <style>
+    body {display: flex; line-height: 1.4; min-height: 100vh;
+      flex-direction: column; margin: 0; background-color: #f1f4f8;}    
+    * {font-family: 'Poppins', sans-serif;}
+    .title {color: #003366; font-size: 24px; margin-bottom: 20px;}
+    .main {background-color: white; border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      padding: 25px; width: 90%; max-width: 400px; text-align: center;}
+
+    .top-nav{width:100%;height:40px;background:linear-gradient(100deg,#002b55,#003d70 55%,#0d4d80);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:0 15px;position:fixed;top:0;z-index:100;box-sizing:border-box;box-shadow:0 4px 18px rgba(0,30,60,.2);border-bottom:1px solid rgba(255,255,255,.12)}
+    .nav-left,.nav-center,.nav-right{display:flex;align-items:center;position:relative}
+    .nav-left{min-width:0}
+    .nav-center{position:absolute;left:50%;transform:translateX(-50%);pointer-events:none}
+    .nav-right{margin-left:auto}
+    .menu-icon{width:31px;height:31px;display:flex;align-items:center;justify-content:center;margin-right:9px;border:1px solid rgba(255,255,255,.12);border-radius:9px;background:rgba(255,255,255,.08);color:#fff;font-size:17px;cursor:pointer;transition:.22s ease;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+    .menu-icon:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.25);transform:translateY(-1px);box-shadow:0 5px 12px rgba(0,0,0,.16)}
+    .menu-icon:active{transform:scale(.94)}
+    .active-page{font-size:13px;font-weight:700;letter-spacing:.25px;white-space:nowrap;opacity:.96}
+    .nav-logo{font-size:19px;font-weight:900;letter-spacing:2px;margin:0;text-shadow:0 2px 7px rgba(0,0,0,.2)}
+    .user-icon{width:34px;height:34px;display:flex;align-items:center;justify-content:center;margin-right:15px;cursor:pointer;border-radius:50%;transition:.22s ease}
+    .user-icon:hover{background:rgba(255,255,255,.12)}
+    .circle{width:28px;height:28px;background:linear-gradient(145deg,#fff,#e9f1f6);border:1px solid rgba(255,255,255,.7);border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 9px rgba(0,0,0,.18);transition:.22s ease}
+    .circle i{font-size:13px;color:#003366;line-height:1}
+    .user-icon:hover .circle{transform:scale(1.05);box-shadow:0 5px 13px rgba(0,0,0,.25)}
+    .head{width:8px;height:8px;background:#003366;border-radius:50%;position:absolute;top:6px}
+    .shoulders{width:16px;height:7px;background:#003366;border-radius:50% 50% 45% 45%;position:absolute;bottom:5px}
+    .user-dropdown{position:absolute;top:45px;right:0;background:rgba(255,255,255,.98);color:#003366;padding:0;border:1px solid #e2eaf0;border-radius:15px;box-shadow:0 18px 45px rgba(0,30,60,.22);z-index:1000;width:190px;text-align:left;margin-right:0;transform-origin:top right;transform:translateY(-6px) scale(.94);opacity:0;transition:transform .22s ease,opacity .18s ease;display:block;pointer-events:none;overflow:hidden;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+    .user-dropdown.show{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}
+    .user-dropdown:before{content:"";display:block;height:3px;background:linear-gradient(90deg,#003366,#1976b8)}
+    .user-dropdown p{margin:0;padding:15px 15px 13px;border-bottom:1px solid #edf1f4;color:#526477;font-size:11px;font-weight:600;white-space:normal;overflow:visible;word-break:normal;overflow-wrap:anywhere}
+    .user-dropdown p strong{display:block;color:#173650;font-size:13px;font-weight:850;white-space:normal;overflow:visible;text-overflow:clip;word-break:normal;overflow-wrap:anywhere;line-height:1.45}
+    .user-dropdown button{display:flex;align-items:center;justify-content:center;gap:8px;background:#fff;color:#003366;border:0;padding:11px 14px;margin:6px;width:calc(100% - 12px);border-radius:9px;cursor:pointer;font-size:11px;font-weight:800;letter-spacing:.2px;transition:.2s ease}
+    .user-dropdown button:before{content:"\f2f5";font:var(--fa-font-solid);font-size:11px}
+    .user-dropdown button:hover{background:#eef5f9;color:#0055aa;transform:translateY(-1px)}
+    .user-dropdown button:active{transform:scale(.98)}
+
+    .main-content {margin-top: 30px; padding: 10px;}
+    .foot {width: 100%; background-color: white; color: #003366; text-align: center; padding: 2px 1px;
+      position: fixed; bottom: 0; left: 0; font-size: 15px;}
+
+    /* ===== FULLSCREEN LOADER ===== */
+    #pageLoader {position: fixed; inset: 0; background: #ffffff; z-index: 9999; display: flex;
+      align-items: center; justify-content: center;
+    }
+    .piden-loader {text-align: center; font-family: "Segoe UI", system-ui, sans-serif;}
+    .piden-text {font-size: 36px; font-weight: 700; letter-spacing: 6px; color: #003366;}
+    .piden-text span {display: inline-block; animation: pulse 1.6s infinite ease-in-out; opacity: 0.3;}
+    .piden-text span:nth-child(1) { animation-delay: 0s; }
+    .piden-text span:nth-child(2) { animation-delay: 0.15s; }
+    .piden-text span:nth-child(3) { animation-delay: 0.3s; }
+    .piden-text span:nth-child(4) { animation-delay: 0.45s; }
+    .piden-text span:nth-child(5) { animation-delay: 0.6s; }
+    @keyframes pulse {0% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); }
+      100% { opacity: 0.3; transform: translateY(0); }}
+
+    .overlay {position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 9990;}
+    .hidden {display: none;}
+    .popup-content {background:#fff; padding:24px; border-radius:16px; width:340px;
+      max-width:calc(100vw - 32px); max-height:85vh; overflow-y:auto; overscroll-behavior:contain;
+      box-shadow:0 12px 40px rgba(0,0,0,0.2); animation:fadeInUp .3s ease; position:relative;
+      box-sizing:border-box; margin:16px;}
+    .popup-content::-webkit-scrollbar {width:5px;}
+    .popup-content::-webkit-scrollbar-thumb {background:#cbd5e1; border-radius:5px;}
+    .popup-content > .popup-header {
+      display:flex; align-items:center; justify-content:space-between;
+      margin:-24px -24px 20px; padding:13px 18px;
+      background:#003366; color:#fff; border-radius:16px 16px 0 0;
+    }
+    .popup-content > .popup-header h2 {
+      margin:0; font-size:1.2rem; font-weight:600; color:#fff;
+    }
+    .popup-content > .popup-header .close-btn {
+      position:static; padding:0; border:0; background:transparent;
+      color:#fff; font-size:20px; cursor:pointer;
+    }
+    .popup-content input[type="file"] {box-sizing:border-box; max-width:100%; font-size:12px;}
+    .complete-btn {transition:background .2s ease,opacity .2s ease;}
+    .complete-btn:disabled {opacity:.5; cursor:not-allowed;}
+    @media(max-width:480px) {
+      .popup-content {width:100%; max-width:calc(100vw - 24px); padding:20px; margin:12px;}
+      .popup-content .popup-header {margin:-20px -20px 18px;}
+    }
+    .image-wrapper {display: flex; justify-content: center; margin-bottom: 10px;}
+    .popup-content img:not(.image-preview-image) {max-width:100px; border-radius:6px; margin-bottom:10px;}
+    .popup-content.small {width: 300px; text-align: center; align-items: center;}
+    label {display: block; margin-top: 1px; font-weight: 500;}
+    input[type="text"], input[type="number"], input[type="file"] {width: 100%; padding: 8px; margin-top: 1px;
+      margin-bottom: 1px; border: 1px solid #ccc; border-radius: 6px;}
+    .popup-content input[type="password"] {width: 70%; padding: 8px; margin-top: 10px; border: 1px solid #ccc;
+      border-radius: 5px;}
+    .complete-btn {margin-top: 20px; width: 100%; padding: 10px; background: #003366; color: white;
+      font-weight: bold; border: none; border-radius: 6px; cursor: pointer;}
+    .complete-btn:hover{background-color: #0055aa;}
+
+    .image-preview-section {margin-top:14px; padding:12px; border:1px solid #e2e8f0;
+      border-radius:12px; background:#f8fafc;}
+    .image-preview-heading {margin:0 0 9px; font-size:13px; font-weight:600; color:#003366;}
+    .image-preview-card {position:relative; height:155px; padding:10px; box-sizing:border-box; display:flex;
+      align-items:center; justify-content:center; overflow:hidden; border-radius:9px; background:#e9eef5;}
+    .image-preview-image {display:block; max-width:100%; max-height:100%; width:auto; height:auto;
+      object-fit:contain; cursor:zoom-in;}
+    .image-preview-actions {display:flex; justify-content:space-between; align-items:center; margin-top:9px;}
+    .image-preview-actions button {border:0; background:transparent; color:#003366; font-size:18px;
+      padding:5px 8px; cursor:pointer;}
+    .image-preview-actions button:hover {color:#0055aa;}
+    .image-size-row {margin-top:12px; display:flex; justify-content:space-between; gap:8px;
+      font-size:12px; color:#475569;}
+    .image-size-row strong {color:#003366;}
+    .image-adjust-message {margin:10px 0 7px; font-size:11px; line-height:1.5; color:#b45309;}
+    .image-adjust-btn {width:100%; padding:9px; border:0; border-radius:8px; background:#003366;
+      color:#fff; font-size:12px; font-weight:600; cursor:pointer;}
+    .image-adjust-btn:disabled {opacity:.55; cursor:not-allowed;}
+    .image-processing-overlay {position:absolute; inset:0; z-index:5; display:flex;
+      align-items:center; justify-content:center; flex-direction:column; gap:8px;
+      background:rgba(255,255,255,.88); color:#003366; font-size:12px; font-weight:600;}
+    .image-processing-overlay i {font-size:25px;}
+    .image-processing-overlay.hidden {display:none;}
+    .image-viewer {position:fixed; inset:0; z-index:10020; display:flex; align-items:center;
+      justify-content:center; background:rgba(8,16,30,.96); padding:18px; box-sizing:border-box;}
+    .image-viewer.hidden {display:none;}
+    .image-viewer img {max-width:100%; max-height:85vh; object-fit:contain;}
+    .image-viewer-close {position:absolute; top:15px; right:18px; color:#fff; background:transparent;
+      border:0; font-size:28px; cursor:pointer;}
+    .image-viewer-actions {position:absolute; bottom:20px; display:flex; gap:12px;}
+    .image-viewer-actions button {background:#fff; color:#003366; border:0; border-radius:25px;
+      padding:10px 17px; font-size:13px; font-weight:600; cursor:pointer;}
+    .image-cropper-overlay {position:fixed; inset:0; z-index:10030; background:#0b1220;
+      display:flex; flex-direction:column; padding:15px; box-sizing:border-box;}
+    .image-cropper-overlay.hidden {display:none;}
+    .image-cropper-header {display:flex; justify-content:space-between; align-items:center;
+      color:#fff; padding:5px 0 15px;}
+    .image-cropper-header h3 {margin:0; font-size:16px;}
+    .image-cropper-done {background:#fff; color:#003366; border:0; border-radius:20px;
+      padding:9px 16px; font-weight:600; cursor:pointer;}
+    .image-cropper-stage {position: relative;flex: 1; min-height: 0; min-width: 0; display: flex; align-items: center;
+      justify-content: center; overflow: hidden;}
+    .image-cropper-stage > img {display: block; max-width: none; max-height: none;}
+    .image-cropper-controls {display:flex; justify-content:center; gap:18px; padding:15px 0 5px;}
+    .image-cropper-controls button {background:#1e293b; color:#fff; border:0; border-radius:25px;
+      padding:10px 16px; cursor:pointer;}
+    .image-preview-card .image-preview-image {display:block; width:auto; height:auto; max-width:100%;
+      max-height:100%; margin:0; border-radius:6px; object-fit:contain; cursor:zoom-in;}
+
+    .edit-current-image {margin-bottom:14px;}
+    .edit-current-image .image-preview-heading {margin-bottom:9px;}
+    .edit-current-image-card {
+      position:relative; display:flex; align-items:center; justify-content:center;
+      height:155px; overflow:hidden; border-radius:9px; background:#e9eef5;
+    }
+    .edit-current-image-card img {
+      display:block; max-width:100%; max-height:155px; width:auto; height:auto;
+      object-fit:contain;
+    }
+    .edit-current-image-delete {
+      position:absolute; right:8px; bottom:8px; width:34px; height:34px;
+      display:flex; align-items:center; justify-content:center;
+      border:0; border-radius:50%; background:#fff; color:#b91c1c;
+      box-shadow:0 2px 8px rgba(0,0,0,.18); cursor:pointer;
+    }
+    .edit-current-image-delete:hover {background:#fee2e2;}
+
+    .popup-buttons button {margin: 10px 5px 0; padding: 10px 15px; border: none; border-radius: 6px;
+      font-weight: bold; cursor: pointer;}
+    .popup-buttons button.edit-back{background-color: #003366; cursor: pointer; width: 50%;}
+    .popup-buttons button.edit-back:hover{background-color: #0055aa;}
+    .popup-buttons button:first-child {background-color: #003366; color: white; font-weight: bold;}
+    .popup-buttons button:first-child:hover {background-color: #0055aa;}
+    .popup-buttons button:last-child {background-color: orange; color: white; font-weight: bold;}
+    .popup-buttons button:last-child:hover {background-color: #aa7d00;}
+    @keyframes fadeInUp {from {transform: translateY(20px); opacity: 0;} to {transform: translateY(0);
+      opacity: 1;}}
+    .checkmark {width: 80px; height: 80px; stroke: #003366; stroke-width: 4; stroke-linecap: round;
+      stroke-linejoin: round; stroke-miterlimit: 10; animation: drawCircle 0.6s ease-in-out forwards;
+      display: block; overflow: visible; box-sizing: content-box;}
+    .checkmark-circle {stroke-dasharray: 166; stroke-dashoffset: 166;
+      animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;}
+    .checkmark-check {stroke-dasharray: 48; stroke-dashoffset: 48;
+      animation: stroke 0.3s 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;}
+    @keyframes stroke {to {stroke-dashoffset: 0;}}
+    @keyframes drawCircle {0% {transform: scale(0); opacity: 0;} 100% {transform: scale(1); opacity: 1;}}
+    .tick-animation {display: flex; justify-content: center; align-items: center; margin: 20px 0;}
+
+    .edit-stock{text-align: center;}
+    .edit-stock-header {position: fixed; top: 40px; left: 0; width: 100%; background: #ffffff;
+      padding: 4px 20px; display: grid; align-items: center; justify-content: center; z-index: 98;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06); grid-template-columns: auto 1fr auto;}
+    .edit-stock-title {text-align: center; font-size: 18px; margin: 0;}
+    .search-bar-container {position: relative; margin-right: 30px;}
+    .search-bar-container input {padding: 5px 10px; border-radius: 6px; border: 1px solid #ccc;
+      font-size: 14px;}
+    #itemSearch {padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px;
+      width: 70px;}  
+    #notFound {display: none; text-align: center; color: #003366; margin-top: 30px; font-size: 16px;}
+    #notFound::before {content: "🕵️‍♂️"; font-size: 100px; display: block; margin-bottom: 10px;} 
+    .back-btn-edit {background: #003366; color: #fff; border: none; padding: 5px 14px;
+      border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex;
+      align-items: center; gap: 6px; transition: background 0.2s ease, transform 0.2s ease;}
+    .back-btn-edit:hover {background: #0055aa; transform: translateX(-2px);}
+    .edit-stock-filters {position: fixed; top: 85px; left: 0; width: 100%; background: #ffffff;
+      padding: 8px 0px; display: flex; align-items: center; justify-content: center; z-index: 98;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);  margin-bottom: 12px;}
+    .filter-buttons {display: flex; justify-content: center; gap: 10px;} 
+    .filter-buttons button {padding: 8px 16px; font-size: 15px; border: none; background-color: #003366;
+      color: white; border-radius: 4px; cursor: pointer; transition: background-color 0.2s;}      
+    .filter-buttons button.active {background-color: #0055aa;}      
+        
+    .items-container {display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px; justify-content: start; margin-top: 90px; margin-bottom: 25px;}
+    @media (max-width: 400px) {.items-container {grid-template-columns: repeat(2, 1fr);}}
+    .item-card {background-color: white; border-radius: 10px; padding: 5px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); text-align: center; font-size: 14px;}     
+    .item-card img {width: 100%; height: 100px; object-fit: cover; border-radius: 6px; margin-bottom: 6px;}    
+    .item-card h3 {font-size: 15px; margin: 5px 0 3px;}
+    .item-card p {margin: 2px 0; color: #444;}   
+   .item-card button {margin-top: 6px; background-color: #003366; color: white; border: none;
+        padding: 6px 10px; border-radius: 10px; font-size: 13px; cursor: pointer; width: 90%;}      
+    .item-card button:hover {background-color: #0055aa;}        
+    .item-card .delete-btn {background-color: red; color: white; border: none; padding: 6px 10px;
+      margin-top: 8px; cursor: pointer; border-radius: 4px;}
+    .item-card .delete-btn:hover {background-color: maroon;}
+
+    :root {--page-footer-height: 0px;} 
+    .side-menu-overlay {position: fixed; inset: 0; background: rgba(0,0,0,0.35);
+      opacity: 0; visibility: hidden; transition: opacity 0.3s ease;}
+    .side-menu {position: fixed; top: 0; left: 0; width: 280px;
+      height: calc(100% - var(--page-footer-height)); bottom: var(--page-footer-height); 
+      background: #ffffff; box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+      transform: translateX(-100%); transition: transform 0.35s ease;
+      z-index: 999; display: flex; flex-direction: column; overflow-y: auto;}
+    .side-menu.show {transform: translateX(0);}
+    .side-menu-overlay.show {opacity: 1; visibility: visible;}
+    .side-menu-header {display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 20px;}
+    .side-menu-title {font-size: 18px; font-weight: 700; color: #003366;}
+    .side-menu-close{width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:#f1f5f8;border:1px solid #e1e9ef;border-radius:50%;font-size:21px;line-height:1;cursor:pointer;color:#003366;transition:transform .3s ease,background .25s ease,color .25s ease,box-shadow .25s ease}
+    .side-menu-close:hover{background:#003366;color:#fff;border-color:#003366;transform:rotate(180deg);box-shadow:0 7px 16px rgba(0,51,102,.22)}
+    .side-menu-close:active{transform:rotate(180deg) scale(.9)}
+    .side-menu-nav {display: flex; flex-direction: column; padding: 4px 0;}
+    .side-menu-nav a {display: flex; align-items: center; gap: 12px; padding: 12px 20px;
+      text-decoration: none; color: #003366; font-weight: 500; transition: background 0.2s ease, padding-left 0.2s ease;}
+    .side-menu-nav a:hover {background-color: #f1f4f8; padding-left: 26px;}
+    .side-menu-nav i {width: 20px; text-align: center; font-size: 16px;}
+    .side-menu hr {border: none; border-top: 1px solid #e0e0e0; margin: 0;}
+
+    .stock-welcome {position: fixed; top: 40px; left: 0; width: 100%; background: #ffffff;
+      padding: 0px 0px; display: flex; align-items: center; justify-content: center; z-index: 98;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);}
+    .stock-heading {font-size: 18px; margin-top: 8px; margin-bottom: 8px;}
+    .stock-welc {position: fixed; top: 40px; left: 0; width: 100%; background: #ffffff; padding: 0 25px;
+      display: flex; align-items: center; justify-content: space-between;  z-index: 98;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);}
+    .back-to-start {margin-top: 8px; margin-bottom: 8px;
+      background: #003366; color: white; border: none; padding: 4px 10px; border-radius: 6px;
+      font-weight: 600; cursor: pointer;} 
+    .back-to-start:hover {background-color: #0055aa;}
+    .add-text {margin: 8px 0; margin-right: 40px; font-size: 18px; font-weight: 600; color: #003366;}
+
+    .main-cards {padding-left: 25px; padding-right: 25px;}
+    .nav-cards-grid {display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px;
+      margin-top: 30px; margin-bottom: 0px;}
+    @media (max-width: 1024px) {.nav-cards-grid {grid-template-columns: repeat(2, 1fr);}}
+    @media (max-width: 600px) {.nav-cards-grid {grid-template-columns: 1fr;}}
+    .nav-card {position: relative; height: 190px; border-radius: 16px; padding: 18px;
+      background-color: #ffffff; box-shadow: 0 8px 25px rgba(0,0,0,0.1); overflow: hidden;
+      display: flex; flex-direction: column; justify-content: space-between;}
+    .nav-card::before {content: ""; position: absolute; inset: 0; background-image: var(--bg);
+      background-size: cover; background-position: top center; opacity: 0.45;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.9) 40%,
+      rgba(0,0,0,0.5) 70%, rgba(0,0,0,0.25) 100%);
+      -webkit-mask-image: linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0.9) 40%,
+      rgba(0,0,0,0.5) 70%,rgba(0,0,0,0.25) 100%);}
+    .nav-card * {position: relative; z-index: 2;}
+    .nav-card h3 {margin: 0; color: #003366; font-size: 18px; font-weight: 600;}
+    .nav-card p {margin: 6px 0 0; font-size: 14px; color: #333; max-width: 80%;}
+    .nav-card button {align-self: flex-end; background-color: #003366; color: #fff; border: none;
+      padding: 8px 14px; border-radius: 20px; font-size: 14px; cursor: pointer; font-weight: bold;
+      transition: background 0.3s ease, transform 0.2s ease;}
+    .nav-card button:hover {background-color: #0055aa; transform: translateX(3px);}
+    .hidden {display: none;}
+
+    .password-wrap {position: relative; display: flex;  align-items: center;}
+    .password-wrap input {width: 100%; background: transparent; padding-right: 40px;}
+    .password-wrap .eye {position: absolute; right: 12px;  cursor: pointer; user-select: none;
+        font-size: 16px;  opacity: 0.7;}
+    .password-wrap .eye:hover {opacity: 1;}
+
+    .empty-state {grid-column: 1 / -1; display: flex; justify-content: center; align-items: center;
+      text-align: center; min-height: 150px; padding: 0px 20px; color: #777; font-size: 16px;}  
+    .confirm-delete {font-size: 16px; color: #003366;}
+  </style>
+</head>
+<body class="dashboard-page">
+  <!-- PIDEN Loader -->
+  <div id="pageLoader">
+    <div class="piden-loader">
+      <div class="piden-text">
+        <span>P</span><span>I</span><span>D</span><span>E</span><span>N</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <div class="nav-left">
+      <div class="menu-icon" onclick="openSideMenu()" aria-label="Open menu" title="Menu">☰</div>
+      <span class="active-page" id="activePageName">Stock</span>
+  
+      <div class="side-menu-overlay" id="sideMenuOverlay" onclick="closeSideMenu()"></div>
+  
+      <aside class="side-menu" id="sideMenu">
+        <div class="side-menu-header">
+          <span class="side-menu-title">PIDEN POS</span>
+          <button class="side-menu-close" onclick="closeSideMenu()" aria-label="Close menu">×</button>
+        </div>
+  
+        <hr>
+  
+        <nav class="side-menu-nav">
+          <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+          <a href="sell.html"><i class="fas fa-cash-register"></i> Make A Sale</a>
+          <a href="stock.html"><i class="fas fa-boxes"></i> Manage Stock</a>
+          <a href="sales.html"><i class="fas fa-chart-line"></i> Daily Sales Records</a>
+          <a href="restock.html"><i class="fas fa-book-open"></i> Restock Aid</a>
+          <a href="expenses.html"><i class="fas fa-receipt"></i> Business Expenses</a>
+          <a href="orders.html"><i class="fas fa-clipboard-list"></i> Orders Management</a>
+          <a href="analysis.html"><i class="fas fa-chart-pie"></i> Analysis Section</a>
+          <a href="profile.html"><i class="fas fa-user-circle"></i> Business Profile</a>
+          <a href="billing.html"><i class="fas fa-credit-card"></i> Billing Section</a>
+        </nav>
+      </aside>
+    </div>
+  
+    <div class="nav-center">
+      <span class="nav-logo">POS</span>
+    </div>
+  
+    <div class="nav-right">
+      <div class="user-icon" onclick="toggleUserDropdown()" aria-label="User menu" title="User menu">
+        <div class="circle">
+          <i class="fa-solid fa-user"></i>
+        </div>
+      </div>
+  
+      <div class="user-dropdown" id="userDropdown">
+        <p><strong id="businessName">Loading...</strong></p>
+        <button type="button" onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Content Area Placeholder -->
+  <main class="main-content">
+
+    <cards class="main-cards">
+      <div id="stockButtons" class="nav-cards-grid">
+        <div class="stock-welcome">
+          <p class="stock-heading">Manage your stock here</p>
+        </div>
+  
+        <div class="nav-card" style="--bg:url('sale.jpeg')">
+          <h3>Add Stock</h3>
+          <p>Add products and services instantly to start selling using the POS system.</p>
+          <button onclick="showAddStock()">Add →</button>
+        </div>
+      
+        <div class="nav-card" style="--bg:url('stock.jpeg')">
+          <h3>Edit Stock</h3>
+          <p>Update your items in stock, update prices and delete unnecessary items securely.</p>
+          <button onclick="openPasswordPopup()">Edit →</button>
+        </div>
+      </div>
+    </cards>
+  
+    <cards class="main-cards">
+      <div id="addStockOptions" class="nav-cards-grid hidden">
+        <div class="stock-welc">
+          <button class="back-to-start" onclick="goBackToStockMain()">⬅ Back</button>
+          <p class="add-text">Add Stock</p>
+        </div>
+  
+        <div class="nav-card" style="--bg:url('addproduct.jpeg')">
+          <h3>Add Products</h3>
+          <p>Add products here instantly to start selling using the POS system.</p>
+          <button onclick="openAddProductPopup()">Add →</button>
+        </div>
+      
+        <div class="nav-card" style="--bg:url('addservices.jpeg')">
+          <h3>Add Services</h3>
+          <p>Add Services here instantly to start selling using the POS system.</p>
+          <button onclick="openAddServicePopup()">Add →</button>
+        </div>
+      </div>
+    </cards>
+
+    <!-- 📦 Add Product Popup -->
+    <div id="addProductPopup" class="overlay hidden">
+      <div class="popup-content">
+        <div class="popup-header">
+          <h2>Add Product</h2> 
+          <button class="close-btn" onclick="closeAddProductPopup()">×</button>
+        </div>
+
+        <label>Product Image (Optional)</label>
+        <input type="file" id="productImage" accept="image/*" />
+        
+        <div id="productImagePreview" class="image-preview-section hidden">
+          <h3 class="image-preview-heading">Image Preview</h3>
+          <div class="image-preview-card">
+            <img id="productPreviewImage" class="image-preview-image" alt="Product image preview">
+            <div id="productImageProcessing" class="image-processing-overlay hidden">
+              <i class="fa-solid fa-arrows-rotate fa-spin"></i>
+              <span>Adjusting image...</span>
+            </div>
+          </div>
+          <div class="image-preview-actions">
+            <button type="button" onclick="openImageCropper('product')" title="Crop image">
+              <i class="fa-solid fa-crop-simple"></i>
+            </button>
+            <button type="button" onclick="deleteSelectedImage('product')" title="Delete image">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+          <div class="image-size-row">
+            <span>Image Size:</span>
+            <strong id="productImageSize">0 KB</strong>
+          </div>
+          <div id="productImageAdjustSection" class="hidden">
+            <p class="image-adjust-message">The uploaded image exceeds 50KB, kindly click the button below to auto adjust it.</p>
+            <button type="button" id="productAutoAdjust" class="image-adjust-btn"
+              onclick="autoAdjustImage('product')">
+              Auto Adjust
+            </button>
+          </div>
+        </div>
+
+        <label>Product Name</label>
+        <input type="text" id="productName" placeholder="e.g. Hp Laptop" onblur="checkDuplicateProduct()" />
+
+        <label>Quantity</label>
+        <input type="number" id="productStock" placeholder="e.g. 7" />
+
+        <label>Buying Price</label>
+        <input type="number" id="buyingPrice"  placeholder="e.g. 700" oninput="calculateProfit()"/>
+
+        <label>Selling Price</label>
+        <input type="number" id="sellingPrice" placeholder="e.g. 1000" oninput="calculateProfit()" />
+
+        <label>Profit</label>
+        <input type="text" id="productProfit" readonly />
+
+        <button onclick="submitNewProduct()" class="complete-btn">Complete</button>
+      </div>
+    </div>
+
+    <!-- 🛠️ Add Service Popup -->
+    <div id="addServicePopup" class="overlay hidden">
+      <div class="popup-content">
+        <div class="popup-header">
+          <h2>Add Service</h2>
+          <button class="close-btn" onclick="closeAddServicePopup()">×</button>      
+        </div>
+
+        <label>Service Image (Optional)</label>
+        <input type="file" id="serviceImage" accept="image/*" />
+
+        <div id="serviceImagePreview" class="image-preview-section hidden">
+          <h3 class="image-preview-heading">Image Preview</h3>
+          <div class="image-preview-card">
+            <img id="servicePreviewImage" class="image-preview-image" alt="Service image preview">
+            <div id="serviceImageProcessing" class="image-processing-overlay hidden">
+              <i class="fa-solid fa-arrows-rotate fa-spin"></i>
+              <span>Adjusting image...</span>
+            </div>
+          </div>
+          <div class="image-preview-actions">
+            <button type="button" onclick="openImageCropper('service')" title="Crop image">
+              <i class="fa-solid fa-crop-simple"></i>
+            </button>
+            <button type="button" onclick="deleteSelectedImage('service')" title="Delete image">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+          <div class="image-size-row">
+            <span>Image Size:</span>
+            <strong id="serviceImageSize">0 KB</strong>
+          </div>
+          <div id="serviceImageAdjustSection" class="hidden">
+            <p class="image-adjust-message">The uploaded image exceeds 50KB, kindly click the button below to auto adjust it.</p>
+            <button type="button" id="serviceAutoAdjust" class="image-adjust-btn"
+              onclick="autoAdjustImage('service')">
+              Auto Adjust
+            </button>
+          </div>
+        </div>
+
+        <label>Service Name</label>
+        <input type="text" id="serviceName" placeholder="e.g. Printing" onblur="checkDuplicateService()" />
+
+        <label>Cost of Service</label>
+        <input type="number" id="serviceCost" placeholder="e.g. 0" oninput="calculateServiceProfit()"/>
+
+        <label>Customer Price</label>
+        <input type="number" id="servicePrice" placeholder="e.g. 10" oninput="calculateServiceProfit()" />
+
+        <label>Profit</label>
+        <input type="text" id="serviceProfit" readonly />
+
+        <button onclick="submitNewService()" class="complete-btn">Complete</button>
+      </div>
+    </div>
+
+    <!-- ✅ Success Popup -->
+    <div id="successPopup" class="overlay hidden">
+      <div class="popup-content small">
+        <h2>Stock Added Successfully!</h2>
+        <div class="tick-animation">
+          <svg class="checkmark" viewBox="0 0 52 52">
+            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="checkmark-check" fill="none" d="M14 27l7 7 17-17"/>
+          </svg>
+        </div>
+        <div class="popup-buttons">
+          <button onclick="window.location.href='sell.html'">📄 View</button>
+          <button onclick="returnToAddOptions()">➕ Add Next Stock</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="editStockSection" class="edit-stock hidden">
+      <div id="popupOverlay"></div>
+      <!-- HEADER BAR -->
+      <div class="edit-stock-header">
+        <button class="back-btn-edit" onclick="goBackToStockMain()">⬅ Back</button>
+
+        <h2 class="edit-stock-title">Edit Stock</h2>
+
+        <div class="search-bar-container">
+          <input type="text" id="itemSearch" placeholder="🔍 Search">
+        </div>
+      </div>
+
+      <!-- FILTER BAR -->
+      <div class="edit-stock-filters">
+        <div class="filter-buttons">
+          <button onclick="filterItems('product')" id="productBtn" class="active">Products</button>
+          <button onclick="filterItems('service')" id="serviceBtn">Services</button>
+        </div>
+      </div>
+
+      <div id="itemsContainer" class="items-container">
+        <!-- Cards will be loaded here -->
+      </div>  
+
+      <div id="notFound">Oops! Item not found</div>
+    </div>
+
+    <!-- Edit Product Popup -->
+    <div id="editProductPopup" class="overlay hidden">
+      <div class="popup-content">
+        <div class="popup-header">
+          <h2>Edit Product</h2>
+          <button type="button" class="close-btn" onclick="closeEditProductPopup()">×</button>
+        </div>
+
+        <div class="popup-body">
+          <div class="edit-current-image">
+            <h3 class="image-preview-heading">Current Image</h3>
+            <div class="edit-current-image-card">
+              <img id="editProductCurrentImage" src="Product.png" alt="Current product image">
+              <div id="editProductCurrentImageProcessing" class="image-processing-overlay hidden">
+                <i class="fa-solid fa-arrows-rotate fa-spin"></i>
+                <span>Deleting image...</span>
+              </div>
+              <button type="button" id="editProductCurrentImageDelete" onclick="deleteEditProductImage()"
+                class="edit-current-image-delete hidden" title="Delete current image"
+                aria-label="Delete current image">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </div>
+
+          <label for="editProductImage">Update Image (Optional)</label>
+          <input type="file" id="editProductImage" accept="image/*">
+
+          <div id="editProductImagePreview" class="image-preview-section hidden">
+            <h3 class="image-preview-heading">Image Preview</h3>
+            <div class="image-preview-card">
+              <img id="editProductPreviewImage" class="image-preview-image"
+                alt="New product image preview">
+              <div id="editProductImageProcessing" class="image-processing-overlay hidden">
+                <i class="fa-solid fa-arrows-rotate fa-spin"></i>
+                <span>Adjusting image...</span>
+              </div>
+            </div>
+            <div class="image-preview-actions">
+              <button type="button" onclick="openImageCropper('editProduct')" title="Crop image">
+                <i class="fa-solid fa-crop-simple"></i>
+              </button>
+              <button type="button" onclick="deleteSelectedImage('editProduct')" title="Delete image">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+            <div class="image-size-row">
+              <span>Image Size:</span>
+              <strong id="editProductImageSize">0 KB</strong>
+            </div>
+            <div id="editProductImageAdjustSection" class="hidden">
+              <p class="image-adjust-message">
+                The uploaded image exceeds 50KB, kindly click the button below to auto adjust it.
+              </p>
+              <button type="button" id="editProductAutoAdjust" class="image-adjust-btn"
+                onclick="autoAdjustImage('editProduct')">Auto Adjust</button>
+            </div>
+          </div>
+
+          <label for="editProductName">Edit Product Name</label>
+          <input type="text" id="editProductName" onblur="checkDuplicateProductNameEdit()">
+
+          <label for="editProductStock">Edit Stock</label>
+          <input type="number" id="editProductStock" min="0">
+
+          <label for="editBuyingPrice">Edit Buying Price</label>
+          <input type="number" id="editBuyingPrice" min="0" oninput="updateEditProductProfit()">
+
+          <label for="editSellingPrice">Edit Selling Price</label>
+          <input type="number" id="editSellingPrice" min="0" oninput="updateEditProductProfit()">
+
+          <label for="editProductProfit">Profit</label>
+          <input type="text" id="editProductProfit" readonly>
+
+          <button type="button" onclick="submitEditProduct()" class="complete-btn">Complete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Service Popup -->
+    <div id="editServicePopup" class="overlay hidden">
+      <div class="popup-content">
+        <div class="popup-header">
+          <h2>Edit Service</h2>
+          <button type="button" class="close-btn" onclick="closeEditServicePopup()">×</button>
+        </div>
+
+        <div class="popup-body">
+          <div class="edit-current-image">
+            <h3 class="image-preview-heading">Current Image</h3>
+            <div class="edit-current-image-card">
+              <img id="editServiceCurrentImage" src="Service.png" alt="Current service image">
+              <div id="editServiceCurrentImageProcessing" class="image-processing-overlay hidden">
+                <i class="fa-solid fa-arrows-rotate fa-spin"></i>
+                <span>Deleting image...</span>
+              </div>
+              <button type="button" id="editServiceCurrentImageDelete" onclick="deleteEditServiceImage()"
+                class="edit-current-image-delete hidden" title="Delete current image"
+                aria-label="Delete current image">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </div>
+
+          <label for="editServiceImage">Update Image (Optional)</label>
+          <input type="file" id="editServiceImage" accept="image/*">
+
+          <div id="editServiceImagePreview" class="image-preview-section hidden">
+            <h3 class="image-preview-heading">Image Preview</h3>
+            <div class="image-preview-card">
+              <img id="editServicePreviewImage" class="image-preview-image"
+                alt="New service image preview">
+              <div id="editServiceImageProcessing" class="image-processing-overlay hidden">
+                <i class="fa-solid fa-arrows-rotate fa-spin"></i>
+                <span>Adjusting image...</span>
+              </div>
+            </div>
+            <div class="image-preview-actions">
+              <button type="button" onclick="openImageCropper('editService')" title="Crop image">
+                <i class="fa-solid fa-crop-simple"></i>
+              </button>
+              <button type="button" onclick="deleteSelectedImage('editService')" title="Delete image">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+            <div class="image-size-row">
+              <span>Image Size:</span>
+              <strong id="editServiceImageSize">0 KB</strong>
+            </div>
+            <div id="editServiceImageAdjustSection" class="hidden">
+              <p class="image-adjust-message">
+                The uploaded image exceeds 50KB, kindly click the button below to auto adjust it.
+              </p>
+              <button type="button" id="editServiceAutoAdjust" class="image-adjust-btn"
+                onclick="autoAdjustImage('editService')">Auto Adjust</button>
+            </div>
+          </div>
+
+          <label for="editServiceName">Edit Service Name</label>
+          <input type="text" id="editServiceName" onblur="checkDuplicateServiceNameEdit()">
+
+          <label for="editCostOfService">Edit Cost of Service</label>
+          <input type="number" id="editCostOfService" min="0" oninput="updateEditServiceProfit()">
+
+          <label for="editCustomerPrice">Edit Customer Price</label>
+          <input type="number" id="editCustomerPrice" min="0" oninput="updateEditServiceProfit()">
+
+          <label for="editServiceProfit">Profit</label>
+          <input type="text" id="editServiceProfit" readonly>
+
+          <button type="button" onclick="submitEditService()" class="complete-btn">Complete</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="successEditPopup" class="overlay hidden">
+      <div class="popup-content small">
+        <h2>Stock Edited Successfully!</h2>
+        <div class="tick-animation">
+          <svg class="checkmark" viewBox="0 0 52 52">
+            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="checkmark-check" fill="none" d="M14 27l7 7 17-17"/>
+          </svg>
+        </div>
+        <div class="popup-buttons">
+          <button class="edit-back" onclick="returnToEditOptions()">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🔴 Delete Confirmation Popup -->
+    <div id="deletePopup" class="overlay hidden">
+      <div class="popup-content small">
+        <h2 class="confirm-delete">Are you sure you want to delete this <span id="deleteTypeLabel">item</span>?</h2>
+        <div class="popup-buttons">
+          <button id="confirmDeleteBtn">✅ Confirm</button>
+          <button onclick="closeDeletePopup()">❌ Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="successDeletePopup" class="overlay hidden">
+      <div class="popup-content small">
+        <h2>Stock Deleted Successfully!</h2>
+        <div class="tick-animation">
+          <svg class="checkmark" viewBox="0 0 52 52">
+            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="checkmark-check" fill="none" d="M14 27l7 7 17-17"/>
+          </svg>
+        </div>
+        <div class="popup-buttons">
+          <button class="edit-back" onclick="returnToStock()">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="passwordPopup" class="overlay hidden">
+      <div class="popup-content">
+        <div class="popup-header">
+          <h2>Admin Access</h2>
+          <button class="close-btn" onclick="closePasswordPopup()">×</button>
+        </div>
+        <p>This is a highly protected page. Please Enter admin password to proceed to Edit Stock:</p>
+        <div class="password-wrap">
+          <input type="password" id="adminPasswordInput" placeholder="Enter Admin Password" required>
+          <span class="eye"aria-label="Toggle password visibility" 
+           onclick="togglePassword('adminPasswordInput', this)">👁️</span>
+        </div>      
+        <p id="passwordError" style="color: red; display: none; margin-top: 10px;">Incorrect password</p>
+        <div style="margin-top: 10px;">
+          <button id="adminPasswordBtn" onclick="verifyAdminPassword()" class="complete-btn">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="imageCropperOverlay" class="image-cropper-overlay hidden">
+      <div class="image-cropper-header">
+        <h3>Crop Image</h3>
+        <button type="button" class="image-cropper-done" onclick="finishImageCrop()">
+          <i class="fa-solid fa-check"></i> Done
+        </button>
+      </div>
+      <div class="image-cropper-stage">
+        <img id="imageCropperTarget" alt="Crop image">
+      </div>
+      <div class="image-cropper-controls">
+        <button type="button" onclick="rotateImageCrop(-90)">
+          <i class="fa-solid fa-rotate-left"></i> Rotate
+        </button>
+        <button type="button" onclick="rotateImageCrop(90)">
+          <i class="fa-solid fa-rotate-right"></i> Rotate
+        </button>
+      </div>
+    </div>
+    
+    <div id="imageFullViewer" class="image-viewer hidden">
+      <button type="button" class="image-viewer-close" onclick="closeFullImageViewer()">×</button>
+      <img id="imageFullViewerTarget" alt="Full image view">
+      <div class="image-viewer-actions">
+        <button type="button" onclick="openImageCropperFromViewer()">
+          <i class="fa-solid fa-crop-simple"></i> Crop
+        </button>
+        <button type="button" onclick="deleteImageFromViewer()">
+          <i class="fa-solid fa-trash"></i> Delete
+        </button>
+      </div>
+    </div>
+    
+  </main>
+
+  <!-- Footer -->
+  <footer class="foot">
+    &copy; <span id="currentYear"></span> PIDEN. All rights reserved
+  </footer>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+
+  <script src="session-watchdog.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module">
+    import { SUPABASE_ANON_KEY } from "./p.js";  
+    const supabaseUrl = "https://mzvlybnvgpemdayoylfk.supabase.co";  
+    window.supabase = supabase.createClient(
+      supabaseUrl,
+      SUPABASE_ANON_KEY
+    );  
+    // ✅ SIGNAL THAT SUPABASE IS READY
+    window.dispatchEvent(new Event("supabase-ready"));
+  </script>
+  
+  <!-- Inline JS for dropdowns & logout -->
+  <script>
+    // Handle browser back/forward cache issues
+    window.addEventListener("pageshow", function (event) {
+            const loader = document.getElementById("pageLoader");
+
+            // Always hide loader if it exists
+            if (loader) {
+            loader.style.display = "none";
+            }
+
+            // If page was restored from bfcache, force reload once
+            if (event.persisted && !sessionStorage.getItem("reloaded")) {
+                sessionStorage.setItem("reloaded", "true");
+                window.location.reload();
+            }
+        });
+
+    document.getElementById("currentYear").textContent = new Date().getFullYear();
+
+    let businessId = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const business = JSON.parse(sessionStorage.getItem("businessProfile"));
+
+        if (!business || !business.businessid) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        businessId = business.businessid; // ✅ IMPORTANT FIX
+
+        const businessName = business.businessname || "Biz";
+        document.getElementById("businessName").textContent = businessName;
+    });
+
+    function openSideMenu() {
+      document.getElementById("sideMenu").classList.add("show");
+      document.getElementById("sideMenuOverlay").classList.add("show");
+    }
+
+    function closeSideMenu() {
+      document.getElementById("sideMenu").classList.remove("show");
+      document.getElementById("sideMenuOverlay").classList.remove("show");
+    }
+
+    function toggleUserDropdown() {
+      document.getElementById("userDropdown").classList.toggle("show");
+    }
+
+    function logout() {
+      sessionStorage.clear();
+      window.location.href = "login.html";
+    }
+
+    window.onload = () => {
+      // Disable back button after logout
+      if (!sessionStorage.getItem("loggedIn")) {
+        window.location.replace("login.html");
+      }
+    }
+
+    window.onclick = function(event) {
+      if (!event.target.closest('.user-icon') && !event.target.closest('.user-dropdown')) {
+        document.getElementById("userDropdown").classList.remove("show");
+      }
+    }
+
+    function togglePassword(inputId, eyeEl) {
+            const input = document.getElementById(inputId);
+
+            if (input.type === "password") {
+                input.type = "text";
+                eyeEl.textContent = "🙈";
+            } else {
+                input.type = "password";
+                eyeEl.textContent = "👁️";
+            }
+        }
+        
+        window.addEventListener("load", async () => {
+          const allowed = await guardEligibility();
+          if (!allowed) return;
+
+          document.getElementById("pageLoader").style.display = "none";
+        });
+
+      // Optional global control for Supabase calls
+      function showLoader() {
+        const loader = document.getElementById("pageLoader");
+        if (loader) loader.style.display = "flex";
+      }
+
+      function hideLoader() {
+        const loader = document.getElementById("pageLoader");
+        if (!loader) return;
+
+        loader.style.opacity = "0";
+        loader.style.transition = "opacity 0.3s ease";
+
+        setTimeout(() => {
+          loader.style.display = "none";
+          loader.style.opacity = "1";
+        }, 300);
+      }
+
+      async function guardEligibility() {
+        const businessId = sessionStorage.getItem("businessid");
+
+        if (!businessId) {
+          window.location.replace("login.html");
+          return false;
+        }
+
+        const { data, error } = await supabase
+          .from("profile")
+          .select("businessstatus")
+          .eq("businessid", businessId)
+          .single();
+
+        if (error || !data) {
+          window.location.replace("login.html");
+          return false;
+        }
+
+        if (data.businessstatus !== "Eligible") {
+          window.location.replace("billing.html");
+          return false;
+        }
+
+        return true;
+      }
+
+      function showAddStock() {
+        document.getElementById("stockButtons").classList.add("hidden");
+        document.querySelector(".stock-heading").classList.add("hidden");
+        const addStock = document.getElementById("addStockOptions");
+        addStock.classList.remove("hidden");
+        addStock.classList.add("animate-fade-in");
+      }
+
+      function handleEditStock() {
+        document.getElementById("stockButtons").classList.add("hidden");
+        document.querySelector(".stock-heading").classList.add("hidden");
+        document.getElementById("editStockSection").classList.remove("hidden");
+      }
+
+      function goBackToStockMain() {
+        window.location.href = "stock.html";
+      }
+
+      const MAX_IMAGE_BYTES = 50 * 1024;
+
+      const imageStates = {
+        product:     {original:null, current:null, cropData:null, previewUrl:null, busy:false},
+        service:     {original:null, current:null, cropData:null, previewUrl:null, busy:false},
+        editProduct: {original:null, current:null, cropData:null, previewUrl:null, busy:false},
+        editService: {original:null, current:null, cropData:null, previewUrl:null, busy:false}
+      };
+
+      let activeCropType = null;
+      let activeViewerType = null;
+      let imageCropper = null;
+
+      function imageElement(type, name) {
+        const ids = {
+          product: {
+            Image:"productImage", Preview:"productPreviewImage",
+            ImagePreview:"productImagePreview", ImageSize:"productImageSize",
+            ImageAdjustSection:"productImageAdjustSection",
+            AutoAdjust:"productAutoAdjust", ImageProcessing:"productImageProcessing"
+          },
+          service: {
+            Image:"serviceImage", Preview:"servicePreviewImage",
+            ImagePreview:"serviceImagePreview", ImageSize:"serviceImageSize",
+            ImageAdjustSection:"serviceImageAdjustSection",
+            AutoAdjust:"serviceAutoAdjust", ImageProcessing:"serviceImageProcessing"
+          },
+          editProduct: {
+            Image:"editProductImage", Preview:"editProductPreviewImage",
+            ImagePreview:"editProductImagePreview", ImageSize:"editProductImageSize",
+            ImageAdjustSection:"editProductImageAdjustSection",
+            AutoAdjust:"editProductAutoAdjust", ImageProcessing:"editProductImageProcessing"
+          },
+          editService: {
+            Image:"editServiceImage", Preview:"editServicePreviewImage",
+            ImagePreview:"editServiceImagePreview", ImageSize:"editServiceImageSize",
+            ImageAdjustSection:"editServiceImageAdjustSection",
+            AutoAdjust:"editServiceAutoAdjust", ImageProcessing:"editServiceImageProcessing"
+          }
+        };
+
+        const id = ids[type]?.[name];
+        return id ? document.getElementById(id) : null;
+      }
+
+      function formatImageSize(bytes) {
+        return bytes < 1024
+          ? bytes + " bytes"
+          : (bytes / 1024).toFixed(1) + " KB";
+      }
+
+      function updateImageSize(type) {
+        const state = imageStates[type];
+
+        if (!state) return;
+
+        const size = state.current ? state.current.size : 0;
+
+        const sizeDisplay = imageElement(type, "ImageSize");
+        const adjustSection = imageElement(type, "ImageAdjustSection");
+
+        if (sizeDisplay) {
+          sizeDisplay.textContent = formatImageSize(size);
+        }
+
+        if (adjustSection) {
+          adjustSection.classList.toggle(
+            "hidden",
+            !state.current || size <= MAX_IMAGE_BYTES
+          );
+        }
+      }
+
+      function setImageBusy(type, busy) {
+        const state = imageStates[type];
+        if (!state) return;
+
+        state.busy = busy;
+
+        const isEdit = type.startsWith("edit");
+        const itemType = type.endsWith("Product") || type === "product" ? "Product" : "Service";
+        const popupId = `${isEdit ? "edit" : "add"}${itemType}Popup`;
+
+        const processing = imageElement(type, "ImageProcessing");
+        const autoAdjust = imageElement(type, "AutoAdjust");
+        const fileInput = imageElement(type, "Image");
+
+        if (processing) processing.classList.toggle("hidden", !busy);
+        if (autoAdjust) autoAdjust.disabled = busy;
+        if (fileInput) fileInput.disabled = busy;
+
+        const popup = document.getElementById(popupId);
+        if (!popup) return;
+
+        popup.querySelectorAll(".complete-btn, .close-btn, .image-preview-actions button")
+          .forEach(button => button.disabled = busy);
+      }
+
+      function resetImageState(type) {
+        const state = imageStates[type];
+
+        if (!state) return;
+
+        // Revoke any temporary preview URL.
+        if (state.previewUrl) {
+          URL.revokeObjectURL(state.previewUrl);
+        }
+
+        // Reset the image state.
+        imageStates[type] = {
+          original: null,
+          current: null,
+          cropData: null,
+          previewUrl: null,
+          busy: false
+        };
+
+        // Reset the file input.
+        const fileInput = imageElement(type, "Image");
+
+        if (fileInput) {
+          fileInput.value = "";
+        }
+
+        // Reset the preview image.
+        const preview = imageElement(type, "Preview");
+
+        if (preview) {
+          preview.removeAttribute("src");
+          preview.style.cursor = "zoom-in";
+          preview.onclick = null;
+          preview.onerror = null;
+          preview.onload = null;
+        }
+
+        // Hide the image preview section.
+        const previewSection = imageElement(type, "ImagePreview");
+
+        if (previewSection) {
+          previewSection.classList.add("hidden");
+        }
+
+        // Hide the auto-adjust section.
+        const adjustSection = imageElement(type, "ImageAdjustSection");
+
+        if (adjustSection) {
+          adjustSection.classList.add("hidden");
+        }
+
+        // Hide the processing overlay.
+        const processingOverlay = imageElement(type, "ImageProcessing");
+
+        if (processingOverlay) {
+          processingOverlay.classList.add("hidden");
+        }
+
+        // Reset the displayed image size.
+        const sizeDisplay = imageElement(type, "ImageSize");
+
+        if (sizeDisplay) {
+          sizeDisplay.textContent = "0 KB";
+        }
+
+        // Reset the busy state and re-enable controls.
+        setImageBusy(type, false);
+      }
+
+      function displayProcessedImage(type, file) {
+        const state = imageStates[type];
+
+        if (!state || !file) return;
+
+        const preview = imageElement(type, "Preview");
+        const previewSection = imageElement(type, "ImagePreview");
+
+        // Stop if the required preview elements are missing.
+        if (!preview || !previewSection) {
+          console.error(
+            `Image preview elements missing for ${type}.`
+          );
+
+          alert("Unable to display the image preview. Please refresh the page.");
+          return;
+        }
+
+        // Revoke the previous preview URL.
+        if (state.previewUrl) {
+          URL.revokeObjectURL(state.previewUrl);
+        }
+
+        // Store the new image.
+        state.current = file;
+        state.previewUrl = URL.createObjectURL(file);
+
+        // Display the image.
+        preview.src = state.previewUrl;
+        preview.style.cursor = "zoom-in";
+        preview.onclick = () => openFullImageViewer(type);
+
+        previewSection.classList.remove("hidden");
+
+        // Update image size and adjustment controls.
+        updateImageSize(type);
+      }
+
+      function loadImageFile(type, file) {
+        if (!file) return;
+
+        if (!file.type.startsWith("image/")) {
+          alert("Please select a valid image file.");
+          imageElement(type, "Image").value = "";
+          return;
+        }
+
+        const state = imageStates[type];
+
+        state.original = file;
+        state.current = file;
+        state.cropData = null;
+
+        displayProcessedImage(type, file);
+      }
+
+      function setupImageInputs() {
+        ["product", "service", "editProduct", "editService"].forEach(type => {
+          const input = imageElement(type, "Image");
+
+          if (input) {
+            input.addEventListener("change", event => {
+              loadImageFile(type, event.target.files[0]);
+            });
+          }
+        });
+      }
+
+      setupImageInputs();
+
+      function openImageCropper(type) {
+        const state = imageStates[type];
+
+        if (!state.original || state.busy) return;
+
+        activeCropType = type;
+
+        const target = document.getElementById("imageCropperTarget");
+        const overlay = document.getElementById("imageCropperOverlay");
+
+        if (imageCropper) {
+          imageCropper.destroy();
+          imageCropper = null;
+        }
+
+        // Revoke the previous temporary cropper URL, if any.
+        if (target.dataset.objectUrl) {
+          URL.revokeObjectURL(target.dataset.objectUrl);
+          delete target.dataset.objectUrl;
+        }
+
+        const imageUrl = URL.createObjectURL(state.original);
+        target.dataset.objectUrl = imageUrl;
+
+        target.onload = () => {
+          imageCropper = new Cropper(target, {
+            viewMode: 0,             // Crop box may extend beyond the image.
+            dragMode: "move",        // Drag the image beneath the crop box.
+            autoCropArea: 1,
+            responsive: true,
+            background: false,
+            zoomOnWheel: true,
+            movable: true,
+            cropBoxMovable: true,
+            cropBoxResizable: true,
+            toggleDragModeOnDblclick: false,
+
+            ready() {
+              if (state.cropData) {
+                imageCropper.setData(state.cropData);
+              } else {
+                // Start with the full visible image selected.
+                const canvas = imageCropper.getCanvasData();
+
+                imageCropper.setCropBoxData({
+                  left: canvas.left,
+                  top: canvas.top,
+                  width: canvas.width,
+                  height: canvas.height
+                });
+              }
+            }
+          });
+        };
+
+        target.src = imageUrl;
+        overlay.classList.remove("hidden");
+      }
+
+      function rotateImageCrop(degrees) {
+        if (!imageCropper) return;
+
+        imageCropper.rotate(degrees);
+      }
+
+      async function finishImageCrop() {
+        if (!imageCropper || !activeCropType) return;
+
+        const type = activeCropType;
+        const state = imageStates[type];
+
+        state.cropData = imageCropper.getData(true);
+
+        const canvas = imageCropper.getCroppedCanvas({
+          maxWidth: 4096,
+          maxHeight: 4096,
+          imageSmoothingEnabled: true,
+          imageSmoothingQuality: "high"
+        });
+
+        if (!canvas) {
+          alert("Unable to crop this image. Please try again.");
+          return;
+        }
+
+        const blob = await new Promise(resolve =>
+          canvas.toBlob(resolve, "image/webp", 0.95)
+        );
+
+        if (!blob) {
+          alert("Unable to process this image.");
+          return;
+        }
+
+        const croppedFile = new File(
+          [blob],
+          "cropped-image.webp",
+          {type: "image/webp"}
+        );
+
+        displayProcessedImage(type, croppedFile);
+
+        imageCropper.destroy();
+        imageCropper = null;
+
+        document.getElementById("imageCropperOverlay").classList.add("hidden");
+
+        const target = document.getElementById("imageCropperTarget");
+
+        if (target.dataset.objectUrl) {
+          URL.revokeObjectURL(target.dataset.objectUrl);
+          delete target.dataset.objectUrl;
+        }
+
+        target.src = "";
+
+        activeCropType = null;
+      }
+
+      function openFullImageViewer(type) {
+        const state = imageStates[type];
+
+        if (!state.current || state.busy) return;
+
+        activeViewerType = type;
+
+        document.getElementById("imageFullViewerTarget").src = state.previewUrl;
+        document.getElementById("imageFullViewer").classList.remove("hidden");
+      }
+
+      function closeFullImageViewer() {
+        document.getElementById("imageFullViewer").classList.add("hidden");
+        document.getElementById("imageFullViewerTarget").src = "";
+        activeViewerType = null;
+      }
+
+      function openImageCropperFromViewer() {
+        if (!activeViewerType) return;
+
+        const type = activeViewerType;
+
+        closeFullImageViewer();
+        openImageCropper(type);
+      }
+
+      function deleteImageFromViewer() {
+        if (!activeViewerType) return;
+
+        deleteSelectedImage(activeViewerType);
+        closeFullImageViewer();
+      }
+
+      function deleteSelectedImage(type) {
+        const state = imageStates[type];
+
+        if (!state.current || state.busy) return;
+
+        const confirmed = confirm("Are you sure you want to remove this image?");
+
+        if (!confirmed) return;
+
+        resetImageState(type);
+      }
+
+      async function autoAdjustImage(type) {
+        const state = imageStates[type];
+
+        if (!state.current || state.busy) return;
+
+        setImageBusy(type, true);
+
+        try {
+          let sourceFile = state.current;
+          let bitmap = await createImageBitmap(sourceFile);
+
+          let width = bitmap.width;
+          let height = bitmap.height;
+          let quality = 0.92;
+          let scale = 1;
+          let result = null;
+
+          for (let attempt = 0; attempt < 30; attempt++) {
+            const canvas = document.createElement("canvas");
+
+            canvas.width = Math.max(1, Math.round(width * scale));
+            canvas.height = Math.max(1, Math.round(height * scale));
+
+            const context = canvas.getContext("2d");
+            context.imageSmoothingEnabled = true;
+            context.imageSmoothingQuality = "high";
+
+            context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+
+            const blob = await new Promise(resolve =>
+              canvas.toBlob(resolve, "image/webp", quality)
+            );
+
+            if (!blob) throw new Error("Image compression failed.");
+
+            if (blob.size <= MAX_IMAGE_BYTES) {
+              result = blob;
+              break;
+            }
+
+            if (quality > 0.72) {
+              quality -= 0.05;
+            } else {
+              scale *= 0.9;
+            }
+          }
+
+          bitmap.close();
+
+          if (!result) {
+            throw new Error("Unable to reduce the image to 50 KB.");
+          }
+
+          const adjustedFile = new File(
+            [result],
+            "adjusted-image.webp",
+            {type: "image/webp"}
+          );
+
+          state.current = adjustedFile;
+
+          displayProcessedImage(type, adjustedFile);
+
+          alert("Image adjusted successfully.");
+        } catch (error) {
+          console.error("Image adjustment error:", error);
+          alert(error.message || "Unable to adjust image. Please try again.");
+        } finally {
+          setImageBusy(type, false);
+        }
+      }
+
+      function makeItemImageFilename(itemName) {
+        const safeName = itemName
+          .normalize("NFKC")
+          .trim()
+          .replace(/[\/\\?%*:|"<>]/g, "")
+          .replace(/\s+/g, "-")
+          .replace(/[^\p{L}\p{N}._-]/gu, "")
+          .replace(/^[.-]+|[.-]+$/g, "");
+
+        return `${safeName || "item"}.webp`;
+      }
+
+      let duplicateDetected = false;
+
+      function openAddProductPopup() {
+        clearProductFields();
+        document.getElementById("addProductPopup").classList.remove("hidden");
+      }
+
+      function closeAddProductPopup() {
+        document.getElementById("addProductPopup").classList.add("hidden");
+        clearProductFields(); 
+      }
+
+      function calculateProfit() {
+        const buying = parseFloat(document.getElementById("buyingPrice").value) || 0;
+        const selling = parseFloat(document.getElementById("sellingPrice").value) || 0;
+        const profit = selling - buying;
+        document.getElementById("productProfit").value = profit;
+      }
+
+      async function checkDuplicateProduct() {
+        const name = document.getElementById("productName").value.trim();
+
+        if (!name) return;
+
+        const { data, error } = await supabase
+          .from("items")
+          .select("name")
+          .eq("type", "product")
+          .eq("businessid", businessId)
+          .ilike("name", name);
+
+        if (data.length > 0) {
+          duplicateDetected = true;
+          alert(`${name} stock is already added. Please use the Edit Stock option instead.`);
+          clearProductFields();
+        } else {
+          duplicateDetected = false;
+        }
+      }
+
+      function clearProductFields() {
+        resetImageState("product");
+
+        document.getElementById("productName").value = "";
+        document.getElementById("productStock").value = "";
+        document.getElementById("buyingPrice").value = "";
+        document.getElementById("sellingPrice").value = "";
+        document.getElementById("productProfit").value = "";
+      }
+
+      async function submitNewProduct() {
+        if (!businessId) {
+          alert("Business session expired. Please log in again.");
+          window.location.href = "index.html";
+          return;
+        }
+
+        if (duplicateDetected) {
+          alert("Duplicate item detected. Cannot add again.");
+          return;
+        }
+
+        const name = document.getElementById("productName").value.trim();
+        const stock = parseInt(document.getElementById("productStock").value);
+        const buying = parseFloat(document.getElementById("buyingPrice").value);
+        const selling = parseFloat(document.getElementById("sellingPrice").value);
+        const profit = selling - buying;
+
+        const imageFile = imageStates.product.current;
+
+        if (!name || isNaN(stock) || isNaN(buying) || isNaN(selling)) {
+          alert("Please fill out all the fields before submitting.");
+          return;
+        }
+
+        if (imageFile && imageFile.size > MAX_IMAGE_BYTES) {
+          alert("The uploaded image exceeds 50KB. Please click Auto Adjust before submitting.");
+          return;
+        }
+
+        showLoader();
+
+        let uploadedPath = null;
+
+        try {
+          let imageUrl = null;
+
+          if (imageFile) {
+            const filename = makeItemImageFilename(name);
+            uploadedPath = `images/${businessId}/${filename}`;
+
+            const {error: uploadError} = await supabase
+              .storage
+              .from("product-images")
+              .upload(uploadedPath, imageFile, {
+                contentType: imageFile.type,
+                upsert: false
+              });
+
+            if (uploadError) throw uploadError;
+
+            const {data: publicURL} = supabase
+              .storage
+              .from("product-images")
+              .getPublicUrl(uploadedPath);
+
+            imageUrl = publicURL.publicUrl;
+          }
+
+          const {error} = await supabase
+            .from("items")
+            .insert([{
+              businessid: businessId,
+              type: "product",
+              name,
+              buying_price: buying,
+              selling_price: selling,
+              profit,
+              stock,
+              image_url: imageUrl
+            }]);
+
+          if (error) throw error;
+
+          closeAddProductPopup();
+          showSuccessPopup();
+
+        } catch (error) {
+          console.error("Product addition failed:", error);
+
+          if (uploadedPath) {
+            await supabase.storage
+              .from("product-images")
+              .remove([uploadedPath]);
+          }
+
+          alert("Failed to add product. Please try again.");
+
+        } finally {
+          hideLoader();
+        }
+      }
+
+      function showSuccessPopup() {
+        document.getElementById("successPopup").classList.remove("hidden");
+      }
+
+      function returnToAddOptions() {
+        document.getElementById("successPopup").classList.add("hidden");
+
+        clearProductFields();
+        clearServiceForm();
+
+        // Optional: You can trigger showing the Add Product/Add Service buttons
+      }
+
+      function openAddServicePopup() {
+        clearServiceForm();
+        document.getElementById("addServicePopup").classList.remove("hidden");
+      }
+
+      let serviceDuplicateDetected = false;
+
+      async function checkDuplicateService() {
+        const name = document.getElementById("serviceName").value.trim();
+        if (!name) return;
+
+        const { data, error } = await supabase
+          .from("items")
+          .select("name")
+          .eq("type", "service")
+          .eq("businessid", businessId)
+          .ilike("name", name);
+
+        if (data && data.length > 0) {
+          serviceDuplicateDetected = true;
+          alert(`${name} service is already added. Please use the Edit Stock option instead.`);
+          clearServiceForm();
+        } else {
+          serviceDuplicateDetected = false;
+        }
+      }
+
+      function calculateServiceProfit() {
+        const cost = parseFloat(document.getElementById("serviceCost").value) || 0;
+        const price = parseFloat(document.getElementById("servicePrice").value) || 0;
+        document.getElementById("serviceProfit").value = (price - cost);
+      }
+
+      function clearServiceForm() {
+        resetImageState("service");
+
+        document.getElementById("serviceName").value = "";
+        document.getElementById("serviceCost").value = "";
+        document.getElementById("servicePrice").value = "";
+        document.getElementById("serviceProfit").value = "";
+      }
+
+      function closeAddServicePopup() {
+        clearServiceForm();
+        document.getElementById("addServicePopup").classList.add("hidden");
+      }
+
+      async function submitNewService() {
+        if (!businessId) {
+          alert("Business session expired. Please log in again.");
+          window.location.href = "index.html";
+          return;
+        }
+
+        if (serviceDuplicateDetected) {
+          alert("Duplicate service detected. Cannot add again.");
+          return;
+        }
+
+        const name = document.getElementById("serviceName").value.trim();
+        const cost = parseFloat(document.getElementById("serviceCost").value);
+        const price = parseFloat(document.getElementById("servicePrice").value);
+        const profit = price - cost;
+
+        const imageFile = imageStates.service.current;
+
+        if (!name || isNaN(cost) || isNaN(price)) {
+          alert("Please fill out all the required fields before submitting.");
+          return;
+        }
+
+        if (imageFile && imageFile.size > MAX_IMAGE_BYTES) {
+          alert("The uploaded image exceeds 50KB. Please click Auto Adjust before submitting.");
+          return;
+        }
+
+        showLoader();
+
+        let uploadedPath = null;
+
+        try {
+          let imageUrl = null;
+
+          if (imageFile) {
+            const filename = makeItemImageFilename(name);
+            uploadedPath = `images/${businessId}/${filename}`;
+
+            const {error: uploadError} = await supabase
+              .storage
+              .from("product-images")
+              .upload(uploadedPath, imageFile, {
+                contentType: imageFile.type,
+                upsert: false
+              });
+
+            if (uploadError) throw uploadError;
+
+            const {data: publicURL} = supabase
+              .storage
+              .from("product-images")
+              .getPublicUrl(uploadedPath);
+
+            imageUrl = publicURL.publicUrl;
+          }
+
+          const {error} = await supabase
+            .from("items")
+            .insert([{
+              businessid: businessId,
+              type: "service",
+              name,
+              cost_service: cost,
+              customer_price: price,
+              profit,
+              stock: 0,
+              image_url: imageUrl
+            }]);
+
+          if (error) throw error;
+
+          closeAddServicePopup();
+          showSuccessPopup();
+
+        } catch (error) {
+          console.error("Service addition failed:", error);
+
+          if (uploadedPath) {
+            await supabase.storage
+              .from("product-images")
+              .remove([uploadedPath]);
+          }
+
+          alert("Failed to add service. Please try again.");
+
+        } finally {
+          hideLoader();
+        }
+      }
+
+      async function verifyAdminPasswordFromDB(enteredPassword) {
+        const business = JSON.parse(sessionStorage.getItem("businessProfile"));
+
+        if (!business || !business.businessid) {
+          alert("Session expired. Please log in again.");
+          window.location.href = "index.html";
+          return false;
+        }
+
+        const { data, error } = await supabase
+          .from("profile")
+          .select("adminpassword")
+          .eq("businessid", business.businessid)
+          .single();
+
+        if (error || !data) {
+          console.error("Admin password fetch error:", error);
+          alert("Security verification failed. Please try again.");
+          return false;
+        }
+
+        return enteredPassword === data.adminpassword;
+      }
+
+      async function verifyAdminPassword() {
+        showLoader();
+        const input = document.getElementById("adminPasswordInput").value.trim();
+        if (!input) return;
+
+        const isValid = await verifyAdminPasswordFromDB(input);
+
+        if (isValid) {
+          document.getElementById("passwordError").style.display = "none";
+          closePasswordPopup();
+          handleEditStock(); // ✅ proceed safely
+          hideLoader();
+        } else {
+          document.getElementById("passwordError").style.display = "block";
+          hideLoader();
+        }
+      }
+      
+      const passwordInput = document.getElementById("adminPasswordInput");
+      const adminBtn = document.getElementById("adminPasswordBtn");
+
+      // Optional: Enter key submits password
+      passwordInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") adminBtn.click();
+      });
+
+      const fallbackProductImg = "Product.png";
+      const fallbackServiceImg = "Service.png";
+
+      let currentItems = []; // Store current items for search
+      let currentType = "product"; // Track whether user is viewing products or services
+
+      // ✅ MAIN FETCH FUNCTION — Get items from Supabase
+      async function fetchItemsAndDisplay(type = "product") {
+        try {
+          showLoader();
+          currentType = type;
+
+          const { data, error } = await window.supabase
+            .from("items")
+            .select("*")
+            .eq("type", type)
+            .eq("businessid", businessId) // ✅ KEY ADDITION
+            .order("name", { ascending: true });
+
+          if (error) throw error;
+
+          currentItems = data || [];
+          if (currentItems.length === 0) {
+            showEmptyState(type);
+            hideLoader();
+          } else {
+            renderItems(currentItems);
+            hideLoader();
+          }
+        } catch (err) {
+          console.error("Fetch error:", err);
+        }
+      }
+
+      function showEmptyState(type) {
+        const container = document.getElementById("itemsContainer"); 
+        // (replace with your actual grid/container ID if different)
+
+        const message =
+          type === "product"
+            ? "Oops! No products found yet. Start by adding your stock under Manage Stock to begin selling."
+            : "Oops! No services found yet. Add your first service under Manage Stock to start offering to customers.";
+
+        container.innerHTML = `
+          <div class="empty-state">
+            <p>${message}</p>
+          </div>
+        `;
+      }
+
+      // ✅ RENDER FUNCTION — Displays items (or fallback message)
+    function renderItems(items) {
+      const container = document.getElementById("itemsContainer");
+      const notFound = document.getElementById("notFound");
+      container.innerHTML = "";
+      notFound.style.display = "none";
+
+      if (!items.length) {
+        notFound.style.display = "block";
+        return;
+      }
+
+      items.forEach(item => {
+        const card = document.createElement("div");
+        card.classList.add("item-card");
+
+        const img = document.createElement("img");
+        img.src = item.image_url || (currentType === "product" ? fallbackProductImg : fallbackServiceImg);
+        img.onerror = () => {
+          img.src = currentType === "product" ? fallbackProductImg : fallbackServiceImg;
+        };
+
+        const name = document.createElement("h3");
+        name.textContent = item.name;
+
+        card.appendChild(img);
+        card.appendChild(name);
+
+        const stock = document.createElement("p");
+        const buying = document.createElement("p");
+        const selling = document.createElement("p");
+        const profit = document.createElement("p");
+
+        if (currentType === "product") {
+          stock.textContent  = "Stock: " + item.stock;
+          buying.textContent = "Buying Price: Ksh " + item.buying_price;
+          selling.textContent = "Selling Price: Ksh " + item.selling_price;
+          profit.textContent = "Profit: Ksh " + (item.selling_price - item.buying_price);
+
+          card.appendChild(stock);
+          card.appendChild(buying);
+          card.appendChild(selling);
+          card.appendChild(profit);
+        } else {
+          const cost = document.createElement("p");
+          cost.textContent = "Cost of Service: Ksh " + item.cost_service;
+          selling.textContent = "Customer Price: Ksh " + item.customer_price;
+          profit.textContent = "Profit: Ksh " + (item.customer_price - item.cost_service);
+
+          card.appendChild(cost);
+          card.appendChild(selling);
+          card.appendChild(profit);
+        }
+
+        const button = document.createElement("button");
+        button.textContent = "Edit";
+        button.addEventListener("click", () => {
+      if (currentType === "product") {
+        openEditProductPopup(item);
+      } else {
+        openEditServicePopup(item);
+      }
+
+      // Optional: Clear search and rerender if you want to reset UI state
+      document.getElementById("itemSearch").value = "";
+    });
+        
+        card.appendChild(button);
+
+        const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "Delete";
+    deleteBtn.classList.add("delete-btn");
+    deleteBtn.addEventListener("click", () => {
+      openDeletePopup(item);
+    });
+
+    card.appendChild(deleteBtn);
+
+        container.appendChild(card);
+      });
+    }
+
+      // ✅ FILTER BUTTONS — Products vs Services
+      function filterItems(type) {
+        document.getElementById("productBtn").classList.remove("active");
+        document.getElementById("serviceBtn").classList.remove("active");
+        document.getElementById(type + "Btn").classList.add("active");
+
+        // Clear search input and fetch items
+        document.getElementById("itemSearch").value = "";
+        fetchItemsAndDisplay(type);
+      }
+
+      // ✅ SEARCH INPUT — Real-time search by item name
+      document.getElementById("itemSearch").addEventListener("input", function () {
+        const term = this.value.trim().toLowerCase();
+        const filtered = currentItems.filter(item =>
+          item.name.toLowerCase().includes(term)
+        );
+        renderItems(filtered);
+      });
+
+      // ✅ ON LOAD — Default load products
+      document.addEventListener("DOMContentLoaded", async function () {
+        document.getElementById("itemSearch").value = ""; // clear search on load
+        showLoader();
+        await fetchItemsAndDisplay("product");
+
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            hideLoader();
+          }, 100);
+        });
+      });
+
+      let currentEditProduct = null;
+      let isDuplicateNameEdit = false;
+
+      function getStoragePathFromImageUrl(imageUrl) {
+        if (!imageUrl) return null;
+
+        try {
+          const url = new URL(imageUrl);
+          const marker = "/storage/v1/object/public/product-images/";
+
+          const markerIndex = url.pathname.indexOf(marker);
+
+          // Only delete files belonging to this bucket.
+          if (markerIndex === -1) return null;
+
+          return decodeURIComponent(
+            url.pathname.slice(markerIndex + marker.length)
+          );
+        } catch (error) {
+          console.warn("Could not read saved image URL:", error);
+          return null;
+        }
+      }
+
+      async function deleteStoredItemImage(imageUrl) {
+        if (!imageUrl) return;
+
+        const path = getStoragePathFromImageUrl(imageUrl);
+
+        if (!path) {
+          throw new Error("The saved image URL is not a valid product-images bucket URL.");
+        }
+
+        const { error } = await supabase.storage
+          .from("product-images")
+          .remove([path]);
+
+        if (error) throw error;
+      }
+
+      function setEditImageDeleting(type, deleting) {
+        const popupId = type === "editProduct"
+          ? "editProductPopup"
+          : "editServicePopup";
+
+        const imageId = type === "editProduct"
+          ? "editProductCurrentImageProcessing"
+          : "editServiceCurrentImageProcessing";
+
+        const popup = document.getElementById(popupId);
+        const overlay = document.getElementById(imageId);
+
+        if (overlay) overlay.classList.toggle("hidden", !deleting);
+
+        if (popup) {
+          popup.querySelectorAll("button, input, select, textarea")
+            .forEach(control => {
+              control.disabled = deleting;
+            });
+        }
+      }
+
+      function setEditCurrentImage(type, imageUrl) {
+        const isProduct = type === "editProduct";
+        const image = document.getElementById(
+          isProduct ? "editProductCurrentImage" : "editServiceCurrentImage"
+        );
+        const deleteButton = document.getElementById(
+          isProduct
+            ? "editProductCurrentImageDelete"
+            : "editServiceCurrentImageDelete"
+        );
+
+        if (!image || !deleteButton) return;
+
+        image.onerror = () => {
+          image.onerror = null;
+          image.src = isProduct ? fallbackProductImg : fallbackServiceImg;
+        };
+
+        image.src = imageUrl || (isProduct ? fallbackProductImg : fallbackServiceImg);
+        deleteButton.classList.toggle("hidden", !imageUrl);
+      }
+
+      function refreshItemCardFromMemory(updatedItem) {
+        const index = currentItems.findIndex(
+          item => String(item.id) === String(updatedItem.id)
+        );
+
+        if (index !== -1) currentItems[index] = { ...updatedItem };
+
+        // Re-render from the already-loaded local list; this does not query Supabase.
+        renderItems(currentItems);
+      }
+
+      async function deleteEditProductImage() {
+        await deleteCurrentEditImage("editProduct");
+      }
+
+      async function deleteEditServiceImage() {
+        await deleteCurrentEditImage("editService");
+      }
+
+      async function deleteCurrentEditImage(type) {
+        const isProduct = type === "editProduct";
+        const item = isProduct ? currentEditProduct : currentEditService;
+
+        if (!item || imageStates[type].busy) return;
+        if (!item.image_url) return;
+
+        if (!confirm("Delete this item's current image? This cannot be undone.")) {
+          return;
+        }
+
+        setEditImageDeleting(type, true);
+
+        try {
+          // Remove the actual file first. If this fails, keep the saved URL unchanged.
+          await deleteStoredItemImage(item.image_url);
+
+          // Then clear the image_url for this item and this business only.
+          const { data, error } = await supabase
+            .from("items")
+            .update({ image_url: null })
+            .eq("id", item.id)
+            .eq("businessid", businessId)
+            .select()
+            .maybeSingle();
+
+          if (error) throw error;
+          if (!data) throw new Error("Item not found for this business.");
+
+          if (isProduct) {
+            currentEditProduct = data;
+          } else {
+            currentEditService = data;
+          }
+
+          setEditCurrentImage(type, null);
+          refreshItemCardFromMemory(data);
+
+          alert("Image deleted successfully.");
+        } catch (error) {
+          console.error("Current image deletion failed:", error);
+          alert("Could not delete the image. The item was not changed. Please try again.");
+        } finally {
+          setEditImageDeleting(type, false);
+        }
+      }
+
+      function openEditProductPopup(product) {
+        resetImageState("editProduct");
+        currentEditProduct = product;
+
+        document.getElementById("editProductPopup").classList.remove("hidden");
+        document.getElementById("editProductName").value = product.name;
+        document.getElementById("editProductStock").value = product.stock;
+        document.getElementById("editBuyingPrice").value = product.buying_price;
+        document.getElementById("editSellingPrice").value = product.selling_price;
+        document.getElementById("editProductProfit").value =
+          product.selling_price - product.buying_price;
+
+        setEditCurrentImage("editProduct", product.image_url);
+      }
+
+      function clearEditProductFields() {
+        resetImageState("editProduct");
+        document.getElementById("editProductImage").value = "";
+      }
+
+      function closeEditProductPopup() {
+        if (imageStates.editProduct.busy) return;
+
+        document.getElementById("editProductPopup").classList.add("hidden");
+        clearEditProductFields();
+        currentEditProduct = null;
+      }
+
+      function updateEditProductProfit() {
+        const buy = parseFloat(document.getElementById("editBuyingPrice").value) || 0;
+        const sell = parseFloat(document.getElementById("editSellingPrice").value) || 0;
+        document.getElementById("editProductProfit").value = (sell - buy);
+      }
+
+      async function checkDuplicateProductNameEdit() {
+        const newName = document.getElementById("editProductName").value.trim();
+        if (!newName || newName.toLowerCase() === currentEditProduct.name.toLowerCase()) {
+          isDuplicateNameEdit = false;
+          return;
+        }
+
+        const { data, error } = await supabase
+          .from("items")
+          .select("id")
+          .eq("type", "product")
+          .eq("businessid", businessId)       // ✅ CRITICAL
+          .ilike("name", newName)
+          .neq("id", currentEditProduct.id);  // ✅ avoid matching itself
+
+        if (data && data.length > 0) {
+          alert("This name is already used for another product.");
+          isDuplicateNameEdit = true;
+        } else {
+          isDuplicateNameEdit = false;
+        }
+      }
+
+      async function submitEditProduct() {
+        const type = "editProduct";
+
+        if (imageStates[type].busy) return;
+        if (!currentEditProduct) return;
+
+        if (isDuplicateNameEdit) {
+          alert("This name is already used for another product.");
+          return;
+        }
+
+        const name = document.getElementById("editProductName").value.trim();
+        const stock = Number(document.getElementById("editProductStock").value);
+        const buying = Number(document.getElementById("editBuyingPrice").value);
+        const selling = Number(document.getElementById("editSellingPrice").value);
+        const profit = selling - buying;
+
+        // This is the selected/cropped/auto-adjusted image, not input.files[0].
+        const imageFile = imageStates[type].current;
+        const oldImageUrl = currentEditProduct.image_url || null;
+
+        if (!name || !Number.isFinite(stock) || !Number.isFinite(buying) ||
+            !Number.isFinite(selling)) {
+          alert("All fields except image are required.");
+          return;
+        }
+
+        // Check before any Supabase request or storage change.
+        if (imageFile && imageFile.size > MAX_IMAGE_BYTES) {
+          alert("The uploaded image exceeds 50KB. Please click Auto Adjust before submitting.");
+          return;
+        }
+
+        const fieldsChanged =
+          name !== (currentEditProduct.name ?? "") ||
+          stock !== Number(currentEditProduct.stock) ||
+          buying !== Number(currentEditProduct.buying_price) ||
+          selling !== Number(currentEditProduct.selling_price);
+
+        const imageChanged = Boolean(imageFile);
+
+        if (!fieldsChanged && !imageChanged) {
+          alert("No data changes made.");
+          return;
+        }
+
+        showLoader();
+
+        let uploadedPath = null;
+
+        try {
+          let imageUrl = oldImageUrl;
+
+          if (imageFile) {
+            // Replacing an existing Supabase image: remove it, then clear its URL.
+            if (oldImageUrl) {
+              await deleteStoredItemImage(oldImageUrl);
+
+              const { error: clearError } = await supabase
+                .from("items")
+                .update({ image_url: null })
+                .eq("id", currentEditProduct.id)
+                .eq("businessid", businessId);
+
+              if (clearError) throw clearError;
+            }
+
+            // Always upload new images into this business's folder.
+            const filename = makeItemImageFilename(name);
+            uploadedPath = `images/${businessId}/${filename}`;
+
+            const { error: uploadError } = await supabase.storage
+              .from("product-images")
+              .upload(uploadedPath, imageFile, {
+                contentType: imageFile.type || "image/webp",
+                upsert: false
+              });
+
+            if (uploadError) throw uploadError;
+
+            const { data: publicURL } = supabase.storage
+              .from("product-images")
+              .getPublicUrl(uploadedPath);
+
+            imageUrl = publicURL.publicUrl;
+          }
+
+          const { data, error } = await supabase
+            .from("items")
+            .update({
+              name,
+              stock,
+              buying_price: buying,
+              selling_price: selling,
+              profit,
+              image_url: imageUrl
+            })
+            .eq("id", currentEditProduct.id)
+            .eq("businessid", businessId)
+            .select()
+            .maybeSingle();
+
+          if (error) throw error;
+          if (!data) throw new Error("Product not found for this business.");
+
+          currentEditProduct = data;
+          refreshItemCardFromMemory(data);
+
+          closeEditProductPopup();
+          showSuccessEditPopup();
+        } catch (error) {
+          console.error("Product update failed:", error);
+
+          // If the new file uploaded but the item update failed, remove that new file.
+          if (uploadedPath) {
+            const { error: cleanupError } = await supabase.storage
+              .from("product-images")
+              .remove([uploadedPath]);
+
+            if (cleanupError) {
+              console.error("Could not clean up failed replacement image:", cleanupError);
+            }
+          }
+
+          alert("Failed to update product. Please try again.");
+        } finally {
+          hideLoader();
+        }
+      }
+
+      let currentEditService = null;
+      let isDuplicateServiceEdit = false;
+
+      function openEditServicePopup(service) {
+        resetImageState("editService");
+        currentEditService = service;
+
+        document.getElementById("editServicePopup").classList.remove("hidden");
+        document.getElementById("editServiceName").value = service.name;
+        document.getElementById("editCostOfService").value = service.cost_service;
+        document.getElementById("editCustomerPrice").value = service.customer_price;
+        document.getElementById("editServiceProfit").value =
+          service.customer_price - service.cost_service;
+
+        setEditCurrentImage("editService", service.image_url);
+      }
+
+      function clearEditServiceFields() {
+        resetImageState("editService");
+        document.getElementById("editServiceImage").value = "";
+      }
+
+      function closeEditServicePopup() {
+        if (imageStates.editService.busy) return;
+
+        document.getElementById("editServicePopup").classList.add("hidden");
+        clearEditServiceFields();
+        currentEditService = null;
+      }
+
+      function updateEditServiceProfit() {
+        const cost = parseFloat(document.getElementById("editCostOfService").value) || 0;
+        const price = parseFloat(document.getElementById("editCustomerPrice").value) || 0;
+        document.getElementById("editServiceProfit").value = (price - cost);
+      }
+
+      async function checkDuplicateServiceNameEdit() {
+        const newName = document.getElementById("editServiceName").value.trim();
+        if (!newName || newName.toLowerCase() === currentEditService.name.toLowerCase()) {
+          isDuplicateServiceEdit = false;
+          return;
+        }
+
+        const { data } = await supabase
+          .from("items")
+          .select("id")
+          .eq("type", "service")
+          .eq("businessid", businessId)        // ✅ CRITICAL
+          .ilike("name", newName)
+          .neq("id", currentEditService.id);
+
+        if (data && data.length > 0) {
+          alert("This name is already used for another service.");
+          isDuplicateServiceEdit = true;
+        } else {
+          isDuplicateServiceEdit = false;
+        }
+      }
+
+      async function submitEditService() {
+        const type = "editService";
+
+        if (imageStates[type].busy) return;
+        if (!currentEditService) return;
+
+        if (isDuplicateServiceEdit) {
+          alert("This name is already used for another service.");
+          return;
+        }
+
+        const name = document.getElementById("editServiceName").value.trim();
+        const cost_service = Number(document.getElementById("editCostOfService").value);
+        const customer_price = Number(document.getElementById("editCustomerPrice").value);
+        const profit = customer_price - cost_service;
+
+        const imageFile = imageStates[type].current;
+        const oldImageUrl = currentEditService.image_url || null;
+
+        if (!name || !Number.isFinite(cost_service) || !Number.isFinite(customer_price)) {
+          alert("All fields except image are required.");
+          return;
+        }
+
+        // Check before any Supabase request or storage change.
+        if (imageFile && imageFile.size > MAX_IMAGE_BYTES) {
+          alert("The uploaded image exceeds 50KB. Please click Auto Adjust before submitting.");
+          return;
+        }
+
+        const fieldsChanged =
+          name !== (currentEditService.name ?? "") ||
+          cost_service !== Number(currentEditService.cost_service) ||
+          customer_price !== Number(currentEditService.customer_price);
+
+        const imageChanged = Boolean(imageFile);
+
+        if (!fieldsChanged && !imageChanged) {
+          alert("No data changes made.");
+          return;
+        }
+
+        showLoader();
+
+        let uploadedPath = null;
+
+        try {
+          let imageUrl = oldImageUrl;
+
+          if (imageFile) {
+            if (oldImageUrl) {
+              await deleteStoredItemImage(oldImageUrl);
+
+              const { error: clearError } = await supabase
+                .from("items")
+                .update({ image_url: null })
+                .eq("id", currentEditService.id)
+                .eq("businessid", businessId);
+
+              if (clearError) throw clearError;
+            }
+
+            const filename = makeItemImageFilename(name);
+            uploadedPath = `images/${businessId}/${filename}`;
+
+            const { error: uploadError } = await supabase.storage
+              .from("product-images")
+              .upload(uploadedPath, imageFile, {
+                contentType: imageFile.type || "image/webp",
+                upsert: false
+              });
+
+            if (uploadError) throw uploadError;
+
+            const { data: publicURL } = supabase.storage
+              .from("product-images")
+              .getPublicUrl(uploadedPath);
+
+            imageUrl = publicURL.publicUrl;
+          }
+
+          const { data, error } = await supabase
+            .from("items")
+            .update({
+              name,
+              cost_service,
+              customer_price,
+              profit,
+              image_url: imageUrl
+            })
+            .eq("id", currentEditService.id)
+            .eq("businessid", businessId)
+            .select()
+            .maybeSingle();
+
+          if (error) throw error;
+          if (!data) throw new Error("Service not found for this business.");
+
+          currentEditService = data;
+          refreshItemCardFromMemory(data);
+
+          closeEditServicePopup();
+          showSuccessEditPopup();
+        } catch (error) {
+          console.error("Service update failed:", error);
+
+          if (uploadedPath) {
+            const { error: cleanupError } = await supabase.storage
+              .from("product-images")
+              .remove([uploadedPath]);
+
+            if (cleanupError) {
+              console.error("Could not clean up failed replacement image:", cleanupError);
+            }
+          }
+
+          alert("Failed to update service. Please try again.");
+        } finally {
+          hideLoader();
+        }
+      }
+
+      function showSuccessEditPopup() {
+        document.getElementById("successEditPopup").classList.remove("hidden");
+      }
+
+      function returnToEditOptions() {
+        document.getElementById("successEditPopup").classList.add("hidden");
+      }
+
+      let itemToDelete = null;
+
+      function openDeletePopup(item) {
+        itemToDelete = item;
+        document.getElementById("deleteTypeLabel").textContent = item.type;
+        document.getElementById("deletePopup").classList.remove("hidden");
+      }
+
+      function closeDeletePopup() {
+        itemToDelete = null;
+        document.getElementById("deletePopup").classList.add("hidden");
+      }
+
+      document.getElementById("confirmDeleteBtn").addEventListener("click", async () => {
+        if (!itemToDelete) return;
+
+        const item = itemToDelete;
+        const itemType = item.type;
+
+        showLoader();
+
+        try {
+          // Delete the file first, wherever it is stored in this bucket.
+          if (item.image_url) {
+            await deleteStoredItemImage(item.image_url);
+          }
+
+          // Only delete this row belonging to this business.
+          const { data, error } = await supabase
+            .from("items")
+            .delete()
+            .eq("id", item.id)
+            .eq("businessid", businessId)
+            .select("id")
+            .maybeSingle();
+
+          if (error) throw error;
+          if (!data) throw new Error("Item not found for this business.");
+
+          currentItems = currentItems.filter(
+            existing => String(existing.id) !== String(item.id)
+          );
+
+          closeDeletePopup();
+          renderItems(currentItems);
+
+          showSuccessDeletePopup();
+        } catch (error) {
+          console.error("Item deletion failed:", error);
+          alert("Delete failed. The item was not removed. Please try again.");
+        } finally {
+          hideLoader();
+        }
+      });
+
+      function showSuccessDeletePopup() {
+        document.getElementById("successDeletePopup").classList.remove("hidden");
+      }
+
+      function returnToStock() {
+        document.getElementById("successDeletePopup").classList.add("hidden");
+        clearProductFields();
+        // Optional: You can trigger showing the Add Product/Add Service buttons
+      }
+
+      function openPasswordPopup() {
+        document.getElementById("passwordPopup").classList.remove("hidden");
+      }
+
+      function closePasswordPopup() {
+        document.getElementById("passwordPopup").classList.add("hidden");
+        document.getElementById("adminPasswordInput").value = "";
+        document.getElementById("passwordError").style.display = "none";
+      }
+  </script>
+</body>
+</html>
